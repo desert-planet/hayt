@@ -1,0 +1,36 @@
+{
+  "name": "arrakis-hubot",
+  "version": "0.0.0",
+
+  "author": "Communist Gaming Party: Ministry Of Idling",
+
+  "keywords": [
+    "github",
+    "hubot",
+    "campfire",
+    "bot",
+	"nonsense"
+  ],
+
+  "description": "The worst of the evils.",
+
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/github/hubot/raw/master/LICENSE"
+  }],
+
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/sshirokov/arrakis-hubot.git"
+  },
+
+  "dependencies": {
+    "hubot":         ">= 2.6.0 < 3.0.0",
+    "hubot-scripts": ">= 2.5.0 < 3.0.0"
+  },
+
+  "engines": {
+    "node": ">= 0.8.x",
+    "npm":  ">= 1.1.x"
+  }
+}
