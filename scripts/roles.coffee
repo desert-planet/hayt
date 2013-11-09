@@ -71,6 +71,11 @@ module.exports = (robot) ->
     name    = msg.match[1].trim()
     newRole = msg.match[2].trim()
 
+    if msg.message.user.name.toLowerCase() == name.toLowerCase()
+      msg.reply "Nice try, buddy."
+      return
+
+
     unless name in ['', 'who', 'what', 'where', 'when', 'why']
       users = robot.brain.usersForFuzzyName(name)
       if users.length is 1
@@ -86,4 +91,3 @@ module.exports = (robot) ->
         msg.send getAmbiguousUserText users
       else
         msg.send "I don't know anything about #{name}."
-
