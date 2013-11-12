@@ -13,8 +13,8 @@
 # Author:
 #   lcsaph
 
-dance = "~(‾▿‾)~ \n"
-"┌(‾▿‾)┘ \n"
+dance = "~(‾▿‾)~ \n" +
+"┌(‾▿‾)┘ \n" +
 "└(‾▿‾)┐"
 
 module.exports = (robot) ->
