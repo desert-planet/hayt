@@ -13,9 +13,9 @@
 # Author:
 #   lcsaph
 
-dance = ~(‾▿‾)~ \n
-┌(‾▿‾)┘ \n
-└(‾▿‾)┐
+dance = "~(‾▿‾)~" \n
+"┌(‾▿‾)┘" \n
+"└(‾▿‾)┐"
 
 module.exports = (robot) ->
   robot.hear /(dance)/i, (msg) ->
