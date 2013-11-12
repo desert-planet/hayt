@@ -13,8 +13,8 @@
 # Author:
 #   lcsaph
 
-Mad = "凸(｀0´)凸"
+mad = "凸(｀0´)凸"
 
 
-module.exports = (robot) ->
-  robot.respond / (mad)
+ robot.hear /(mad)/i, (msg) ->
+    msg.send mad
