@@ -18,5 +18,5 @@ dance = "~(‾▿‾)~" \n
 "└(‾▿‾)┐"
 
 module.exports = (robot) ->
-  robot.hear /(dance)/i, (msg) ->
+  robot.respond /(dance)/i, (msg) ->
     msg.send dance
