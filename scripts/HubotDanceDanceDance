@@ -1,0 +1,22 @@
+# Description:
+#   Hubot will make you dance, dance, dance.
+#
+# Dependencies:
+#   None
+#
+# Configuration:
+#   None
+#
+# Commands:
+#   dance - Recite dance
+#
+# Author:
+#   lcsaph
+
+dance = ~(‾▿‾)~ \n
+┌(‾▿‾)┘ \n
+└(‾▿‾)┐
+
+module.exports = (robot) ->
+  robot.hear /(dance)/i, (msg) ->
+    msg.send dance
