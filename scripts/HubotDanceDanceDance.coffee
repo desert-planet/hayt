@@ -15,7 +15,8 @@
 
 dance = "~(‾▿‾)~ \n" +
 "┌(‾▿‾)┘ \n" +
-"└(‾▿‾)┐"
+"└(‾▿‾)┐\n" +
+"~(‾▿‾)~"
 
 module.exports = (robot) ->
   robot.respond /(dance)/i, (msg) ->
