@@ -15,6 +15,6 @@
 
 mad = "凸(｀0´)凸"
 
-
-robot.hear /(mad)/i, (msg) ->
-  msg.send mad
+module.exports = (robot) ->
+  robot.hear /(mad)/i, (msg) ->
+    msg.send mad
