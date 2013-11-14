@@ -26,7 +26,7 @@ module.exports = (robot) ->
        localstorage[room][username] += tellmessage
      else
        localstorage[room][username] = tellmessage
-     robot.reply "Ok, I'll tell #{username}"
+     msg.reply "Ok, I'll tell #{username}"
      return
 
 
