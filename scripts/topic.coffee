@@ -15,5 +15,8 @@
 
 module.exports = (robot) ->
   robot.respond /topic( me)? (.*)/i, (msg) ->
-    msg.send "/topic #arrakis #{msg.match[2]"
+    msg.emit 'raw',
+      command: 'TOPIC',
+      channel: '#arrakis',
+      args: msg.match[2]
     
