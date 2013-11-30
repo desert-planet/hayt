@@ -14,18 +14,17 @@
 # Author:
 #   sshirokov
 
-## Dat state
-current = null
-
 ## Dat model
 class Vote
+  @current = null
+
   length: 30 * 1000
 
 
   finish: () =>
     # Close the gate, and update the current vote
     @finished = true
-    current = null
+    Vote.current = null
 
     if @expired
       @msg.send "Vote failed, time's up!"
@@ -91,7 +90,7 @@ class Vote
       @finish()
     @timeout = setTimeout fn, @length
     # Note myself if I haven't been yet
-    current ?= this
+    Vote.current ?= this
 
   yes: (who) =>
     @_vote 'yes', who
@@ -112,9 +111,9 @@ module.exports = (robot) ->
     msg.send "Voting is a lie, and you can't do it yet."
 
   robot.respond /voting\??$/i, (msg) ->
-    sure_am = "Yep, for #{current?.duration()} seconds now. #{current?.votes.yes.length} vs #{current?.votes.no.length}"
+    sure_am = "Yep, for #{Vote.current?.duration()} seconds now. #{Vote.current?.votes.yes.length} vs #{Vote.current?.votes.no.length}"
     nope = "Nope, democracy has totally failed."
-    msg.reply if current then sure_am else nope
+    msg.reply if Vote.current then sure_am else nope
 
   # Election driver
   robot.respond /vote ([^\s]+)\s?(.*)?$/, (msg) ->
@@ -124,30 +123,30 @@ module.exports = (robot) ->
     switch action
       # Vote on a current issue
       when "yes"
-        return msg.reply "There's no vote going on." unless current?
-        result = current?.yes msg.message.user.name
+        return msg.reply "There's no vote going on." unless Vote.current?
+        result = Vote.current?.yes msg.message.user.name
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
       when "no"
-        return msg.reply "There's nothing to disagree with." unless current?
-        result = current?.no msg.message.user.name
+        return msg.reply "There's nothing to disagree with." unless Vote.current?
+        result = Vote.current?.no msg.message.user.name
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
 
       # Super Important Issues to vote about
       when "poop"
-        if current
+        if Vote.current
           msg.reply "A vote is already in progress, hold up."
           return
-        current = new Vote robot, msg, ->
+        vote = new Vote robot, msg, ->
           msg.send msg.random [
             "Poop is coming out",
             "I am pooping"
             "Butt evacuation in progress.",
           ]
-        current.start()
+        vote.start()
         msg.send "New Vote: Should I poop!?"
 
       # Shut up, loony bin
