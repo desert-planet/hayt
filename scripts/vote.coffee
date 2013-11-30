@@ -144,7 +144,7 @@ module.exports = (robot) ->
           vote = new Vote robot, msg, "Should I poop!?", ->
             msg.send msg.random [
               "Poop is coming out",
-              "I am pooping"
+              "I am pooping",
               "Butt evacuation in progress.",
             ]
           vote.start()
