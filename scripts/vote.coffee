@@ -21,18 +21,6 @@ current = null
 class Vote
   length: 30 * 1000
 
-  constructor: (@robot, @msg, @vote_cb) ->
-    @finished = false
-    @expired = false
-    @votes =
-      started: Date.now()
-      last: Date.now()
-      yes: []
-      no: []
-
-  # Time this election has run, in seconds.
-  duration: () =>
-    (Date.now() - @votes.started) / 1000
 
   finish: () =>
     # Close the gate, and update the current vote
@@ -72,12 +60,6 @@ class Vote
     return if (Date.now() - @votes.last) < 5000
     @finish()
 
-  start: () =>
-    fn = =>
-      return if @finished
-      @expired = true
-      @finish()
-    @timeout = setTimeout fn, @length
 
   _vote: (how, who) =>
     # Lookup table of opposites
@@ -91,12 +73,36 @@ class Vote
     do @maybeFinish
     return true
 
-  # Voting API
+  ## Public Voting API
+  constructor: (@robot, @msg, @vote_cb) ->
+    @finished = false
+    @expired = false
+    @votes =
+      started: Date.now()
+      last: Date.now()
+      yes: []
+      no: []
+
+  start: () =>
+    fn = =>
+      return if @finished
+      @expired = true
+      @finish()
+    @timeout = setTimeout fn, @length
+    # Note myself if I haven't been yet
+    current ?= this
+
   yes: (who) =>
     @_vote 'yes', who
 
   no: (who) =>
     @_vote 'no', who
+
+  duration: () =>
+    (Date.now() - @votes.started) / 1000
+
+
+
 
 ## Dose Handlers
 module.exports = (robot) ->
