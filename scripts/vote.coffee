@@ -17,10 +17,9 @@
 ## Dat model
 class Vote
   @current = null
-
   length: 30 * 1000
 
-
+  ## Internal API
   finish: () =>
     # Close the gate, and update the current vote
     @finished = true
@@ -72,7 +71,7 @@ class Vote
     return true
 
   ## Public Voting API
-  constructor: (@robot, @msg, @vote_cb) ->
+  constructor: (@robot, @msg, @description, @vote_cb) ->
     @finished = false
     @expired = false
     @votes =
@@ -83,14 +82,18 @@ class Vote
       no: []
 
   start: () =>
+    if Vote.current
+      throw "A vote is already in progress, hold up"
+
     fn = =>
       do @maybeFinish
       return if @finished
       @expired = true
       @finish()
     @timeout = setTimeout fn, @length
-    # Note myself if I haven't been yet
-    Vote.current ?= this
+
+    @msg.send "New Vote: #{@description}"
+    Vote.current = this
 
   yes: (who) =>
     @_vote 'yes', who
@@ -137,17 +140,16 @@ module.exports = (robot) ->
 
       # Super Important Issues to vote about
       when "poop"
-        if Vote.current
-          msg.reply "A vote is already in progress, hold up."
-          return
-        vote = new Vote robot, msg, ->
-          msg.send msg.random [
-            "Poop is coming out",
-            "I am pooping"
-            "Butt evacuation in progress.",
-          ]
-        vote.start()
-        msg.send "New Vote: Should I poop!?"
+        try
+          vote = new Vote robot, msg, "Should I poop!?", ->
+            msg.send msg.random [
+              "Poop is coming out",
+              "I am pooping"
+              "Butt evacuation in progress.",
+            ]
+          vote.start()
+        catch error
+          msg.reply error
 
       # Shut up, loony bin
       else
