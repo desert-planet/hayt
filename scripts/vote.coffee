@@ -27,8 +27,6 @@ class Vote
     @finished = true
     current = null
 
-    @msg.reply "TODO: Finish F:[#{@finished}] E:[#{@expired}] +:[#{@votes.yes.length}] -:[#{@votes.no.length}]"
-
     if @expired
       @msg.send "Vote failed, time's up!"
       return false
@@ -57,7 +55,7 @@ class Vote
     # We're not done if it's only a two vote difference
     return if (Math.abs(@votes.yes.length - @votes.no.length) < 2)
     # Is this still being contested?
-    return if (Date.now() - @votes.last) < 5000
+    return if (Date.now() - @votes.prev) < 5000
     @finish()
 
 
@@ -68,6 +66,7 @@ class Vote
       no: 'yes'
     return false if @finished
     return false if who.toLowerCase() in @votes[how].concat(@votes[how_else[how]])
+    @votes.prev = @votes.last
     @votes.last = Date.now()
     @votes[how].push who.toLowerCase()
     do @maybeFinish
@@ -78,13 +77,15 @@ class Vote
     @finished = false
     @expired = false
     @votes =
-      started: Date.now()
-      last: Date.now()
+      started: Date.now() # When voting started
+      last: Date.now()    # The last time action was taken
+      prev: Date.now()    # Previous `last`
       yes: []
       no: []
 
   start: () =>
     fn = =>
+      do @maybeFinish
       return if @finished
       @expired = true
       @finish()
@@ -141,7 +142,7 @@ module.exports = (robot) ->
           msg.reply "A vote is already in progress, hold up."
           return
         current = new Vote robot, msg, ->
-          msg.send robot.random [
+          msg.send msg.random [
             "Poop is coming out",
             "I am pooping"
             "Butt evacuation in progress.",
