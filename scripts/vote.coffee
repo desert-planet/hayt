@@ -26,7 +26,7 @@ class Vote
     Vote.current = null
 
     if @expired
-      @msg.send "Vote failed, time's up!"
+      @msg.send "Vote failed, time's up! (#{@duration()} seconds)"
       return false
 
     if @votes.yes.length == @votes.no.length
