@@ -111,7 +111,14 @@ class Vote
 module.exports = (robot) ->
   # Dat help
   robot.respond /vote\??$/i, (msg) ->
-    msg.send "Voting is a lie, and you can't do it yet."
+    msg.send """Voting allows you to pretend you have the power of a god.
+Supported commands:
+  .vote?                  - This help noise
+  .voting?                - What is going on, RIGHT NOW.
+  .vote yes               - Vote yes in the current vote
+  .vote no                - Vote no in the current vote
+  .vote topic <new topic> - Propose a new topic
+"""
 
   robot.respond /voting\??$/i, (msg) ->
     sure_am = "Yep, for #{Vote.current?.duration()} seconds now. #{Vote.current?.votes.yes.length} vs #{Vote.current?.votes.no.length}"
