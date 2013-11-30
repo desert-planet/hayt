@@ -139,6 +139,14 @@ module.exports = (robot) ->
         msg.reply reply
 
       # Super Important Issues to vote about
+      when "topic"
+        try
+          vote = new Vote robot, msg, "Topic: '#{arg}'", ->
+            msg.topic arg
+          vote.start()
+        catch error
+          msg.reply error
+
       when "poop"
         try
           vote = new Vote robot, msg, "Should I poop!?", ->
