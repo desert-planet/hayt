@@ -24,7 +24,7 @@ module.exports = (robot) ->
       msg.send "Deployed: #{stdout.trim()}"
 
   robot.respond /deploy(\s[\w_\-/]+)?$/, (msg) ->
-    branch = msg.match[1] or "master"
+    branch = (msg.match[1] or "master").trim()
 
     if msg.message.user.name.toLowerCase() not in OPS
       msg.reply "Sorry, I can't do that for you."
