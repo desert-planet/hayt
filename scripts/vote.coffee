@@ -161,7 +161,7 @@ Supported commands:
             msg.send msg.random [
               "Skalnik approves #{arg}",
               "YES TO #{arg}!!!!!!",
-              "#{arg}. It is so.
+              "#{arg}. It is so."
             ]
           vote.start()
         catch error
