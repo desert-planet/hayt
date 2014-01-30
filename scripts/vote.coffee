@@ -118,7 +118,7 @@ Supported commands:
   .vote yes               - Vote yes in the current vote
   .vote no                - Vote no in the current vote
   .vote topic <new topic> - Propose a new topic
-  .vote thing <new thing> - Vote on a thing
+  .vote on <new thing>    - Vote on a thing
 """
 
   robot.respond /voting\??$/i, (msg) ->
@@ -155,10 +155,14 @@ Supported commands:
         catch error
           msg.reply error
 
-      when "thing"
+      when "on"
         try
           vote = new Vote robot, msg, "Thing: '#{arg}'", ->
-            msg.send "Yes to thing!"
+            msg.send msg.random [
+              "Skalnik approves #{arg}",
+              "YES TO #{arg}!!!!!!",
+              "#{arg}. It is so.
+            ]
           vote.start()
         catch error
           msg.reply error
