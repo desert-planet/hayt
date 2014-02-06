@@ -32,8 +32,9 @@ module.exports = (robot) ->
       return
 
     prefix = ""
-    if remote[0] == '@'
-      remote = remote.replace '@', ''
+    if branch[0] == '@' and branch.indexOf('/') != -1
+      branch = branch.replace '@', ''
+      [remote, branch] = branch.split '/'
       prefix = "git remote add #{remote} https://github.com/#{remote}/arrakis-hubot"
 
     msg.send "\"Deploying\" #{origin}/#{branch}"
