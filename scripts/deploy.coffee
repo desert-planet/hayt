@@ -37,8 +37,8 @@ module.exports = (robot) ->
       [remote, branch] = branch.split '/'
       prefix = "git remote add #{remote} https://github.com/#{remote}/arrakis-hubot"
 
-    msg.send "\"Deploying\" #{origin}/#{branch}"
-    exec "#{prefix} ; git fetch --all && git checkout -f '#{origin}/#{branch}'", (err, stdout, stderr) ->
+    msg.send "\"Deploying\" #{remote}/#{branch}"
+    exec "#{prefix} ; git fetch --all && git checkout -f '#{remote}/#{branch}'", (err, stdout, stderr) ->
       if err
         msg.send "Something has gone wrong: #{util.inspect err}"
       else
