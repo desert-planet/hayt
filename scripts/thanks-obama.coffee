@@ -23,7 +23,7 @@ url = "http://thanks-obama.tumblr.com/"
 
 module.exports = (robot) ->
 
-  robot.hear /thanks obama/i, (msg) ->
+  robot.hear /thanks obama.*/i, (msg) ->
     request "#{url}?page=#{Math.floor(Math.random() * 8)}", (error, response, body)->
       throw error if error
       $ = cheerio.load(body)
