@@ -31,7 +31,7 @@ module.exports = (robot) ->
       msg.reply "Sorry, I can't do that for you."
       return
 
-    prefix = ""
+    prefix = ":"
     if branch[0] == '@' and branch.indexOf('/') != -1
       branch = branch.replace '@', ''
       [remote, branch] = branch.split '/'
