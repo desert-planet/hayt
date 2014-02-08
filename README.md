@@ -1,6 +1,6 @@
 # Hayt - A Hubot
 
-Butts. (_|_)
+Butts. `(_|_)`
 
 ### Testing Hayt Locally
 
