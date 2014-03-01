@@ -176,6 +176,7 @@ Supported commands:
               "I am pooping",
               "Butt evacuation in progress.",
               "http://i.imgur.com/ZTukQOl.gif",
+              "http://i.imgur.com/0nwjhNO.gif",
             ]
           vote.start()
         catch error
