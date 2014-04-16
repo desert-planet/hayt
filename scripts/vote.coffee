@@ -127,9 +127,9 @@ Supported commands:
     msg.reply if Vote.current then sure_am else nope
 
   # Election driver
-  robot.respond /(vote|freedom) ([^\s]+)\s?(.*)?$/, (msg) ->
-    action = msg.match[2].trim().toLowerCase()
-    arg = msg.match[3]?.trim()
+  robot.respond /(?:vote|freedom) ([^\s]+)\s?(.*)?$/, (msg) ->
+    action = msg.match[1].trim().toLowerCase()
+    arg = msg.match[2]?.trim()
 
     switch action
       # Vote on a current issue
@@ -168,7 +168,7 @@ Supported commands:
         catch error
           msg.reply error
 
-      when "poop"
+      when "poop" || "💩"
         try
           vote = new Vote robot, msg, "Should I poop!?", ->
             msg.send msg.random [
