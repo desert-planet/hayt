@@ -128,8 +128,8 @@ Supported commands:
 
   # Election driver
   robot.respond /(vote|freedom) ([^\s]+)\s?(.*)?$/, (msg) ->
-    action = msg.match[1].trim().toLowerCase()
-    arg = msg.match[2]?.trim()
+    action = msg.match[2].trim().toLowerCase()
+    arg = msg.match[3]?.trim()
 
     switch action
       # Vote on a current issue
