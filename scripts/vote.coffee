@@ -17,7 +17,7 @@
 ## Dat model
 class Vote
   @current = null
-  length: 30 * 1000
+  length: 60 * 1000
 
   ## Internal API
   finish: () =>
