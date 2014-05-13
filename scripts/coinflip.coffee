@@ -15,4 +15,18 @@
 
 module.exports = (robot) ->
   robot.respond /(coinflip)/i, (msg) ->
-    msg.random ["Heads", "Tails"]
+    result = msg.random ["Heads", "Tails"]
+    insult = msg.random [
+      "Dickweed",
+      "Asshole",
+      "Turdlord",
+      "Shithead",
+      "Douche",
+      "Asshat",
+      "Asshole",
+      "Butt",
+      "Fucker",
+      "Motherfucker",
+      "Also, no one likes you"
+    ]
+    msg.send "#{result}, #{insult}"
