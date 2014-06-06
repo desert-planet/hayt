@@ -34,7 +34,8 @@
     "request": "2.14.0",
     "soupselect": "0.2.0",
     "htmlparser": "1.7.6",
-    "hubot-calculator": ">= 0.2.0"
+    "hubot-calculator": ">= 0.2.0",
+    "hubot-plusplus": "1.0.0"
   },
 
   "engines": {
