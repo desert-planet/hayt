@@ -53,7 +53,7 @@ class Vote
     # We're not done if it's only a two vote difference
     return if (Math.abs(@votes.yes.length - @votes.no.length) < 2)
     # Is this still being contested?
-    return if (Date.now() - @votes.prev) < 5000
+    return if (Date.now() - @votes.prev) < 10000
     @finish()
 
 
