@@ -177,6 +177,7 @@ Supported commands:
               "Butt evacuation in progress.",
               "http://i.imgur.com/ZTukQOl.gif",
               "http://i.imgur.com/0nwjhNO.gif",
+              "http://i.imgur.com/pm4DXWS.jpg"
             ]
           vote.start()
         catch error
