@@ -20,7 +20,7 @@ insult = [
 ]
 
 module.exports = (robot) ->
-  robot.respond /butt( \w+)?/, (msg) ->
+  robot.respond /butts?( \w+)?/, (msg) ->
     name = msg.match[1]?.trim() or 'me'
     name = msg.message.user.name if name == 'me'
 
