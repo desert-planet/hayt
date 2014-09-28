@@ -21,7 +21,7 @@ OPS = ['muta_work']
 module.exports = (robot) ->
   robot.respond /deployed\??/, (msg) ->
     exec 'git name-rev --always HEAD && git rev-parse HEAD', (err, stdout, stderr) ->
-      msg.send "Deployed: #{stdout.split('\n').join('--').trim()}"
+      msg.send "Deployed: #{stdout.trim().split('\n').join('--').trim()}"
 
   robot.respond /deploy(\s@?[\w_\-/]+)?$/, (msg) ->
     remote = 'origin'
