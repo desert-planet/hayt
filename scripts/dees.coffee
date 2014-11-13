@@ -2,7 +2,7 @@
 
 module.exports = (robot) ->
   robot.enter (msg) ->
-    console.log(msg.user)
+    console.log(require('util').inspect(msg))
     # If its dusya optionally follwed by ANYTHING
     # if /^dusya/.test(msg.user.name.toLowerCase())
     #  msg.send "YOUR NUTS"
