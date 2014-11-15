@@ -6,5 +6,5 @@ module.exports = (robot) ->
     # If its dusya optionally follwed by ANYTHING
     if /^dusya/.test(username)
       msg.send "DEES NUTS"
-    else if /^anonuser/.test(username)
+    else if /anonuser/.test(username)
       msg.send "Bazinga!"
