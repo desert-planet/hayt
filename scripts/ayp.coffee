@@ -58,7 +58,7 @@ class PantsBuffer
 
       # Get a random offset where we can grab n lines otherwise
       start = Math.round(Math.random() * (count - n))
-      return @storage.zrange @key(), start, (start + n), callback
+      return @storage.zrange @key(), start, (start + (n - 1)), callback
 
 
   # Store and timestamp `who` saying `what`.
