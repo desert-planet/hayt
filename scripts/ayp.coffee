@@ -19,11 +19,47 @@ module.exports = (robot) ->
 
   # Ask for what currently serves as "output"
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
-    msg.reply "HOLD YOUR FUCKING HORSES"
+    buffer.get 6, (err, lines) ->
+      lines = lines.map (line) -> line.split(": ", 2)
+      count = 0
+      for log in lines
+        do (log) ->
+          # Make any transforms required to the text and the nick
+          [who, what] = [
+            filterName(log[0]),
+            filterText(log[1])
+          ]
+
+          msg.reply "=#{count += 1}> [#{who}] '#{what}'"
+
+# Make any changes required to the name
+filterName = (name) ->
+  name
+
+# Make any changes required to the text
+filterText = (text) ->
+  "TODO: Elipsis after a length"
+  text
 
 class PantsBuffer
   # The zset that stores the buffer of logs
   key: -> "#{@options.prefix}:buffer"
+
+  # Get an array of `n` lines from the log.
+  # When data arrives the callback will be called
+  # ass cb(err, data). `err` will be only be set on
+  # error. `res` will be an array of lines.
+  get: (n=6, callback=((err, res) ->)) ->
+    @storage.zcard @key(), (err, count) =>
+      return console.log("Failed zcard of #{@key()}: #{err}") if err
+
+      # If we don't have enough lines, return all the lines we have
+      return @storage.zrange @key(), 0, -1, callback if count <= n
+
+      # Get a random offset where we can grab n lines otherwise
+      start = Math.round(Math.random() * (count - n))
+      return @storage.zrange @key(), start, (start + n), callback
+
 
   # Store and timestamp `who` saying `what`.
   # Also trims the set with `@trim` to the configured
