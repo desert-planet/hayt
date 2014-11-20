@@ -38,7 +38,13 @@ filterName = (name) ->
 
 # Make any changes required to the text
 filterText = (text) ->
-  "TODO: Elipsis after a length"
+  # Twitter length, then truncate with `...`
+  limit = 140
+  suffix = '...'
+  if text.length > limit
+    text = text.slice(0, (limit - suffix.length))
+    text += suffix
+
   text
 
 class PantsBuffer
