@@ -43,7 +43,6 @@ class PantsBuffer
        return console.log "WARNING: Failed to store: '#{who}: #{what}' @ #{stmp}: #{err}" if err
 
   trim: ->
-    console.log "=> Trimming #{@key()}"
     days = 3
     end = Date.now() - (
       days *  # Days
@@ -52,5 +51,6 @@ class PantsBuffer
       60   *  # Seconds
       1000    # ms
     )
+    console.log "=> Trimming #{@key()} 0 #{end}"
     @storage.zremrangebyrank @key(), 0, end, (err, response) =>
       return console.log "WARNING: Failed to trim '#{@key()}': #{err}" if err
