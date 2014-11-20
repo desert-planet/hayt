@@ -20,16 +20,10 @@ module.exports = (robot) ->
   # Ask for what currently serves as "output"
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
-      lines = lines.map (line) -> line.split(": ", 2)
       count = 0
       for log in lines
         do (log) ->
-          # Make any transforms required to the text and the nick
-          [who, what] = [
-            filterName(log[0]),
-            filterText(log[1])
-          ]
-
+          [who, what] = log
           msg.reply "=#{count += 1}> [#{who}] '#{what}'"
 
 # Make any changes required to the name
@@ -56,15 +50,27 @@ class PantsBuffer
   # ass cb(err, data). `err` will be only be set on
   # error. `res` will be an array of lines.
   get: (n=6, callback=((err, res) ->)) ->
+    # This wraps the supplied `callback` to process the resulting
+    # list into a list of [[who, what], ...] to save the consumer
+    # a step.
+    # In case of error, the result is untouched
+    resultWrapper = (err, res) ->
+      return callback(err, res) if err
+
+      res = res.map (line) ->
+        [who, what] = line.split(": ", 2)
+        [filterName(who), filterText(what)]
+      callback(err, res)
+
     @storage.zcard @key(), (err, count) =>
-      return console.log("Failed zcard of #{@key()}: #{err}") if err
+      return console.error("Failed zcard of #{@key()}: #{err}") if err
 
       # If we don't have enough lines, return all the lines we have
-      return @storage.zrange @key(), 0, -1, callback if count <= n
+      return @storage.zrange @key(), 0, -1, resultWrapper if count <= n
 
       # Get a random offset where we can grab n lines otherwise
       start = Math.round(Math.random() * (count - n))
-      return @storage.zrange @key(), start, (start + (n - 1)), callback
+      return @storage.zrange @key(), start, (start + (n - 1)), resultWrapper
 
 
   # Store and timestamp `who` saying `what`.
@@ -74,9 +80,8 @@ class PantsBuffer
     do @trim
     stamp = Date.now()
     body = "#{who}: #{what}"
-    console.log "=> Storing #{@key()} => #{stamp} @ #{who}: #{what}"
     @storage.zadd [@key(), stamp, body], (err, response) =>
-       return console.log "WARNING: Failed to store: '#{who}: #{what}' @ #{stmp}: #{err}" if err
+       return console.error "WARNING: Failed to store: '#{who}: #{what}' @ #{stmp}: #{err}" if err
 
   # Trim the logging buffer to `@options.days` since we don't care about
   # being a general purpose logger.
@@ -89,9 +94,8 @@ class PantsBuffer
       60   *  # Seconds
       1000    # ms
     )
-    console.log "=> Trimming #{@key()} 0 #{end} (Now: #{Date.now()})"
     @storage.zremrangebyscore @key(), 0, end, (err, response) =>
-      return console.log "WARNING: Failed to trim '#{@key()}': #{err}" if err
+      return console.error "WARNING: Failed to trim '#{@key()}': #{err}" if err
 
   # Constructor for `PantsBuffer`
   #
