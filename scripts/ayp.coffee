@@ -51,6 +51,6 @@ class PantsBuffer
       60   *  # Seconds
       1000    # ms
     )
-    console.log "=> Trimming #{@key()} 0 #{end}"
-    @storage.zremrangebyrank @key(), 0, end, (err, response) =>
+    console.log "=> Trimming #{@key()} 0 #{end} (Now: #{Date.now()})"
+    @storage.zremrangebyscore @key(), 0, end, (err, response) =>
       return console.log "WARNING: Failed to trim '#{@key()}': #{err}" if err
