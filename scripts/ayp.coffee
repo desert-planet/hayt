@@ -57,7 +57,7 @@ class PantsBuffer
 
   # Get an array of `n` lines from the log.
   # When data arrives the callback will be called
-  # ass cb(err, data). `err` will be only be set on
+  # as cb(err, data). `err` will be only be set on
   # error. `res` will be an array of lines.
   get: (n=6, callback=((err, res) ->)) ->
     # This wraps the supplied `callback` to process the resulting
