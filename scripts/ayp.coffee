@@ -55,7 +55,7 @@ class PantsBuffer
   #
   # Options:
   #   prefix: The redis prefix to use for the ringbuffer.
-  #   adys:   The number of days to keep logs in the buffer
+  #   days:   The number of days to keep logs in the buffer
   constructor: (@options={}) ->
     # Connect to redis
     info = Url.parse process.env.REDISTOGO_URL or
