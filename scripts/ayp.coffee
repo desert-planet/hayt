@@ -5,15 +5,7 @@ Url = require 'url'
 Redis = require 'redis'
 
 module.exports = (robot) ->
-  # Configure redis the same way that redis-brain does.
-  info = Url.parse process.env.REDISTOGO_URL or
-    process.env.REDISCLOUD_URL or
-    process.env.BOXEN_REDIS_URL or
-    'redis://localhost:6379'
-  client = Redis.createClient(info.port, info.hostname)
-  client.auth info.auth.split(":")[1] if info.auth
-
-  buffer = new PantsBuffer(client)
+  buffer = new PantsBuffer()
 
   # We listen to everything.
   # Everything.
@@ -25,15 +17,17 @@ module.exports = (robot) ->
       msg.message.text.trim()
     )
 
+  # Ask for what currently serves as "output"
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     msg.reply "HOLD YOUR FUCKING HORSES"
 
 class PantsBuffer
-  constructor: (@storage, @options={}) ->
-    @options.prefix ?= "ayp:"
-
+  # The zset that stores the buffer of logs
   key: -> "#{@options.prefix}:buffer"
 
+  # Store and timestamp `who` saying `what`.
+  # Also trims the set with `@trim` to the configured
+  # length
   store: (who, what) ->
     do @trim
     stamp = Date.now()
@@ -42,8 +36,10 @@ class PantsBuffer
     @storage.zadd [@key(), stamp, body], (err, response) =>
        return console.log "WARNING: Failed to store: '#{who}: #{what}' @ #{stmp}: #{err}" if err
 
+  # Trim the logging buffer to `@options.days` since we don't care about
+  # being a general purpose logger.
   trim: ->
-    days = 3
+    days = @options.days
     end = Date.now() - (
       days *  # Days
       24   *  # Hours
@@ -54,3 +50,21 @@ class PantsBuffer
     console.log "=> Trimming #{@key()} 0 #{end} (Now: #{Date.now()})"
     @storage.zremrangebyscore @key(), 0, end, (err, response) =>
       return console.log "WARNING: Failed to trim '#{@key()}': #{err}" if err
+
+  # Constructor for `PantsBuffer`
+  #
+  # Options:
+  #   prefix: The redis prefix to use for the ringbuffer.
+  #   adys:   The number of days to keep logs in the buffer
+  constructor: (@options={}) ->
+    # Connect to redis
+    info = Url.parse process.env.REDISTOGO_URL or
+      process.env.REDISCLOUD_URL or
+      process.env.BOXEN_REDIS_URL or
+      'redis://localhost:6379'
+    @storage = Redis.createClient(info.port, info.hostname)
+    @storage.auth info.auth.split(":")[1] if info.auth
+
+    # Defaults for options
+    @options.prefix ?= "ayp:"
+    @options.days   ?= 3
