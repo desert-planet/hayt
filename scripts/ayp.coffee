@@ -59,7 +59,7 @@ class PantsBuffer
   # When data arrives the callback will be called
   # as cb(err, data). `err` will be only be set on
   # error. `res` will be an array of lines.
-  get: (n=6, callback=((err, res) ->)) ->
+  get: (n, callback) ->
     # This wraps the supplied `callback` to process the resulting
     # list into a list of [[who, what], ...] to save the consumer
     # a step.
