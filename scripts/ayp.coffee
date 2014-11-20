@@ -40,7 +40,7 @@ filterText = (text) ->
     text += suffix
 
   # Urls are secret. Not for you. Not for anyone.
-  text = test.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
 
   text
 
