@@ -44,6 +44,13 @@ filterText = (text) ->
 
   text
 
+# PantsBuffer is the abstraction of "The Logs".
+#
+# It keeps a ringbuffer of logs configured on construction
+# and fed by `.store(who, what)` which computes timestamps
+# and allows you to get n random lines with `.get`.
+#
+# Fetches are asyncronous, because NODE JS NINJA REDIS
 class PantsBuffer
   # The zset that stores the buffer of logs
   key: -> "#{@options.prefix}:buffer"
