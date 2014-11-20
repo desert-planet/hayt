@@ -39,6 +39,9 @@ filterText = (text) ->
     text = text.slice(0, (limit - suffix.length))
     text += suffix
 
+  # Urls are secret. Not for you. Not for anyone.
+  text = test.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+
   text
 
 class PantsBuffer
