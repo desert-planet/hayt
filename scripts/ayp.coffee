@@ -3,6 +3,7 @@
 
 Url = require 'url'
 Redis = require 'redis'
+GD = require 'node-gd'
 
 module.exports = (robot) ->
   buffer = new PantsBuffer()
@@ -20,11 +21,60 @@ module.exports = (robot) ->
   # Ask for what currently serves as "output"
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
+      # Build a strip of AYP
+      buildComic lines, (err, image) ->
+        return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
+        console.log " => Built image: #{image.width}x#{image.height}"
+        msg.reply "TODO: DO SOMETHING WITH THE RESULT: #{image.width}x#{image.height}"
+
+      # Echo the lines to the channel
       count = 0
       for log in lines
         do (log) ->
           [who, what] = log
           msg.reply "=#{count += 1}> [#{who}] '#{what}'"
+
+# Build a comic and invoke the cb(err, res) with res
+# being the resulting image. `err` will be true if an error
+# is encountered.
+buildComic = (lines, cb) ->
+  buildPanels lines, (err, panels) ->
+    return cb(err, null) if err
+    cb("TODO: Throw the panels on the background with padding", null)
+
+# Turn a set of 6 `lines` into 3 panels
+# using two lines per panel, then invokes `cb`.
+#
+# callback invoked as `cb(err, [image, image, image])`
+# Error will only be set on failure.
+buildPanels = (lines, cb) ->
+  failed = false
+  panels = [null, null, null]
+
+  # Handler for when a panel fails to build.
+  fail = (err) ->
+    cb(err, [])
+    return failed = true
+
+  # Handler for panel completion, store in the list, see if we're done,
+  # invoke callback if we are.
+  finishPanel = (err, n, panel) ->
+    # No one cares if we already lost.
+    return if failed
+    return fail(err) if err
+
+    panels[n] = panel
+    cb(false, panels) if panels.every (p) -> p
+
+  # TODO: There's a loop here, somewhere
+  buildPanel lines[0..1], (err, panel) -> finishPanel(err, 0, panel)
+  buildPanel lines[2..3], (err, panel) -> finishPanel(err, 1, panel)
+  buildPanel lines[4..5], (err, panel) -> finishPanel(err, 2, panel)
+
+# Build a single panel out of (UP TO) two lines of dialog
+# cb invoked as `cb(err, image)`. `err` is only set on failure
+buildPanel = (lines, cb) ->
+  cb("TODO: Build a panel on a transperant background", null)
 
 # Make any changes required to the name
 filterName = (name) ->
