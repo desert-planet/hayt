@@ -118,6 +118,37 @@ buildPanel = (lines, cb) ->
   # frame if we get no lines
   return cb(false, frame) unless lines.length > 0
 
+  # Set up a list of names that we need to load avatars for
+  # as a list of [{name: "nick", img: .., err: ..},.. ]
+  # As the images load, we'll fill in `.img` and if any fail,
+  # we'll bail, and make sure no later calls do anything
+  failed = false
+  names = (l[0] for l in lines).
+    filter((v, i, a) -> a.indexOf(v) == i).    # De-dupe
+    map (n) -> {name: n, img: null, err: null} # Prepare requirements
+
+  fail = (err) ->
+    cb(err, null)
+    return faliled = true
+
+  charPathForNick = (nick) ->
+    # TODO: You know, do what it says
+    path.resolve(AVATAR_BASE, "stan.png")
+
+  for nameObj in names
+    do (nameObj) ->
+      GD.openPng charPathForNick(nameObj.name), (err, img) ->
+        return if failed
+        return fail(err) if err
+        nameObj.img = img unless err
+
+        # Are we done?
+        do namesReady if names.every((o) -> o.img)
+
+  # This will be invoked when all the names finish loading above
+  namesReady = ->
+    console.log "TOOD: COMPOSITE THE CONTENTS OF:", names
+
   # TODO: Right now, this is just one static char. Figure out and load
   # either one or two chars, and place them in the right place.
   # And select them based on nick.
