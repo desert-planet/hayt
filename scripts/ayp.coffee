@@ -59,7 +59,6 @@ buildComic = (lines, cb) ->
     # to vary the loader to accommodate.
     GD.openPng path.resolve(BG_BASE, "b29.png"), (err, bg) ->
       return cb(err, bg) if err
-      # TODO: Composite `panels` onto `bg` correctly
       totalPadding = 12
       left = 0
       top = totalPadding / 2
