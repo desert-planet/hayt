@@ -114,6 +114,10 @@ buildPanel = (lines, cb) ->
   clear = frame.colorAllocateAlpha(0, 0, 0, 127)
   frame.fill(0, 0, clear)
 
+  # We can just return the empty transperant
+  # frame if we get no lines
+  return cb(false, frame) unless lines.length > 0
+
   # TODO: Right now, this is just one static char. Figure out and load
   # either one or two chars, and place them in the right place.
   # And select them based on nick.
