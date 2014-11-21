@@ -164,6 +164,7 @@ buildPanel = (lines, cb) ->
 
         if first
           left = 0
+          first = false
         else
           left = frame.width - char.width
 
