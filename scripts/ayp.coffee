@@ -32,7 +32,7 @@ module.exports = (robot) ->
       buildComic lines, (err, image) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
-        console.log " => Built image: #{image.width}x#{image.height}"
+        msg.reply " => Built image: #{image.width}x#{image.height}"
         # TODO: Temp file name
         outPath = path.resolve(ROOT, "out.png")
         try fs.unlinkSync(outPath) # lol
@@ -155,9 +155,24 @@ buildPanel = (lines, cb) ->
       top = (frame.height - char.height)
       compositeImage frame, char, left, top
       # TODO: Here, I would add the text
-    else
-      return cb("TODO: Draw each on their own side", frame)
-      # TODO: Also, draw the text for both
+    else # We have two speakers
+      first = true
+      for line in lines
+        [who, what] = line
+        char = names[who]
+        top = (frame.height - char.height)
+
+        if first
+          left = 0
+        else
+          left = frame.width - char.width
+
+        compositeImage frame, char, left, top
+        # TODO: Draw `what`
+
+    # Return the frame to the caller from `namesReady`
+    # [Comment highlights indent]
+    # TODO: JESUS GOD REFACTOR THIS FLOW
     return cb(false, frame)
 
 # Composite `sprite` onto `dst` in full.
