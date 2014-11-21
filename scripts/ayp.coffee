@@ -144,28 +144,29 @@ buildPanel = (lines, cb) ->
         nameObj.img = img unless err
 
         # Are we done?
-        do namesReady if names.every((o) -> o.img)
+        namesReady(names) if names.every((o) -> o.img)
 
   # This will be invoked when all the names finish loading above
-  namesReady = ->
-    console.log "TOOD: COMPOSITE THE CONTENTS OF:", names
+  namesReady = (namesList) ->
+    # Dictionary of name -> img
+    names = {}
+    for obj in namesList
+      names[obj.name] = obj.img
 
-  # TODO: Right now, this is just one static char. Figure out and load
-  # either one or two chars, and place them in the right place.
-  # And select them based on nick.
-  # Do. A. Lot.
-  # Right now, one stan.
-  GD.openPng path.resolve(AVATAR_BASE, "stan.png"), (err, char) ->
-    return cb(err, char) if err
-    charDims = [char.width, char.height]
-    bottom = (frame.height - char.height)
-    char.copyResampled frame,
-      0, bottom, # dst x, y
+    if namesList.length == 1
+      # The only person speaking is centered in the frame
+      char = namesList[0].img
+      charDims = [char.width, char.height]
+      left = (frame.width / 2) - (char.width / 2)
+      bottom = (frame.height - char.height)
+      char.copyResampled frame,
+      left, bottom, # dst x, y
       0, 0,      # src x, y
-      charDims..., # dst height, width
-      charDims...  # src height, width
-
-    # It worked, give it back
+      charDims..., charDims... # No size change
+      # TODO: Here, I would add the text
+    else
+      return cb("TODO: Draw each on their own side", frame)
+      # TODO: Also, draw the text for both
     return cb(false, frame)
 
 # Make any changes required to the name
