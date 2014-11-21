@@ -160,9 +160,9 @@ buildPanel = (lines, cb) ->
       left = (frame.width / 2) - (char.width / 2)
       bottom = (frame.height - char.height)
       char.copyResampled frame,
-      left, bottom, # dst x, y
-      0, 0,      # src x, y
-      charDims..., charDims... # No size change
+        left, bottom, # dst x, y
+        0, 0,      # src x, y
+        charDims..., charDims... # No size change
       # TODO: Here, I would add the text
     else
       return cb("TODO: Draw each on their own side", frame)
