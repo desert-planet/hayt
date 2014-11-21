@@ -122,9 +122,10 @@ buildPanel = (lines, cb) ->
   GD.openPng path.resolve(AVATAR_BASE, "stan.png"), (err, char) ->
     return cb(err, char) if err
     charDims = [char.width, char.height]
+    bottom = (frame.height - char.height)
     char.copyResampled frame,
-      0, 0, # dst x, y
-      0, 0, # src x, y
+      0, bottom, # dst x, y
+      0, 0,      # src x, y
       charDims..., # dst height, width
       charDims...  # src height, width
 
