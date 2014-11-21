@@ -181,6 +181,8 @@ buildPanel = (lines, cb) ->
 # and `+top` from the top
 compositeImage = (dst, sprite, left, top) ->
   dim = [sprite.width, sprite.height]
+  left = Math.round(left)
+  top = Math.round(top)
   sprite.copyResampled dst,
     left, top, # dst x, y
     0, 0,      # src x, y
