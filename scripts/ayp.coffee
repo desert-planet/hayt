@@ -1,9 +1,15 @@
 # Scaffolds for AYP
 # That good, handmade shit.
 
+path = require 'path'
 Url = require 'url'
 Redis = require 'redis'
 GD = require 'node-gd'
+
+ROOT = path.resolve(__dirname, '..')
+IMG_BASE = path.resolve(ROOT, 'ayp-template-images')
+BG_BASE = path.resolve(IMG_BASE, 'bg')
+AVATAR_BASE = path.resolve(IMG_BASE, 'avatars')
 
 module.exports = (robot) ->
   buffer = new PantsBuffer()
@@ -24,8 +30,13 @@ module.exports = (robot) ->
       # Build a strip of AYP
       buildComic lines, (err, image) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
+
         console.log " => Built image: #{image.width}x#{image.height}"
-        msg.reply "TODO: DO SOMETHING WITH THE RESULT: #{image.width}x#{image.height}"
+        # TODO: Temp file name
+        image.savePng path.resolve(ROOT, "out.png"), 0, (err) ->
+          return console.error "Failed to write result:", err if err
+          msg.reply "TODO: Upload result: #{image.width}x#{image.height}"
+
 
       # Echo the lines to the channel
       count = 0
@@ -40,7 +51,13 @@ module.exports = (robot) ->
 buildComic = (lines, cb) ->
   buildPanels lines, (err, panels) ->
     return cb(err, null) if err
-    cb("TODO: Throw the panels on the background with padding", null)
+
+    # TODO: Note that you have mixed extension backgrounds, so you'll have
+    # to vary the loader to accommodate.
+    GD.openPng path.resolve(BG_BASE, "b29.png"), (err, bg) ->
+      return cb(err, bg) if err
+      # TODO: Composite `panels` onto `bg`
+      cb(false, bg)
 
 # Turn a set of 6 `lines` into 3 panels
 # using two lines per panel, then invokes `cb`.
@@ -74,7 +91,30 @@ buildPanels = (lines, cb) ->
 # Build a single panel out of (UP TO) two lines of dialog
 # cb invoked as `cb(err, image)`. `err` is only set on failure
 buildPanel = (lines, cb) ->
-  cb("TODO: Build a panel on a transperant background", null)
+  # Setup a transparant frame that we'll composite
+  # characters and text into.
+  # See: https://github.com/sshirokov/arrakis-hubot/pull/43#issuecomment-63786326
+  frame = GD.createTrueColor(348, 348)
+  frame.saveAlpha(1)
+  clear = frame.colorAllocateAlpha(0, 0, 0, 127)
+  frame.fill(0, 0, clear)
+
+  # TODO: Right now, this is just one static char. Figure out and load
+  # either one or two chars, and place them in the right place.
+  # And select them based on nick.
+  # Do. A. Lot.
+  # Right now, one stan.
+  GD.openPng path.resolve(AVATAR_BASE, "stan.png"), (err, char) ->
+    return cb(err, char) if err
+    charDims = [char.width, char.height]
+    char.copyResampled frame,
+      0, 0, # dst x, y
+      0, 0, # src x, y
+      charDims..., # src height, width
+      charDims...  # dst height, width
+
+    # It worked, give it back
+    return cb(false, frame)
 
 # Make any changes required to the name
 filterName = (name) ->
