@@ -36,7 +36,8 @@
     "htmlparser": "1.7.6",
     "hubot-calculator": ">= 0.2.0",
     "hubot-markov": "~1.3.0",
-    "redis": "~0.12.1"
+    "redis": "~0.12.1",
+    "node-gd": "~0.2.3"
   },
 
   "engines": {
