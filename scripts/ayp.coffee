@@ -110,8 +110,8 @@ buildPanel = (lines, cb) ->
     char.copyResampled frame,
       0, 0, # dst x, y
       0, 0, # src x, y
-      charDims..., # src height, width
-      charDims...  # dst height, width
+      charDims..., # dst height, width
+      charDims...  # src height, width
 
     # It worked, give it back
     return cb(false, frame)
