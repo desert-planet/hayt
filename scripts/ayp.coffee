@@ -60,18 +60,19 @@ buildComic = (lines, cb) ->
     GD.openPng path.resolve(BG_BASE, "b29.png"), (err, bg) ->
       return cb(err, bg) if err
       # TODO: Composite `panels` onto `bg` correctly
+      totalPadding = 12
       left = 0
-      top = 6
+      top = totalPadding / 2
       for panel in panels
         do (panel) ->
           panelDims = [panel.width, panel.height]
           panel.copyResampled bg,
-            (left += 6), top, # dst
-            0, 0,             # src
+            (left += (totalPadding / 2)), top, # dst
+            0, 0,                              # src
             panelDims..., panelDims... # We keep the same size
 
-          # `left` has to grow by the width of the panel, also
-          left += panel.width
+          left += panel.width # Panel width
+          left += (totalPadding / 2)
       cb(false, bg)
 
 # Turn a set of 6 `lines` into 3 panels
