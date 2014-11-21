@@ -132,8 +132,9 @@ buildPanel = (lines, cb) ->
     return faliled = true
 
   charPathForNick = (nick) ->
-    # TODO: You know, do what it says
-    path.resolve(AVATAR_BASE, "stan.png")
+    potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
+    return potential if (try fs.statSync(potential))
+    return path.resolve(AVATAR_BASE, "default.png")
 
   for nameObj in names
     do (nameObj) ->
