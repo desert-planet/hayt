@@ -1,6 +1,7 @@
 # Scaffolds for AYP
 # That good, handmade shit.
 
+fs = require 'fs'
 path = require 'path'
 Url = require 'url'
 Redis = require 'redis'
@@ -33,7 +34,9 @@ module.exports = (robot) ->
 
         console.log " => Built image: #{image.width}x#{image.height}"
         # TODO: Temp file name
-        image.savePng path.resolve(ROOT, "out.png"), 0, (err) ->
+        outPath = path.resolve(ROOT, "out.png")
+        try fs.unlinkSync(outPath) # lol
+        image.savePng outPath, 0, (err) ->
           return console.error "Failed to write result:", err if err
           msg.reply "TODO: Upload result: #{image.width}x#{image.height}"
 
@@ -56,7 +59,19 @@ buildComic = (lines, cb) ->
     # to vary the loader to accommodate.
     GD.openPng path.resolve(BG_BASE, "b29.png"), (err, bg) ->
       return cb(err, bg) if err
-      # TODO: Composite `panels` onto `bg`
+      # TODO: Composite `panels` onto `bg` correctly
+      left = 0
+      top = 6
+      for panel in panels
+        do (panel) ->
+          panelDims = [panel.width, panel.height]
+          panel.copyResampled bg,
+            (left += 6), top, # dst
+            0, 0,             # src
+            panelDims..., panelDims... # We keep the same size
+
+          # `left` has to grow by the width of the panel, also
+          left += panel.width
       cb(false, bg)
 
 # Turn a set of 6 `lines` into 3 panels
