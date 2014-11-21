@@ -64,12 +64,7 @@ buildComic = (lines, cb) ->
       top = totalPadding / 2
       for panel in panels
         do (panel) ->
-          panelDims = [panel.width, panel.height]
-          panel.copyResampled bg,
-            (left += (totalPadding / 2)), top, # dst
-            0, 0,                              # src
-            panelDims..., panelDims... # We keep the same size
-
+          compositeImage bg, panel, (left += (totalPadding / 2)), top
           left += panel.width # Panel width
           left += (totalPadding / 2)
       cb(false, bg)
@@ -156,18 +151,25 @@ buildPanel = (lines, cb) ->
     if namesList.length == 1
       # The only person speaking is centered in the frame
       char = namesList[0].img
-      charDims = [char.width, char.height]
       left = (frame.width / 2) - (char.width / 2)
-      bottom = (frame.height - char.height)
-      char.copyResampled frame,
-        left, bottom, # dst x, y
-        0, 0,      # src x, y
-        charDims..., charDims... # No size change
+      top = (frame.height - char.height)
+      compositeImage frame, char, left, top
       # TODO: Here, I would add the text
     else
       return cb("TODO: Draw each on their own side", frame)
       # TODO: Also, draw the text for both
     return cb(false, frame)
+
+# Composite `sprite` onto `dst` in full.
+# Offsets `sprite` `+left` from the left
+# and `+top` from the top
+compositeImage = (dst, sprite, left, top) ->
+  dim = [sprite.width, sprite.height]
+  sprite.copyResampled dst,
+    left, top, # dst x, y
+    0, 0,      # src x, y
+    dim..., dim... # No size change
+  return dst
 
 # Make any changes required to the name
 filterName = (name) ->
