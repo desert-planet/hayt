@@ -95,7 +95,7 @@ module.exports = (robot) ->
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
-      buildComic lines, (err, image) ->
+      new AYPStrip lines, (err, image) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
@@ -118,69 +118,73 @@ module.exports = (robot) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
               msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
 
-# Build a comic and invoke the cb(err, res) with res
-# being the resulting image. `err` will be true if an error
-# is encountered.
-buildComic = (lines, cb) ->
-  buildPanels lines, (err, panels) ->
-    return cb(err, null) if err
-    loaders =
-      png: GD.openPng
-      jpg: GD.openJpeg
-      jpeg: GD.openJpeg
+class AYPStrip
+  constructor: (@script, @ready) ->
+    do @buildComic
+
+  # Build a comic and invoke the @ready(err, res) callback with res
+  # being the resulting image. `err` will be true if an error
+  # is encountered.
+  buildComic: =>
+    @buildPanels (err, panels) =>
+      return @ready(err, null) if err
+      loaders =
+        png: GD.openPng
+        jpg: GD.openJpeg
+        jpeg: GD.openJpeg
 
 
-    fs.readdir BG_BASE, (err, files) ->
-      cb(err, null) if err
-      files = files.filter (f) -> f[0] != '.'
-      selected = files[Math.round(Math.random() * (files.length - 1))]
-      ext = selected[-3..].toLowerCase()
-      loader = loaders[ext]
+      fs.readdir BG_BASE, (err, files) =>
+        @ready(err, null) if err
+        files = files.filter (f) -> f[0] != '.'
+        selected = files[Math.round(Math.random() * (files.length - 1))]
+        ext = selected[-3..].toLowerCase()
+        loader = loaders[ext]
 
-      # If we pick a BG we can't load, panic
-      # TODO: Or try again a few times?
-      cb("Can't find loader for #{selected}", null) unless loader
+        # If we pick a BG we can't load, panic
+        # TODO: Or try again a few times?
+        @ready("Can't find loader for #{selected}", null) unless loader
 
-      loader path.resolve(BG_BASE, selected), (err, bg) ->
-        return cb(err, bg) if err
-        totalPadding = (AYP_PANEL_PADDING * 2)
-        left = 0
-        top = Math.round(totalPadding / 2)
-        for panel in panels
-          do (panel) ->
-            compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
-            left += panel.width # Panel width
-            left += Math.round(totalPadding / 2)
-        cb(false, bg)
+        loader path.resolve(BG_BASE, selected), (err, bg) =>
+          return @ready(err, bg) if err
+          totalPadding = (AYP_PANEL_PADDING * 2)
+          left = 0
+          top = Math.round(totalPadding / 2)
+          for panel in panels
+            do (panel) ->
+              compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
+              left += panel.width # Panel width
+              left += Math.round(totalPadding / 2)
+          @ready(false, bg)
 
-# Turn a set of 6 `lines` into 3 panels
-# using two lines per panel, then invokes `cb`.
-#
-# callback invoked as `cb(err, [image, image, image])`
-# Error will only be set on failure.
-buildPanels = (lines, cb) ->
-  failed = false
-  panels = [null, null, null]
+  # Turn the `@script` into 3 panels
+  # using two lines per panel, then invokes `cb`.
+  #
+  # callback invoked as `cb(err, [image, image, image])`
+  # Error will only be set on failure.
+  buildPanels: (cb) =>
+    failed = false
+    panels = [null, null, null]
 
-  # Handler for when a panel fails to build.
-  fail = (err) ->
-    cb(err, [])
-    return failed = true
+    # Handler for when a panel fails to build.
+    fail = (err) ->
+      cb(err, [])
+      return failed = true
 
-  # Handler for panel completion, store in the list, see if we're done,
-  # invoke callback if we are.
-  finishPanel = (err, n, panel) ->
-    # No one cares if we already lost.
-    return if failed
-    return fail(err) if err
+    # Handler for panel completion, store in the list, see if we're done,
+    # invoke callback if we are.
+    finishPanel = (err, n, panel) ->
+      # No one cares if we already lost.
+      return if failed
+      return fail(err) if err
 
-    panels[n] = panel
-    cb(false, panels) if panels.every (p) -> p
+      panels[n] = panel
+      cb(false, panels) if panels.every (p) -> p
 
-  # TODO: There's a loop here, somewhere
-  buildPanel lines[0..1], (err, panel) -> finishPanel(err, 0, panel)
-  buildPanel lines[2..3], (err, panel) -> finishPanel(err, 1, panel)
-  buildPanel lines[4..5], (err, panel) -> finishPanel(err, 2, panel)
+    # TODO: There's a loop here, somewhere
+    buildPanel @script[0..1], (err, panel) -> finishPanel(err, 0, panel)
+    buildPanel @script[2..3], (err, panel) -> finishPanel(err, 1, panel)
+    buildPanel @script[4..5], (err, panel) -> finishPanel(err, 2, panel)
 
 # Load avatars for `names` and invoke `cb` as:
 # `cb(err, {"Nickname": avatarImg, ...})`
