@@ -90,13 +90,6 @@ module.exports = (robot) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
               msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
 
-      # Echo the lines to the channel
-      count = 0
-      for log in lines
-        do (log) ->
-          [who, what] = log
-          msg.reply "=#{count += 1}> [#{who}] '#{what}'"
-
 # Build a comic and invoke the cb(err, res) with res
 # being the resulting image. `err` will be true if an error
 # is encountered.
