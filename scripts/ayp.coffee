@@ -16,9 +16,11 @@ AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
 AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
 
 # The size of single panel
-AYP_PANEL_WIDTH  = 348
-AYP_PANEL_HEIGHT = 348
+AYP_PANEL_WIDTH   = 348
+AYP_PANEL_HEIGHT  = 348
 
+# The ammount of padding on each side of a panel
+AYP_PANEL_PADDING = 6
 
 
 ## Paths to find media
@@ -104,14 +106,14 @@ buildComic = (lines, cb) ->
 
       loader path.resolve(BG_BASE, selected), (err, bg) ->
         return cb(err, bg) if err
-        totalPadding = 12
+        totalPadding = (AYP_PANEL_PADDING * 2)
         left = 0
-        top = totalPadding / 2
+        top = Math.round(totalPadding / 2)
         for panel in panels
           do (panel) ->
-            compositeImage bg, panel, (left += (totalPadding / 2)), top
+            compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
             left += panel.width # Panel width
-            left += (totalPadding / 2)
+            left += Math.round(totalPadding / 2)
         cb(false, bg)
 
 # Turn a set of 6 `lines` into 3 panels
