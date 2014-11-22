@@ -257,6 +257,12 @@ chunkInputInto = (msg, splits) ->
       chunkLen = chunks[n].length
       msg = "#{chunks[n][chunkLen - 1]}#{msg}"
       chunks[n] = chunks[n][...-1]
+
+  # If we somehow have some message left over, shove it
+  # into the last chunk.
+  if msg.length
+    chunks[chunks.length - 1] += msg
+
   return chunks.map (c) -> c.trim()
 
 formatForTextBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=330) ->
