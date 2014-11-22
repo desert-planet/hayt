@@ -6,11 +6,21 @@ path = require 'path'
 Url = require 'url'
 Redis = require 'redis'
 GD = require 'node-gd'
+S3 = require 'node-s3'
 
+## Knobs and buttons
+AYP_AWS_KEY    = process.env.AYP_AWS_KEY
+AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
+AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
+
+## Paths to find media
 ROOT = path.resolve(__dirname, '..')
 IMG_BASE = path.resolve(ROOT, 'ayp-template-images')
 BG_BASE = path.resolve(IMG_BASE, 'bg')
 AVATAR_BASE = path.resolve(IMG_BASE, 'avatars')
+
+## S3 Storage
+s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
 
 module.exports = (robot) ->
   buffer = new PantsBuffer()
@@ -32,14 +42,25 @@ module.exports = (robot) ->
       buildComic lines, (err, image) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
-        msg.reply " => Built image: #{image.width}x#{image.height}"
-        # TODO: Temp file name
-        outPath = path.resolve(ROOT, "out.png")
-        try fs.unlinkSync(outPath) # lol
+        # Save locally, upload, cleanup
+        name = "ayp-#{Date.now()}.png"
+        outPath = path.resolve("/tmp", name)
         image.savePng outPath, 0, (err) ->
           return console.error "Failed to write result:", err if err
-          msg.reply "TODO: Upload result: #{image.width}x#{image.height}"
 
+          fs.readFile outPath, (err, data) ->
+            # We can unlink unconditionally now that we have it or failed
+            fs.unlink(outPath, ->)
+            return msg.reply "I somehow lost the file I just put down at #{outpath}. Like a moron :(" if err
+            return msg.reply "You hve no S3 creds bub" unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
+
+            info =
+              headers:
+                'Content-Type': 'image/png'
+              body: data
+            s3.put name, info, (err) ->
+              return msg.reply "Woooops! Failed to upload: #{err}" if err
+              msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
 
       # Echo the lines to the channel
       count = 0
