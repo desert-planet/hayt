@@ -34,13 +34,17 @@ AYP_BUBBLE_MAX_WIDTH          = AYP_PANEL_WIDTH - 18
 # Padding on each side of the text bubble
 AYP_TEXT_PADDING              = 2
 
+# The size anf font of the text to use in the text bubbles
+AYP_FONT_SIZE                 = 12
+AYP_FONT_FILE                 = "arial.ttf"
+
 
 ## Paths to find media
 ROOT = path.resolve(__dirname, '..')
 IMG_BASE = path.resolve(ROOT, 'ayp-template-images')
 BG_BASE = path.resolve(IMG_BASE, 'bg')
 AVATAR_BASE = path.resolve(IMG_BASE, 'avatars')
-FONT = path.resolve(IMG_BASE, "arial.ttf")
+FONT_PATH = path.resolve(IMG_BASE, AYP_FONT_FILE)
 
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
@@ -297,7 +301,7 @@ formatForTextBubble = (msg, font, size, max) ->
   else
     msg
 
-textBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=AYP_BUBBLE_MAX_WIDTH) ->
+textBubble = (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) ->
   msg = formatForTextBubble(msg, font, size, max)
   [w, h] = textSize(msg, font, size)
 
