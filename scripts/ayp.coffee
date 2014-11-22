@@ -155,9 +155,10 @@ buildPanels = (lines, cb) ->
   buildPanel lines[4..5], (err, panel) -> finishPanel(err, 2, panel)
 
 # Load avatars for `names` and invoke `cb` as:
-# `cb(err, [{{name: n, img: GD-image, err: null}},... ])`
-# The `img` member will be a GD image loader from disk
-# that can be used to represent the `name`.
+# `cb(err, {"Nickname": avatarImg, ...})`
+# mapping each name to an avatar image that
+# can be used to represent it.
+#
 # `err` is only set on failure
 loadAvatars = (names, cb) ->
   # Prepare requirements
@@ -180,8 +181,13 @@ loadAvatars = (names, cb) ->
         return fail(err) if err
         nameObj.img = img unless err
 
-        # Are we done?
-        cb(null, names) if names.every((o) -> o.img)
+        # Are we done? Then build up a dictionary
+        # and tell the caller.
+        if names.every((o) -> o.img)
+          avatars = {}
+          for obj in names
+            avatars[obj.name] = obj.img
+          cb(null, avatars)
 
 # Build a single panel out of (UP TO) two lines of dialog
 # cb invoked as `cb(err, image)`. `err` is only set on failure
@@ -201,13 +207,8 @@ buildPanel = (lines, cb) ->
   names = (l[0] for l in lines).
     filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
 
-  loadAvatars names, (err, namesList) ->
+  loadAvatars names, (err, avatars) ->
     return cb(err, null) if err
-
-    # Dictionary of name -> img
-    avatars = {}
-    for obj in namesList
-      avatars[obj.name] = obj.img
 
     if names.length == 1
       # The only person speaking is centered in the frame
