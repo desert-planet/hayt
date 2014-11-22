@@ -75,20 +75,34 @@ module.exports = (robot) ->
 buildComic = (lines, cb) ->
   buildPanels lines, (err, panels) ->
     return cb(err, null) if err
+    loaders =
+      png: GD.openPng
+      jpg: GD.openJpeg
+      jpeg: GD.openJpeg
 
-    # TODO: Note that you have mixed extension backgrounds, so you'll have
-    # to vary the loader to accommodate.
-    GD.openPng path.resolve(BG_BASE, "b29.png"), (err, bg) ->
-      return cb(err, bg) if err
-      totalPadding = 12
-      left = 0
-      top = totalPadding / 2
-      for panel in panels
-        do (panel) ->
-          compositeImage bg, panel, (left += (totalPadding / 2)), top
-          left += panel.width # Panel width
-          left += (totalPadding / 2)
-      cb(false, bg)
+
+    fs.readdir BG_BASE, (err, files) ->
+      cb(err, null) if err
+      files = files.filter (f) -> f[0] != '.'
+      selected = files[Math.round(Math.random() * files.length)]
+      ext = selected[-3..].toLowerCase()
+      loader = loaders[ext]
+
+      # If we pick a BG we can't load, panic
+      # TODO: Or try again a few times?
+      cb("Can't find loader for #{selected}", null) unless loader
+
+      loader path.resolve(BG_BASE, selected), (err, bg) ->
+        return cb(err, bg) if err
+        totalPadding = 12
+        left = 0
+        top = totalPadding / 2
+        for panel in panels
+          do (panel) ->
+            compositeImage bg, panel, (left += (totalPadding / 2)), top
+            left += panel.width # Panel width
+            left += (totalPadding / 2)
+        cb(false, bg)
 
 # Turn a set of 6 `lines` into 3 panels
 # using two lines per panel, then invokes `cb`.
