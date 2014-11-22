@@ -253,6 +253,9 @@ buildPanel = (lines, cb) ->
     # TODO: JESUS GOD REFACTOR THIS FLOW
     return cb(false, frame)
 
+# Returns the bounding box of `msg`
+# When printed using `font` of `size`
+# in the form [width, height]
 textSize = (msg, font, size) ->
   img = GD.create(1,1)
   black = img.colorAllocate(0, 0, 0)
@@ -262,6 +265,9 @@ textSize = (msg, font, size) ->
     bb[1] - bb[7]
   ]
 
+# Splits the input `msg` into a list of
+# `splits` chunks performing word wrapping on
+# each chunk as in ["Hello", "World"]
 chunkInputInto = (msg, splits) ->
   stepSize = Math.round(msg.length / splits)
   chunks = []
@@ -284,6 +290,10 @@ chunkInputInto = (msg, splits) ->
 
   return chunks.map (c) -> c.trim()
 
+# Prpares a string `msg` for prtinting with `font`
+# at size `size` that will fit into `max`. The string
+# will be broken into multiple lines so that it does not
+# exceed `max` pixels
 formatForTextBubble = (msg, font, size, max) ->
   msg = msg.trim()
   [w, h] = textSize(msg, font, size)
@@ -294,6 +304,11 @@ formatForTextBubble = (msg, font, size, max) ->
   else
     msg
 
+# Produce a text bubble that contains `msg` printed in the
+# font `font` in the size `size`. The bubble will be at most
+# `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
+#
+# The return value will be a GD image.
 textBubble = (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) ->
   msg = formatForTextBubble(msg, font, size, max)
   [w, h] = textSize(msg, font, size)
