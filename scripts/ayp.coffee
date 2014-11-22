@@ -191,18 +191,8 @@ buildPanel = (lines, cb) ->
       left = (frame.width / 2) - (char.width / 2)
       top = (frame.height - char.height)
       compositeImage frame, char, left, top
-
-      top = 0
-      left = 0
-      for line in lines
-        [who, what] = line
-        bubble = textBubble what
-        compositeImage frame, bubble, left, top
-        top += bubble.height + 3
-
-
-      # TODO: Here, I would add the text
-    else # We have two speakers
+    else
+      # We have two speakers
       first = true
       for line in lines
         [who, what] = line
@@ -216,7 +206,28 @@ buildPanel = (lines, cb) ->
           left = frame.width - char.width
 
         compositeImage frame, char, left, top
-        # TODO: Draw `what`
+
+    # I can render all the text unconditionally
+    # since it looks the same regardless of the number
+    # of speakers. (i.e. left -> right, top -> bottom)
+    top = 0
+    left = 0
+    first = true
+    topPad = 3
+    for line in lines
+      [who, what] = line
+      bubble = textBubble what
+
+      if not first
+        left = frame.width - bubble.width
+
+      compositeImage frame, bubble, left, top
+
+      top += bubble.height + topPad
+      first = false if first
+
+
+
 
     # Return the frame to the caller from `namesReady`
     # [Comment highlights indent]
