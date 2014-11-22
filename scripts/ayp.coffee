@@ -71,9 +71,9 @@ module.exports = (robot) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
-        name = "ayp-#{Date.now()}.png"
+        name = "ayp-#{Date.now()}.jpg"
         outPath = path.resolve("/tmp", name)
-        image.savePng outPath, 0, (err) ->
+        image.saveJpeg outPath, 95, (err) ->
           return console.error "Failed to write result:", err if err
 
           fs.readFile outPath, (err, data) ->
@@ -84,7 +84,7 @@ module.exports = (robot) ->
 
             info =
               headers:
-                'Content-Type': 'image/png'
+                'Content-Type': 'image/jpeg'
               body: data
             s3.put name, info, (err) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
