@@ -198,24 +198,20 @@ buildPanel = (lines, cb) ->
   # frame if we get no lines
   return cb(false, frame) unless lines.length > 0
 
-  # Set up a list of names that we need to load avatars for
-  # as a list of [{name: "nick", img: .., err: ..},.. ]
-  # As the images load, we'll fill in `.img` and if any fail,
-  # we'll bail, and make sure no later calls do anything
-  failed = false
-  names = (l[0] for l in lines).filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
+  names = (l[0] for l in lines).
+    filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
 
   loadAvatars names, (err, namesList) ->
     return cb(err, null) if err
 
     # Dictionary of name -> img
-    names = {}
+    avatars = {}
     for obj in namesList
-      names[obj.name] = obj.img
+      avatars[obj.name] = obj.img
 
-    if namesList.length == 1
+    if names.length == 1
       # The only person speaking is centered in the frame
-      char = namesList[0].img
+      char = avatars[names[0]]
       left = (frame.width / 2) - (char.width / 2)
       top = (frame.height - char.height)
       compositeImage frame, char, left, top
@@ -224,7 +220,7 @@ buildPanel = (lines, cb) ->
       first = true
       for line in lines
         [who, what] = line
-        char = names[who]
+        char = avatars[who]
         top = (frame.height - char.height)
 
         if first
