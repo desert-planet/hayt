@@ -9,9 +9,17 @@ GD = require 'node-gd'
 S3 = require 'node-s3'
 
 ## Knobs and buttons
+
+# S3 Keys
 AYP_AWS_KEY    = process.env.AYP_AWS_KEY
 AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
 AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
+
+# The size of single panel
+AYP_PANEL_WIDTH  = 348
+AYP_PANEL_HEIGHT = 348
+
+
 
 ## Paths to find media
 ROOT = path.resolve(__dirname, '..')
@@ -141,7 +149,7 @@ buildPanel = (lines, cb) ->
   # Setup a transparant frame that we'll composite
   # characters and text into.
   # See: https://github.com/sshirokov/arrakis-hubot/pull/43#issuecomment-63786326
-  frame = GD.createTrueColor(348, 348)
+  frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
   frame.saveAlpha(1)
   clear = frame.colorAllocateAlpha(0, 0, 0, 127)
   frame.fill(0, 0, clear)
