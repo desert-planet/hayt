@@ -189,6 +189,31 @@ loadAvatars = (names, cb) ->
             avatars[obj.name] = obj.img
           cb(null, avatars)
 
+# Draw the text into a `frame` described by
+# `lines`.
+# No character drawing is done, just bubbles being placed.
+# The avatars should already be painted, in case the text
+# needs to overlap them.
+drawPanelText = (frame, lines) ->
+  # I can render all the text unconditionally
+  # since it looks the same regardless of the number
+  # of speakers. (i.e. left -> right, top -> bottom)
+  first = true
+  top = 0
+  left = AYP_BUBBLE_PADDING_HORIZONTAL
+  topPad = AYP_BUBBLE_PADDING_VERTICAL
+  for line in lines
+    [who, what] = line
+    bubble = textBubble what
+
+    if not first
+      left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
+    else
+      first = false
+
+    compositeImage frame, bubble, left, top
+    top += bubble.height + topPad
+
 # Build a single panel out of (UP TO) two lines of dialog
 # cb invoked as `cb(err, image)`. `err` is only set on failure
 buildPanel = (lines, cb) ->
@@ -232,24 +257,9 @@ buildPanel = (lines, cb) ->
 
         compositeImage frame, char, left, top
 
-    # I can render all the text unconditionally
-    # since it looks the same regardless of the number
-    # of speakers. (i.e. left -> right, top -> bottom)
-    first = true
-    top = 0
-    left = AYP_BUBBLE_PADDING_HORIZONTAL
-    topPad = AYP_BUBBLE_PADDING_VERTICAL
-    for line in lines
-      [who, what] = line
-      bubble = textBubble what
+    # Add the text after all the avatars are painted on
+    drawPanelText frame, lines
 
-      if not first
-        left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
-
-      compositeImage frame, bubble, left, top
-
-      top += bubble.height + topPad
-      first = false if first
     # Return the frame to the caller from `namesReady`
     return cb(false, frame)
 
