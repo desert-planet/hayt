@@ -18,6 +18,7 @@ ROOT = path.resolve(__dirname, '..')
 IMG_BASE = path.resolve(ROOT, 'ayp-template-images')
 BG_BASE = path.resolve(IMG_BASE, 'bg')
 AVATAR_BASE = path.resolve(IMG_BASE, 'avatars')
+FONT = path.resolve(IMG_BASE, "arial.ttf")
 
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
@@ -190,6 +191,16 @@ buildPanel = (lines, cb) ->
       left = (frame.width / 2) - (char.width / 2)
       top = (frame.height - char.height)
       compositeImage frame, char, left, top
+
+      top = 0
+      left = 0
+      for line in lines
+        [who, what] = line
+        bubble = textBubble what
+        compositeImage frame, bubble, left, top
+        top += bubble.height + 3
+
+
       # TODO: Here, I would add the text
     else # We have two speakers
       first = true
@@ -211,6 +222,59 @@ buildPanel = (lines, cb) ->
     # [Comment highlights indent]
     # TODO: JESUS GOD REFACTOR THIS FLOW
     return cb(false, frame)
+
+textSize = (msg, font, size) ->
+  img = GD.create(1,1)
+  black = img.colorAllocate(0, 0, 0)
+  bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
+  [
+    bb[2] - bb[0],
+    bb[1] - bb[7]
+  ]
+
+chunkInputInto = (msg, splits) ->
+  stepSize = Math.round(msg.length / splits)
+  chunks = []
+
+  for n in [0...splits]
+    chunks[n] = msg[...stepSize]
+    msg = msg[stepSize..]
+
+    # Shift words down until the last space in this line and
+    # give them back to the buffer
+    while not /\s$/.test(chunks[n])
+      chunkLen = chunks[n].length
+      msg = "#{chunks[n][chunkLen - 1]}#{msg}"
+      chunks[n] = chunks[n][...-1]
+  return chunks.map (c) -> c.trim()
+
+formatForTextBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=330) ->
+  msg = msg.trim()
+  [w, h] = textSize(msg, font, size)
+  if w > max
+    splits = Math.round(w / max)
+    splits += 1 if w % max
+    msg = chunkInputInto(msg, splits).join "\n"
+  else
+    msg
+
+textBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=330) ->
+  msg = formatForTextBubble(arguments...)
+  [w, h] = textSize(msg, font, size)
+
+  frame = GD.createTrueColor(w, h)
+  frame.saveAlpha(1)
+  white = frame.colorAllocate(0xff, 0xff, 0xff)
+  black = frame.colorAllocate(0x00, 0x00, 0x00)
+  frame.fill(0, 0, white)
+
+  frame.stringFT(black, font, size,
+    0,    # Rotation angle
+    0,    # x
+    size, # y
+    msg
+  )
+  return frame
 
 # Composite `sprite` onto `dst` in full.
 # Offsets `sprite` `+left` from the left
