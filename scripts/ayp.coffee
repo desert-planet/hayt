@@ -151,8 +151,8 @@ class AYPStrip
           left = 0
           top = Math.round(totalPadding / 2)
           for panel in panels
-            do (panel) ->
-              compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
+            do (panel) =>
+              @compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
               left += panel.width # Panel width
               left += Math.round(totalPadding / 2)
           @ready(false, bg)
@@ -182,208 +182,206 @@ class AYPStrip
       cb(false, panels) if panels.every (p) -> p
 
     # TODO: There's a loop here, somewhere
-    buildPanel @script[0..1], (err, panel) -> finishPanel(err, 0, panel)
-    buildPanel @script[2..3], (err, panel) -> finishPanel(err, 1, panel)
-    buildPanel @script[4..5], (err, panel) -> finishPanel(err, 2, panel)
+    @buildPanel @script[0..1], (err, panel) -> finishPanel(err, 0, panel)
+    @buildPanel @script[2..3], (err, panel) -> finishPanel(err, 1, panel)
+    @buildPanel @script[4..5], (err, panel) -> finishPanel(err, 2, panel)
 
-# Load avatars for `names` and invoke `cb` as:
-# `cb(err, {"Nickname": avatarImg, ...})`
-# mapping each name to an avatar image that
-# can be used to represent it.
-#
-# `err` is only set on failure
-loadAvatars = (names, cb) ->
-  # Prepare requirements
-  names = names.map (n) -> {name: n, img: null, err: null}
-  failed = false
+  # Load avatars for `names` and invoke `cb` as:
+  # `cb(err, {"Nickname": avatarImg, ...})`
+  # mapping each name to an avatar image that
+  # can be used to represent it.
+  #
+  # `err` is only set on failure
+  loadAvatars: (names, cb) =>
+    # Prepare requirements
+    names = names.map (n) -> {name: n, img: null, err: null}
+    failed = false
 
-  fail = (err) ->
-    cb(err, null)
-    return faliled = true
+    fail = (err) ->
+      cb(err, null)
+      return faliled = true
 
-  charPathForNick = (nick) ->
-    potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
-    return potential if (try fs.statSync(potential))
-    return path.resolve(AVATAR_BASE, "default.png")
+    charPathForNick = (nick) ->
+      potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
+      return potential if (try fs.statSync(potential))
+      return path.resolve(AVATAR_BASE, "default.png")
 
-  for nameObj in names
-    do (nameObj) ->
-      GD.openPng charPathForNick(nameObj.name), (err, img) ->
-        return if failed
-        return fail(err) if err
-        nameObj.img = img unless err
+    for nameObj in names
+      do (nameObj) ->
+        GD.openPng charPathForNick(nameObj.name), (err, img) ->
+          return if failed
+          return fail(err) if err
+          nameObj.img = img unless err
 
-        # Are we done? Then build up a dictionary
-        # and tell the caller.
-        if names.every((o) -> o.img)
-          avatars = {}
-          for obj in names
-            avatars[obj.name] = obj.img
-          cb(null, avatars)
+          # Are we done? Then build up a dictionary
+          # and tell the caller.
+          if names.every((o) -> o.img)
+            avatars = {}
+            for obj in names
+              avatars[obj.name] = obj.img
+            cb(null, avatars)
 
-# Draw the text into a `frame` described by
-# `lines`.
-# No character drawing is done, just bubbles being placed.
-# The avatars should already be painted, in case the text
-# needs to overlap them.
-drawPanelText = (frame, lines) ->
-  # I can render all the text unconditionally
-  # since it looks the same regardless of the number
-  # of speakers. (i.e. left -> right, top -> bottom)
-  first = true
-  top = 0
-  left = AYP_BUBBLE_PADDING_HORIZONTAL
-  topPad = AYP_BUBBLE_PADDING_VERTICAL
-  for line in lines
-    [who, what] = line
-    bubble = textBubble what
+  # Draw the text into a `frame` described by
+  # the `@script`
+  # No character drawing is done, just bubbles being placed.
+  # The avatars should already be painted, in case the text
+  # needs to overlap them.
+  drawPanelText: (frame, lines) =>
+    # I can render all the text unconditionally
+    # since it looks the same regardless of the number
+    # of speakers. (i.e. left -> right, top -> bottom)
+    first = true
+    top = 0
+    left = AYP_BUBBLE_PADDING_HORIZONTAL
+    topPad = AYP_BUBBLE_PADDING_VERTICAL
+    for line in lines
+      [who, what] = line
+      bubble = @textBubble what
 
-    if not first
-      left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
-    else
-      first = false
+      if not first
+        left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
+      else
+        first = false
 
-    compositeImage frame, bubble, left, top
-    top += bubble.height + topPad
+      @compositeImage frame, bubble, left, top
+      top += bubble.height + topPad
 
-# Build a single panel out of (UP TO) two lines of dialog
-# cb invoked as `cb(err, image)`. `err` is only set on failure
-buildPanel = (lines, cb) ->
-  # Setup a transparant frame that we'll composite
-  # characters and text into.
-  # See: https://github.com/sshirokov/arrakis-hubot/pull/43#issuecomment-63786326
-  frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
-  frame.saveAlpha(1)
-  clear = frame.colorAllocateAlpha(0, 0, 0, 127)
-  frame.fill(0, 0, clear)
+  # Build a single panel out of (UP TO) two lines of dialog
+  # cb invoked as `cb(err, image)`. `err` is only set on failure
+  buildPanel: (lines, cb) =>
+    # Setup a transparant frame that we'll composite characters and text into.
+    frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
+    frame.saveAlpha(1)
+    clear = frame.colorAllocateAlpha(0, 0, 0, 127)
+    frame.fill(0, 0, clear)
 
-  # We can just return the empty transperant
-  # frame if we get no lines
-  return cb(false, frame) unless lines.length > 0
+    # We can just return the empty transperant
+    # frame if we get no lines
+    return cb(false, frame) unless lines.length > 0
 
-  names = (l[0] for l in lines).
-    filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
+    names = (l[0] for l in lines).
+      filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
 
-  loadAvatars names, (err, avatars) ->
-    return cb(err, null) if err
+    @loadAvatars names, (err, avatars) =>
+      return cb(err, null) if err
 
-    if names.length == 1
-      # The only person speaking is centered in the frame
-      char = avatars[names[0]]
-      left = (frame.width / 2) - (char.width / 2)
-      top = (frame.height - char.height)
-      compositeImage frame, char, left, top
-    else
-      # We have two speakers
-      first = true
-      for line in lines
-        [who, what] = line
-        char = avatars[who]
+      if names.length == 1
+        # The only person speaking is centered in the frame
+        char = avatars[names[0]]
+        left = (frame.width / 2) - (char.width / 2)
         top = (frame.height - char.height)
+        @compositeImage frame, char, left, top
+      else
+        # We have two speakers
+        first = true
+        for line in lines
+          [who, what] = line
+          char = avatars[who]
+          top = (frame.height - char.height)
 
-        if first
-          left = 0
-          first = false
-        else
-          left = frame.width - char.width
+          if first
+            left = 0
+            first = false
+          else
+            left = frame.width - char.width
 
-        compositeImage frame, char, left, top
+          @compositeImage frame, char, left, top
 
-    # Add the text after all the avatars are painted on
-    drawPanelText frame, lines
+      # Add the text after all the avatars are painted on
+      @drawPanelText frame, lines
 
-    # Return the frame to the caller from `namesReady`
-    return cb(false, frame)
+      # Return the frame to the caller
+      return cb(false, frame)
 
-# Returns the bounding box of `msg`
-# When printed using `font` of `size`
-# in the form [width, height]
-textSize = (msg, font, size) ->
-  img = GD.create(1,1)
-  black = img.colorAllocate(0, 0, 0)
-  bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
-  [
-    bb[2] - bb[0],
-    bb[1] - bb[7]
-  ]
+  # Returns the bounding box of `msg`
+  # When printed using `font` of `size`
+  # in the form [width, height]
+  textSize: (msg, font, size) ->
+    img = GD.create(1,1)
+    black = img.colorAllocate(0, 0, 0)
+    bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
+    [
+      bb[2] - bb[0],
+      bb[1] - bb[7]
+    ]
 
-# Splits the input `msg` into a list of
-# `splits` chunks performing word wrapping on
-# each chunk as in ["Hello", "World"]
-chunkInputInto = (msg, splits) ->
-  stepSize = Math.round(msg.length / splits)
-  chunks = []
+  # Splits the input `msg` into a list of
+  # `splits` chunks performing word wrapping on
+  # each chunk as in ["Hello", "World"]
+  chunkInputInto: (msg, splits) ->
+    stepSize = Math.round(msg.length / splits)
+    chunks = []
 
-  for n in [0...splits]
-    chunks[n] = msg[...stepSize]
-    msg = msg[stepSize..]
+    for n in [0...splits]
+      chunks[n] = msg[...stepSize]
+      msg = msg[stepSize..]
 
-    # Shift words down until the last space in this line and
-    # give them back to the buffer
-    while not /\s$/.test(chunks[n])
-      chunkLen = chunks[n].length
-      msg = "#{chunks[n][chunkLen - 1]}#{msg}"
-      chunks[n] = chunks[n][...-1]
+      # Shift words down until the last space in this line and
+      # give them back to the buffer
+      while not /\s$/.test(chunks[n])
+        chunkLen = chunks[n].length
+        msg = "#{chunks[n][chunkLen - 1]}#{msg}"
+        chunks[n] = chunks[n][...-1]
 
-  # If we somehow have some message left over, shove it
-  # into the last chunk.
-  if msg.length
-    chunks[chunks.length - 1] += msg
+    # If we somehow have some message left over, shove it
+    # into the last chunk.
+    if msg.length
+      chunks[chunks.length - 1] += msg
 
-  return chunks.map (c) -> c.trim()
+    return chunks.map (c) -> c.trim()
 
-# Prpares a string `msg` for prtinting with `font`
-# at size `size` that will fit into `max`. The string
-# will be broken into multiple lines so that it does not
-# exceed `max` pixels
-formatForTextBubble = (msg, font, size, max) ->
-  msg = msg.trim()
-  [w, h] = textSize(msg, font, size)
-  if w > max
-    splits = Math.round(w / max)
-    splits += 1 if w % max
-    msg = chunkInputInto(msg, splits).join "\n"
-  else
-    msg
+  # Prpares a string `msg` for prtinting with `font`
+  # at size `size` that will fit into `max`. The string
+  # will be broken into multiple lines so that it does not
+  # exceed `max` pixels
+  formatForTextBubble: (msg, font, size, max) =>
+    msg = msg.trim()
+    [w, h] = @textSize(msg, font, size)
+    if w > max
+      splits = Math.round(w / max)
+      splits += 1 if w % max
+      msg = @chunkInputInto(msg, splits).join "\n"
+    else
+      msg
 
-# Produce a text bubble that contains `msg` printed in the
-# font `font` in the size `size`. The bubble will be at most
-# `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
-#
-# The return value will be a GD image.
-textBubble = (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) ->
-  msg = formatForTextBubble(msg, font, size, max)
-  [w, h] = textSize(msg, font, size)
+  # Produce a text bubble that contains `msg` printed in the
+  # font `font` in the size `size`. The bubble will be at most
+  # `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
+  #
+  # The return value will be a GD image.
+  textBubble: (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) =>
+    msg = @formatForTextBubble(msg, font, size, max)
+    [w, h] = @textSize(msg, font, size)
 
-  frame = GD.createTrueColor(
-    w + (AYP_TEXT_PADDING * 2),
-    h + (AYP_TEXT_PADDING * 2)
-  )
-  frame.saveAlpha(1)
-  white = frame.colorAllocate(0xff, 0xff, 0xff)
-  black = frame.colorAllocate(0x00, 0x00, 0x00)
-  frame.fill(0, 0, white)
+    frame = GD.createTrueColor(
+      w + (AYP_TEXT_PADDING * 2),
+      h + (AYP_TEXT_PADDING * 2)
+    )
+    frame.saveAlpha(1)
+    white = frame.colorAllocate(0xff, 0xff, 0xff)
+    black = frame.colorAllocate(0x00, 0x00, 0x00)
+    frame.fill(0, 0, white)
 
-  frame.stringFT(black, font, size,
-    0,                           # Rotation angle
-    AYP_TEXT_PADDING,            # x
-    AYP_TEXT_PADDING + size + 1, # y
-    msg
-  )
-  return frame
+    frame.stringFT(black, font, size,
+      0,                           # Rotation angle
+      AYP_TEXT_PADDING,            # x
+      AYP_TEXT_PADDING + size + 1, # y
+      msg
+    )
+    return frame
 
-# Composite `sprite` onto `dst` in full.
-# Offsets `sprite` `+left` from the left
-# and `+top` from the top
-compositeImage = (dst, sprite, left, top) ->
-  dim = [sprite.width, sprite.height]
-  left = Math.round(left)
-  top = Math.round(top)
-  sprite.copyResampled dst,
-    left, top, # dst x, y
-    0, 0,      # src x, y
-    dim..., dim... # No size change
-  return dst
+  # Composite `sprite` onto `dst` in full.
+  # Offsets `sprite` `+left` from the left
+  # and `+top` from the top
+  compositeImage: (dst, sprite, left, top) ->
+    dim = [sprite.width, sprite.height]
+    left = Math.round(left)
+    top = Math.round(top)
+    sprite.copyResampled dst,
+      left, top, # dst x, y
+      0, 0,      # src x, y
+      dim..., dim... # No size change
+    return dst
 
 # PantsBuffer is the abstraction of "The Logs".
 #
