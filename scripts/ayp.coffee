@@ -154,6 +154,35 @@ buildPanels = (lines, cb) ->
   buildPanel lines[2..3], (err, panel) -> finishPanel(err, 1, panel)
   buildPanel lines[4..5], (err, panel) -> finishPanel(err, 2, panel)
 
+# Load avatars for `names` and invoke `cb` as:
+# `cb(err, [{{name: n, img: GD-image, err: null}},... ])`
+# The `img` member will be a GD image loader from disk
+# that can be used to represent the `name`.
+# `err` is only set on failure
+loadAvatars = (names, cb) ->
+  # Prepare requirements
+  names = names.map (n) -> {name: n, img: null, err: null}
+  failed = false
+
+  fail = (err) ->
+    cb(err, null)
+    return faliled = true
+
+  charPathForNick = (nick) ->
+    potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
+    return potential if (try fs.statSync(potential))
+    return path.resolve(AVATAR_BASE, "default.png")
+
+  for nameObj in names
+    do (nameObj) ->
+      GD.openPng charPathForNick(nameObj.name), (err, img) ->
+        return if failed
+        return fail(err) if err
+        nameObj.img = img unless err
+
+        # Are we done?
+        cb(null, names) if names.every((o) -> o.img)
+
 # Build a single panel out of (UP TO) two lines of dialog
 # cb invoked as `cb(err, image)`. `err` is only set on failure
 buildPanel = (lines, cb) ->
@@ -174,31 +203,11 @@ buildPanel = (lines, cb) ->
   # As the images load, we'll fill in `.img` and if any fail,
   # we'll bail, and make sure no later calls do anything
   failed = false
-  names = (l[0] for l in lines).
-    filter((v, i, a) -> a.indexOf(v) == i).    # De-dupe
-    map (n) -> {name: n, img: null, err: null} # Prepare requirements
+  names = (l[0] for l in lines).filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
 
-  fail = (err) ->
-    cb(err, null)
-    return faliled = true
+  loadAvatars names, (err, namesList) ->
+    return cb(err, null) if err
 
-  charPathForNick = (nick) ->
-    potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
-    return potential if (try fs.statSync(potential))
-    return path.resolve(AVATAR_BASE, "default.png")
-
-  for nameObj in names
-    do (nameObj) ->
-      GD.openPng charPathForNick(nameObj.name), (err, img) ->
-        return if failed
-        return fail(err) if err
-        nameObj.img = img unless err
-
-        # Are we done?
-        namesReady(names) if names.every((o) -> o.img)
-
-  # This will be invoked when all the names finish loading above
-  namesReady = (namesList) ->
     # Dictionary of name -> img
     names = {}
     for obj in namesList
@@ -244,13 +253,7 @@ buildPanel = (lines, cb) ->
 
       top += bubble.height + topPad
       first = false if first
-
-
-
-
     # Return the frame to the caller from `namesReady`
-    # [Comment highlights indent]
-    # TODO: JESUS GOD REFACTOR THIS FLOW
     return cb(false, frame)
 
 # Returns the bounding box of `msg`
