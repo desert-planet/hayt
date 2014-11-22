@@ -22,6 +22,15 @@ AYP_PANEL_HEIGHT  = 348
 # The ammount of padding on each side of a panel
 AYP_PANEL_PADDING = 6
 
+# Space left between stacked speech bubbles
+# and the sides of the panel and the speech bubbles
+AYP_BUBBLE_PADDING_VERTICAL   = 3
+AYP_BUBBLE_PADDING_HORIZONTAL = 3
+
+# Maximum width of the speech bubble, after text becomes wider
+# it is wrapped to a new line
+AYP_BUBBLE_MAX_WIDTH          = AYP_PANEL_WIDTH - 18
+
 
 ## Paths to find media
 ROOT = path.resolve(__dirname, '..')
@@ -220,16 +229,16 @@ buildPanel = (lines, cb) ->
     # I can render all the text unconditionally
     # since it looks the same regardless of the number
     # of speakers. (i.e. left -> right, top -> bottom)
-    top = 0
-    left = 0
     first = true
-    topPad = 3
+    top = 0
+    left = AYP_BUBBLE_PADDING_HORIZONTAL
+    topPad = AYP_BUBBLE_PADDING_VERTICAL
     for line in lines
       [who, what] = line
       bubble = textBubble what
 
       if not first
-        left = frame.width - bubble.width
+        left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
 
       compositeImage frame, bubble, left, top
 
@@ -275,7 +284,7 @@ chunkInputInto = (msg, splits) ->
 
   return chunks.map (c) -> c.trim()
 
-formatForTextBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=330) ->
+formatForTextBubble = (msg, font, size, max) ->
   msg = msg.trim()
   [w, h] = textSize(msg, font, size)
   if w > max
@@ -285,8 +294,8 @@ formatForTextBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max
   else
     msg
 
-textBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=330) ->
-  msg = formatForTextBubble(arguments...)
+textBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=AYP_BUBBLE_MAX_WIDTH) ->
+  msg = formatForTextBubble(msg, font, size, max)
   [w, h] = textSize(msg, font, size)
 
   frame = GD.createTrueColor(w, h)
