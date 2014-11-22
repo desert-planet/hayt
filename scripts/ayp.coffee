@@ -49,6 +49,34 @@ FONT_PATH = path.resolve(IMG_BASE, AYP_FONT_FILE)
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
 
+## Content filters. These can be used to change the text from the logging
+## engine to be whatever is better for AGGGHHHHHHT reasons. Such as removing URLs
+## or mapping a pattern of names into a single, consistent one.
+
+# Make any changes required to the name
+filterName = (name) ->
+  if /dusya/.test(name)
+    # She likes to change her name A LOT. We can assume if it
+    # looks like her, it's her.
+    name = 'dusya'
+
+  return name
+
+# Make any changes required to the text
+filterText = (text) ->
+  # Urls are secret. Not for you. Not for anyone.
+  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+
+  # Twitter length, then truncate with `...`
+  limit = 140
+  suffix = '...'
+  if text.length > limit
+    text = text.slice(0, (limit - suffix.length))
+    text += suffix
+
+  return text
+
+
 ## Robot event bindings
 module.exports = (robot) ->
   buffer = new PantsBuffer()
@@ -352,24 +380,6 @@ compositeImage = (dst, sprite, left, top) ->
     0, 0,      # src x, y
     dim..., dim... # No size change
   return dst
-
-# Make any changes required to the name
-filterName = (name) ->
-  name
-
-# Make any changes required to the text
-filterText = (text) ->
-  # Urls are secret. Not for you. Not for anyone.
-  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
-
-  # Twitter length, then truncate with `...`
-  limit = 140
-  suffix = '...'
-  if text.length > limit
-    text = text.slice(0, (limit - suffix.length))
-    text += suffix
-
-  text
 
 # PantsBuffer is the abstraction of "The Logs".
 #
