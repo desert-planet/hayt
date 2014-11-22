@@ -31,6 +31,9 @@ AYP_BUBBLE_PADDING_HORIZONTAL = 3
 # it is wrapped to a new line
 AYP_BUBBLE_MAX_WIDTH          = AYP_PANEL_WIDTH - 18
 
+# Padding on each side of the text bubble
+AYP_TEXT_PADDING              = 2
+
 
 ## Paths to find media
 ROOT = path.resolve(__dirname, '..')
@@ -298,16 +301,19 @@ textBubble = (msg, font="./ayp-template-images/arial.ttf", size=12, max=AYP_BUBB
   msg = formatForTextBubble(msg, font, size, max)
   [w, h] = textSize(msg, font, size)
 
-  frame = GD.createTrueColor(w, h)
+  frame = GD.createTrueColor(
+    w + (AYP_TEXT_PADDING * 2),
+    h + (AYP_TEXT_PADDING * 2)
+  )
   frame.saveAlpha(1)
   white = frame.colorAllocate(0xff, 0xff, 0xff)
   black = frame.colorAllocate(0x00, 0x00, 0x00)
   frame.fill(0, 0, white)
 
   frame.stringFT(black, font, size,
-    0,    # Rotation angle
-    0,    # x
-    size, # y
+    0,                           # Rotation angle
+    AYP_TEXT_PADDING,            # x
+    AYP_TEXT_PADDING + size + 1, # y
     msg
   )
   return frame
