@@ -105,7 +105,7 @@ buildComic = (lines, cb) ->
     fs.readdir BG_BASE, (err, files) ->
       cb(err, null) if err
       files = files.filter (f) -> f[0] != '.'
-      selected = files[Math.round(Math.random() * files.length)]
+      selected = files[Math.round(Math.random() * (files.length - 1))]
       ext = selected[-3..].toLowerCase()
       loader = loaders[ext]
 
