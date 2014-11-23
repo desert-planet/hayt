@@ -3,7 +3,8 @@
 Butts. `(_|_)`
 
 ![Peaches](http://s3.amazonaws.com/ayp/ayp-1416706859717.jpg)
-Internationally standardized (http://s3.amazonaws.com/ayp/ayp-1416707245276.jpg)
+
+**[Internationally standardized!](http://s3.amazonaws.com/ayp/ayp-1416707245276.jpg)**
 
 ### Testing Hayt Locally
 
