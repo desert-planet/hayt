@@ -2,6 +2,8 @@
 
 Butts. `(_|_)`
 
+![Peaches](http://s3.amazonaws.com/ayp/ayp-1416706859717.jpg)
+
 ### Testing Hayt Locally
 
 You can test your hubot (hayt) by running the following.
