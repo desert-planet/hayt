@@ -118,7 +118,15 @@ module.exports = (robot) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
               msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
 
+# This wraps up everything that builds the image strips of the comic
+#
+# Usage:
+# `new AYPStrip script, (err, image) -> ...`
+# Will invoke the callback with the completed
+# strip when it's ready.
 class AYPStrip
+  # Constructor just stores the script and callback
+  # and passes flow to the builder.
   constructor: (@script, @ready) ->
     do @buildComic
 
@@ -186,66 +194,6 @@ class AYPStrip
     @buildPanel @script[2..3], (err, panel) -> finishPanel(err, 1, panel)
     @buildPanel @script[4..5], (err, panel) -> finishPanel(err, 2, panel)
 
-  # Load avatars for `names` and invoke `cb` as:
-  # `cb(err, {"Nickname": avatarImg, ...})`
-  # mapping each name to an avatar image that
-  # can be used to represent it.
-  #
-  # `err` is only set on failure
-  loadAvatars: (names, cb) =>
-    # Prepare requirements
-    names = names.map (n) -> {name: n, img: null, err: null}
-    failed = false
-
-    fail = (err) ->
-      cb(err, null)
-      return faliled = true
-
-    charPathForNick = (nick) ->
-      potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
-      return potential if (try fs.statSync(potential))
-      return path.resolve(AVATAR_BASE, "default.png")
-
-    for nameObj in names
-      do (nameObj) ->
-        GD.openPng charPathForNick(nameObj.name), (err, img) ->
-          return if failed
-          return fail(err) if err
-          nameObj.img = img unless err
-
-          # Are we done? Then build up a dictionary
-          # and tell the caller.
-          if names.every((o) -> o.img)
-            avatars = {}
-            for obj in names
-              avatars[obj.name] = obj.img
-            cb(null, avatars)
-
-  # Draw the text into a `frame` described by
-  # the `@script`
-  # No character drawing is done, just bubbles being placed.
-  # The avatars should already be painted, in case the text
-  # needs to overlap them.
-  drawPanelText: (frame, lines) =>
-    # I can render all the text unconditionally
-    # since it looks the same regardless of the number
-    # of speakers. (i.e. left -> right, top -> bottom)
-    first = true
-    top = 0
-    left = AYP_BUBBLE_PADDING_HORIZONTAL
-    topPad = AYP_BUBBLE_PADDING_VERTICAL
-    for line in lines
-      [who, what] = line
-      bubble = @textBubble what
-
-      if not first
-        left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
-      else
-        first = false
-
-      @compositeImage frame, bubble, left, top
-      top += bubble.height + topPad
-
   # Build a single panel out of (UP TO) two lines of dialog
   # cb invoked as `cb(err, image)`. `err` is only set on failure
   buildPanel: (lines, cb) =>
@@ -292,6 +240,95 @@ class AYPStrip
 
       # Return the frame to the caller
       return cb(false, frame)
+
+  # Draw the text into a `frame` described by
+  # the `@script`
+  # No character drawing is done, just bubbles being placed.
+  # The avatars should already be painted, in case the text
+  # needs to overlap them.
+  drawPanelText: (frame, lines) =>
+    # I can render all the text unconditionally
+    # since it looks the same regardless of the number
+    # of speakers. (i.e. left -> right, top -> bottom)
+    first = true
+    top = 0
+    left = AYP_BUBBLE_PADDING_HORIZONTAL
+    topPad = AYP_BUBBLE_PADDING_VERTICAL
+    for line in lines
+      [who, what] = line
+      bubble = @textBubble what
+
+      if not first
+        left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
+      else
+        first = false
+
+      @compositeImage frame, bubble, left, top
+      top += bubble.height + topPad
+
+  # Produce a text bubble that contains `msg` printed in the
+  # font `font` in the size `size`. The bubble will be at most
+  # `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
+  #
+  # The return value will be a GD image.
+  textBubble: (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) =>
+    msg = @formatForTextBubble(msg, font, size, max)
+    [w, h] = @textSize(msg, font, size)
+
+    frame = GD.createTrueColor(
+      w + (AYP_TEXT_PADDING * 2),
+      h + (AYP_TEXT_PADDING * 2)
+    )
+    frame.saveAlpha(1)
+    white = frame.colorAllocate(0xff, 0xff, 0xff)
+    black = frame.colorAllocate(0x00, 0x00, 0x00)
+    frame.fill(0, 0, white)
+
+    frame.stringFT(black, font, size,
+      0,                           # Rotation angle
+      AYP_TEXT_PADDING,            # x
+      AYP_TEXT_PADDING + size + 1, # y
+      msg
+    )
+    return frame
+
+  ##
+  ## Helpers and utilities
+
+  # Load avatars for `names` and invoke `cb` as:
+  # `cb(err, {"Nickname": avatarImg, ...})`
+  # mapping each name to an avatar image that
+  # can be used to represent it.
+  #
+  # `err` is only set on failure
+  loadAvatars: (names, cb) =>
+    # Prepare requirements
+    names = names.map (n) -> {name: n, img: null, err: null}
+    failed = false
+
+    fail = (err) ->
+      cb(err, null)
+      return faliled = true
+
+    charPathForNick = (nick) ->
+      potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
+      return potential if (try fs.statSync(potential))
+      return path.resolve(AVATAR_BASE, "default.png")
+
+    for nameObj in names
+      do (nameObj) ->
+        GD.openPng charPathForNick(nameObj.name), (err, img) ->
+          return if failed
+          return fail(err) if err
+          nameObj.img = img unless err
+
+          # Are we done? Then build up a dictionary
+          # and tell the caller.
+          if names.every((o) -> o.img)
+            avatars = {}
+            for obj in names
+              avatars[obj.name] = obj.img
+            cb(null, avatars)
 
   # Returns the bounding box of `msg`
   # When printed using `font` of `size`
@@ -344,33 +381,7 @@ class AYPStrip
     else
       msg
 
-  # Produce a text bubble that contains `msg` printed in the
-  # font `font` in the size `size`. The bubble will be at most
-  # `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
-  #
-  # The return value will be a GD image.
-  textBubble: (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) =>
-    msg = @formatForTextBubble(msg, font, size, max)
-    [w, h] = @textSize(msg, font, size)
-
-    frame = GD.createTrueColor(
-      w + (AYP_TEXT_PADDING * 2),
-      h + (AYP_TEXT_PADDING * 2)
-    )
-    frame.saveAlpha(1)
-    white = frame.colorAllocate(0xff, 0xff, 0xff)
-    black = frame.colorAllocate(0x00, 0x00, 0x00)
-    frame.fill(0, 0, white)
-
-    frame.stringFT(black, font, size,
-      0,                           # Rotation angle
-      AYP_TEXT_PADDING,            # x
-      AYP_TEXT_PADDING + size + 1, # y
-      msg
-    )
-    return frame
-
-  # Composite `sprite` onto `dst` in full.
+    # Composite `sprite` onto `dst` in full.
   # Offsets `sprite` `+left` from the left
   # and `+top` from the top
   compositeImage: (dst, sprite, left, top) ->
