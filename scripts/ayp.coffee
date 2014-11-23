@@ -49,6 +49,34 @@ FONT_PATH = path.resolve(IMG_BASE, AYP_FONT_FILE)
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
 
+## Content filters. These can be used to change the text from the logging
+## engine to be whatever is better for AGGGHHHHHHT reasons. Such as removing URLs
+## or mapping a pattern of names into a single, consistent one.
+
+# Make any changes required to the name
+filterName = (name) ->
+  if /dusya/.test(name)
+    # She likes to change her name A LOT. We can assume if it
+    # looks like her, it's her.
+    name = 'dusya'
+
+  return name
+
+# Make any changes required to the text
+filterText = (text) ->
+  # Urls are secret. Not for you. Not for anyone.
+  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+
+  # Twitter length, then truncate with `...`
+  limit = 140
+  suffix = '...'
+  if text.length > limit
+    text = text.slice(0, (limit - suffix.length))
+    text += suffix
+
+  return text
+
+
 ## Robot event bindings
 module.exports = (robot) ->
   buffer = new PantsBuffer()
@@ -67,7 +95,7 @@ module.exports = (robot) ->
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
-      buildComic lines, (err, image) ->
+      new AYPStrip lines, (err, image) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
@@ -90,142 +118,135 @@ module.exports = (robot) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
               msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
 
-# Build a comic and invoke the cb(err, res) with res
-# being the resulting image. `err` will be true if an error
-# is encountered.
-buildComic = (lines, cb) ->
-  buildPanels lines, (err, panels) ->
-    return cb(err, null) if err
-    loaders =
-      png: GD.openPng
-      jpg: GD.openJpeg
-      jpeg: GD.openJpeg
-
-
-    fs.readdir BG_BASE, (err, files) ->
-      cb(err, null) if err
-      files = files.filter (f) -> f[0] != '.'
-      selected = files[Math.round(Math.random() * (files.length - 1))]
-      ext = selected[-3..].toLowerCase()
-      loader = loaders[ext]
-
-      # If we pick a BG we can't load, panic
-      # TODO: Or try again a few times?
-      cb("Can't find loader for #{selected}", null) unless loader
-
-      loader path.resolve(BG_BASE, selected), (err, bg) ->
-        return cb(err, bg) if err
-        totalPadding = (AYP_PANEL_PADDING * 2)
-        left = 0
-        top = Math.round(totalPadding / 2)
-        for panel in panels
-          do (panel) ->
-            compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
-            left += panel.width # Panel width
-            left += Math.round(totalPadding / 2)
-        cb(false, bg)
-
-# Turn a set of 6 `lines` into 3 panels
-# using two lines per panel, then invokes `cb`.
+# This wraps up everything that builds the image strips of the comic
 #
-# callback invoked as `cb(err, [image, image, image])`
-# Error will only be set on failure.
-buildPanels = (lines, cb) ->
-  failed = false
-  panels = [null, null, null]
+# Usage:
+# `new AYPStrip script, (err, image) -> ...`
+# Will invoke the callback with the completed
+# strip when it's ready.
+class AYPStrip
+  # Constructor just stores the script and callback
+  # and passes flow to the builder.
+  constructor: (@script, @ready) ->
+    do @buildComic
 
-  # Handler for when a panel fails to build.
-  fail = (err) ->
-    cb(err, [])
-    return failed = true
+  # Build a comic and invoke the @ready(err, res) callback with res
+  # being the resulting image. `err` will be true if an error
+  # is encountered.
+  buildComic: =>
+    @buildPanels (err, panels) =>
+      return @ready(err, null) if err
+      loaders =
+        png: GD.openPng
+        jpg: GD.openJpeg
+        jpeg: GD.openJpeg
 
-  # Handler for panel completion, store in the list, see if we're done,
-  # invoke callback if we are.
-  finishPanel = (err, n, panel) ->
-    # No one cares if we already lost.
-    return if failed
-    return fail(err) if err
 
-    panels[n] = panel
-    cb(false, panels) if panels.every (p) -> p
+      fs.readdir BG_BASE, (err, files) =>
+        @ready(err, null) if err
+        files = files.filter (f) -> f[0] != '.'
+        selected = files[Math.round(Math.random() * (files.length - 1))]
+        ext = selected[-3..].toLowerCase()
+        loader = loaders[ext]
 
-  # TODO: There's a loop here, somewhere
-  buildPanel lines[0..1], (err, panel) -> finishPanel(err, 0, panel)
-  buildPanel lines[2..3], (err, panel) -> finishPanel(err, 1, panel)
-  buildPanel lines[4..5], (err, panel) -> finishPanel(err, 2, panel)
+        # If we pick a BG we can't load, panic
+        # TODO: Or try again a few times?
+        @ready("Can't find loader for #{selected}", null) unless loader
 
-# Build a single panel out of (UP TO) two lines of dialog
-# cb invoked as `cb(err, image)`. `err` is only set on failure
-buildPanel = (lines, cb) ->
-  # Setup a transparant frame that we'll composite
-  # characters and text into.
-  # See: https://github.com/sshirokov/arrakis-hubot/pull/43#issuecomment-63786326
-  frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
-  frame.saveAlpha(1)
-  clear = frame.colorAllocateAlpha(0, 0, 0, 127)
-  frame.fill(0, 0, clear)
-
-  # We can just return the empty transperant
-  # frame if we get no lines
-  return cb(false, frame) unless lines.length > 0
-
-  # Set up a list of names that we need to load avatars for
-  # as a list of [{name: "nick", img: .., err: ..},.. ]
-  # As the images load, we'll fill in `.img` and if any fail,
-  # we'll bail, and make sure no later calls do anything
-  failed = false
-  names = (l[0] for l in lines).
-    filter((v, i, a) -> a.indexOf(v) == i).    # De-dupe
-    map (n) -> {name: n, img: null, err: null} # Prepare requirements
-
-  fail = (err) ->
-    cb(err, null)
-    return faliled = true
-
-  charPathForNick = (nick) ->
-    potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
-    return potential if (try fs.statSync(potential))
-    return path.resolve(AVATAR_BASE, "default.png")
-
-  for nameObj in names
-    do (nameObj) ->
-      GD.openPng charPathForNick(nameObj.name), (err, img) ->
-        return if failed
-        return fail(err) if err
-        nameObj.img = img unless err
-
-        # Are we done?
-        namesReady(names) if names.every((o) -> o.img)
-
-  # This will be invoked when all the names finish loading above
-  namesReady = (namesList) ->
-    # Dictionary of name -> img
-    names = {}
-    for obj in namesList
-      names[obj.name] = obj.img
-
-    if namesList.length == 1
-      # The only person speaking is centered in the frame
-      char = namesList[0].img
-      left = (frame.width / 2) - (char.width / 2)
-      top = (frame.height - char.height)
-      compositeImage frame, char, left, top
-    else
-      # We have two speakers
-      first = true
-      for line in lines
-        [who, what] = line
-        char = names[who]
-        top = (frame.height - char.height)
-
-        if first
+        loader path.resolve(BG_BASE, selected), (err, bg) =>
+          return @ready(err, bg) if err
+          totalPadding = (AYP_PANEL_PADDING * 2)
           left = 0
-          first = false
-        else
-          left = frame.width - char.width
+          top = Math.round(totalPadding / 2)
+          for panel in panels
+            do (panel) =>
+              @compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
+              left += panel.width # Panel width
+              left += Math.round(totalPadding / 2)
+          @ready(false, bg)
 
-        compositeImage frame, char, left, top
+  # Turn the `@script` into 3 panels
+  # using two lines per panel, then invokes `cb`.
+  #
+  # callback invoked as `cb(err, [image, image, image])`
+  # Error will only be set on failure.
+  buildPanels: (cb) =>
+    failed = false
+    panels = [null, null, null]
 
+    # Handler for when a panel fails to build.
+    fail = (err) ->
+      cb(err, [])
+      return failed = true
+
+    # Handler for panel completion, store in the list, see if we're done,
+    # invoke callback if we are.
+    finishPanel = (err, n, panel) ->
+      # No one cares if we already lost.
+      return if failed
+      return fail(err) if err
+
+      panels[n] = panel
+      cb(false, panels) if panels.every (p) -> p
+
+    # TODO: There's a loop here, somewhere
+    @buildPanel @script[0..1], (err, panel) -> finishPanel(err, 0, panel)
+    @buildPanel @script[2..3], (err, panel) -> finishPanel(err, 1, panel)
+    @buildPanel @script[4..5], (err, panel) -> finishPanel(err, 2, panel)
+
+  # Build a single panel out of (UP TO) two lines of dialog
+  # cb invoked as `cb(err, image)`. `err` is only set on failure
+  buildPanel: (lines, cb) =>
+    # Setup a transparant frame that we'll composite characters and text into.
+    frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
+    frame.saveAlpha(1)
+    clear = frame.colorAllocateAlpha(0, 0, 0, 127)
+    frame.fill(0, 0, clear)
+
+    # We can just return the empty transperant
+    # frame if we get no lines
+    return cb(false, frame) unless lines.length > 0
+
+    names = (l[0] for l in lines).
+      filter((v, i, a) -> a.indexOf(v) == i) # De-dupe
+
+    @loadAvatars names, (err, avatars) =>
+      return cb(err, null) if err
+
+      if names.length == 1
+        # The only person speaking is centered in the frame
+        char = avatars[names[0]]
+        left = (frame.width / 2) - (char.width / 2)
+        top = (frame.height - char.height)
+        @compositeImage frame, char, left, top
+      else
+        # We have two speakers
+        first = true
+        for line in lines
+          [who, what] = line
+          char = avatars[who]
+          top = (frame.height - char.height)
+
+          if first
+            left = 0
+            first = false
+          else
+            left = frame.width - char.width
+
+          @compositeImage frame, char, left, top
+
+      # Add the text after all the avatars are painted on
+      @drawPanelText frame, lines
+
+      # Return the frame to the caller
+      return cb(false, frame)
+
+  # Draw the text into a `frame` described by
+  # the `@script`
+  # No character drawing is done, just bubbles being placed.
+  # The avatars should already be painted, in case the text
+  # needs to overlap them.
+  drawPanelText: (frame, lines) =>
     # I can render all the text unconditionally
     # since it looks the same regardless of the number
     # of speakers. (i.e. left -> right, top -> bottom)
@@ -235,131 +256,143 @@ buildPanel = (lines, cb) ->
     topPad = AYP_BUBBLE_PADDING_VERTICAL
     for line in lines
       [who, what] = line
-      bubble = textBubble what
+      bubble = @textBubble what
 
       if not first
         left = frame.width - bubble.width - AYP_BUBBLE_PADDING_HORIZONTAL
+      else
+        first = false
 
-      compositeImage frame, bubble, left, top
-
+      @compositeImage frame, bubble, left, top
       top += bubble.height + topPad
-      first = false if first
 
+  # Produce a text bubble that contains `msg` printed in the
+  # font `font` in the size `size`. The bubble will be at most
+  # `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
+  #
+  # The return value will be a GD image.
+  textBubble: (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) =>
+    msg = @formatForTextBubble(msg, font, size, max)
+    [w, h] = @textSize(msg, font, size)
 
+    frame = GD.createTrueColor(
+      w + (AYP_TEXT_PADDING * 2),
+      h + (AYP_TEXT_PADDING * 2)
+    )
+    frame.saveAlpha(1)
+    white = frame.colorAllocate(0xff, 0xff, 0xff)
+    black = frame.colorAllocate(0x00, 0x00, 0x00)
+    frame.fill(0, 0, white)
 
+    frame.stringFT(black, font, size,
+      0,                           # Rotation angle
+      AYP_TEXT_PADDING,            # x
+      AYP_TEXT_PADDING + size + 1, # y
+      msg
+    )
+    return frame
 
-    # Return the frame to the caller from `namesReady`
-    # [Comment highlights indent]
-    # TODO: JESUS GOD REFACTOR THIS FLOW
-    return cb(false, frame)
+  ##
+  ## Helpers and utilities
 
-# Returns the bounding box of `msg`
-# When printed using `font` of `size`
-# in the form [width, height]
-textSize = (msg, font, size) ->
-  img = GD.create(1,1)
-  black = img.colorAllocate(0, 0, 0)
-  bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
-  [
-    bb[2] - bb[0],
-    bb[1] - bb[7]
-  ]
+  # Load avatars for `names` and invoke `cb` as:
+  # `cb(err, {"Nickname": avatarImg, ...})`
+  # mapping each name to an avatar image that
+  # can be used to represent it.
+  #
+  # `err` is only set on failure
+  loadAvatars: (names, cb) =>
+    # Prepare requirements
+    names = names.map (n) -> {name: n, img: null, err: null}
+    failed = false
 
-# Splits the input `msg` into a list of
-# `splits` chunks performing word wrapping on
-# each chunk as in ["Hello", "World"]
-chunkInputInto = (msg, splits) ->
-  stepSize = Math.round(msg.length / splits)
-  chunks = []
+    fail = (err) ->
+      cb(err, null)
+      return faliled = true
 
-  for n in [0...splits]
-    chunks[n] = msg[...stepSize]
-    msg = msg[stepSize..]
+    charPathForNick = (nick) ->
+      potential = path.resolve(AVATAR_BASE, "#{nick.toLowerCase()}.png")
+      return potential if (try fs.statSync(potential))
+      return path.resolve(AVATAR_BASE, "default.png")
 
-    # Shift words down until the last space in this line and
-    # give them back to the buffer
-    while not /\s$/.test(chunks[n])
-      chunkLen = chunks[n].length
-      msg = "#{chunks[n][chunkLen - 1]}#{msg}"
-      chunks[n] = chunks[n][...-1]
+    for nameObj in names
+      do (nameObj) ->
+        GD.openPng charPathForNick(nameObj.name), (err, img) ->
+          return if failed
+          return fail(err) if err
+          nameObj.img = img unless err
 
-  # If we somehow have some message left over, shove it
-  # into the last chunk.
-  if msg.length
-    chunks[chunks.length - 1] += msg
+          # Are we done? Then build up a dictionary
+          # and tell the caller.
+          if names.every((o) -> o.img)
+            avatars = {}
+            for obj in names
+              avatars[obj.name] = obj.img
+            cb(null, avatars)
 
-  return chunks.map (c) -> c.trim()
+  # Returns the bounding box of `msg`
+  # When printed using `font` of `size`
+  # in the form [width, height]
+  textSize: (msg, font, size) ->
+    img = GD.create(1,1)
+    black = img.colorAllocate(0, 0, 0)
+    bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
+    [
+      bb[2] - bb[0],
+      bb[1] - bb[7]
+    ]
 
-# Prpares a string `msg` for prtinting with `font`
-# at size `size` that will fit into `max`. The string
-# will be broken into multiple lines so that it does not
-# exceed `max` pixels
-formatForTextBubble = (msg, font, size, max) ->
-  msg = msg.trim()
-  [w, h] = textSize(msg, font, size)
-  if w > max
-    splits = Math.round(w / max)
-    splits += 1 if w % max
-    msg = chunkInputInto(msg, splits).join "\n"
-  else
-    msg
+  # Splits the input `msg` into a list of
+  # `splits` chunks performing word wrapping on
+  # each chunk as in ["Hello", "World"]
+  chunkInputInto: (msg, splits) ->
+    stepSize = Math.round(msg.length / splits)
+    chunks = []
 
-# Produce a text bubble that contains `msg` printed in the
-# font `font` in the size `size`. The bubble will be at most
-# `max` pixels wide, and will be padded according to `AYP_TEXT_PADDING`
-#
-# The return value will be a GD image.
-textBubble = (msg, font=FONT_PATH, size=AYP_FONT_SIZE, max=AYP_BUBBLE_MAX_WIDTH) ->
-  msg = formatForTextBubble(msg, font, size, max)
-  [w, h] = textSize(msg, font, size)
+    for n in [0...splits]
+      chunks[n] = msg[...stepSize]
+      msg = msg[stepSize..]
 
-  frame = GD.createTrueColor(
-    w + (AYP_TEXT_PADDING * 2),
-    h + (AYP_TEXT_PADDING * 2)
-  )
-  frame.saveAlpha(1)
-  white = frame.colorAllocate(0xff, 0xff, 0xff)
-  black = frame.colorAllocate(0x00, 0x00, 0x00)
-  frame.fill(0, 0, white)
+      # Shift words down until the last space in this line and
+      # give them back to the buffer
+      while not /\s$/.test(chunks[n])
+        chunkLen = chunks[n].length
+        msg = "#{chunks[n][chunkLen - 1]}#{msg}"
+        chunks[n] = chunks[n][...-1]
 
-  frame.stringFT(black, font, size,
-    0,                           # Rotation angle
-    AYP_TEXT_PADDING,            # x
-    AYP_TEXT_PADDING + size + 1, # y
-    msg
-  )
-  return frame
+    # If we somehow have some message left over, shove it
+    # into the last chunk.
+    if msg.length
+      chunks[chunks.length - 1] += msg
 
-# Composite `sprite` onto `dst` in full.
-# Offsets `sprite` `+left` from the left
-# and `+top` from the top
-compositeImage = (dst, sprite, left, top) ->
-  dim = [sprite.width, sprite.height]
-  left = Math.round(left)
-  top = Math.round(top)
-  sprite.copyResampled dst,
-    left, top, # dst x, y
-    0, 0,      # src x, y
-    dim..., dim... # No size change
-  return dst
+    return chunks.map (c) -> c.trim()
 
-# Make any changes required to the name
-filterName = (name) ->
-  name
+  # Prpares a string `msg` for prtinting with `font`
+  # at size `size` that will fit into `max`. The string
+  # will be broken into multiple lines so that it does not
+  # exceed `max` pixels
+  formatForTextBubble: (msg, font, size, max) =>
+    msg = msg.trim()
+    [w, h] = @textSize(msg, font, size)
+    if w > max
+      splits = Math.round(w / max)
+      splits += 1 if w % max
+      msg = @chunkInputInto(msg, splits).join "\n"
+    else
+      msg
 
-# Make any changes required to the text
-filterText = (text) ->
-  # Urls are secret. Not for you. Not for anyone.
-  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
-
-  # Twitter length, then truncate with `...`
-  limit = 140
-  suffix = '...'
-  if text.length > limit
-    text = text.slice(0, (limit - suffix.length))
-    text += suffix
-
-  text
+    # Composite `sprite` onto `dst` in full.
+  # Offsets `sprite` `+left` from the left
+  # and `+top` from the top
+  compositeImage: (dst, sprite, left, top) ->
+    dim = [sprite.width, sprite.height]
+    left = Math.round(left)
+    top = Math.round(top)
+    sprite.copyResampled dst,
+      left, top, # dst x, y
+      0, 0,      # src x, y
+      dim..., dim... # No size change
+    return dst
 
 # PantsBuffer is the abstraction of "The Logs".
 #
