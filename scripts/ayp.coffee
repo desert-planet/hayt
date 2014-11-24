@@ -60,6 +60,10 @@ filterName = (name) ->
     # looks like her, it's her.
     name = 'dusya'
 
+  if /laura/i.test(name)
+    # Some kind of laura is one kind of laura
+    name = 'laura'
+
   return name
 
 # Make any changes required to the text
