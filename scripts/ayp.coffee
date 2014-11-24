@@ -55,7 +55,7 @@ s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.co
 
 # Make any changes required to the name
 filterName = (name) ->
-  if /dusya/.test(name)
+  if /dusya/i.test(name)
     # She likes to change her name A LOT. We can assume if it
     # looks like her, it's her.
     name = 'dusya'
