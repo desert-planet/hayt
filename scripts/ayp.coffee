@@ -74,7 +74,7 @@ filterName = (name) ->
 # Make any changes required to the text
 filterText = (text) ->
   # Urls are secret. Not for you. Not for anyone.
-  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+  text = text.replace(/(https?:\/\/[^\s]+)/, "██████████")
 
   # Twitter length, then truncate with `...`
   limit = 140
