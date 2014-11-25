@@ -143,15 +143,16 @@ class AYPStrip
 
 
       fs.readdir BG_BASE, (err, files) =>
-        @ready(err, null) if err
+        return @ready(err, null) if err
+
+        # No hidden files
         files = files.filter (f) -> f[0] != '.'
+        # No files we can't load
+        files = files.filter (f) -> loaders[f[-3..]]
+
         selected = files[Math.round(Math.random() * (files.length - 1))]
         ext = selected[-3..].toLowerCase()
         loader = loaders[ext]
-
-        # If we pick a BG we can't load, panic
-        # TODO: Or try again a few times?
-        @ready("Can't find loader for #{selected}", null) unless loader
 
         loader path.resolve(BG_BASE, selected), (err, bg) =>
           return @ready(err, bg) if err
