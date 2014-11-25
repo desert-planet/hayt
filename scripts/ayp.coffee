@@ -15,6 +15,11 @@ AYP_AWS_KEY    = process.env.AYP_AWS_KEY
 AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
 AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
 
+# AYP The website hooks
+AYP_SITE = "http://ayp.wtf.cat/"
+AYP_ENDPOINT = "#{AYP_SITE}new/"
+AYP_SECRET = process.env.AYP_SECRET
+
 # The size of single panel
 AYP_PANEL_WIDTH   = 348
 AYP_PANEL_HEIGHT  = 348
@@ -103,7 +108,8 @@ module.exports = (robot) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
-        name = "ayp-#{Date.now()}.jpg"
+        now = Date.now()
+        name = "ayp-#{now}.jpg"
         outPath = path.resolve("/tmp", name)
         image.saveJpeg outPath, 95, (err) ->
           return console.error "Failed to write result:", err if err
@@ -120,7 +126,16 @@ module.exports = (robot) ->
               body: data
             s3.put name, info, (err) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
-              msg.reply "I made a thing: http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
+              strip_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
+              msg.reply "I made a thing: #{strip_url}"
+
+              # Now let's tell `ayp.wtf.cat` about our great work here
+              return msg.reply "I'd update the site, but I don't know the secret :(" unless AYP_SECRET
+              robot.http(AYP_ENDPOINT).
+                header('Content-Type', 'application/json').
+                post JSON.stringify(url: strip_url, time: now, secret: AYP_SECRET), (err, res, body) ->
+                  return msg.reply "Bad news. I was fed shit when I tried to update the site: #{err}" if err
+                  msg.reply "GOOD NEWS EVERYONE: #{AYP_SITE} got some fresh data"
 
 # This wraps up everything that builds the image strips of the comic
 #
