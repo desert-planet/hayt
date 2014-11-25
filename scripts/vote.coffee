@@ -127,7 +127,7 @@ Supported commands:
     msg.reply if Vote.current then sure_am else nope
 
   # Election driver
-  robot.respond /(?:vote|freedom) ([^\s]+)\s?(.*)?$/, (msg) ->
+  robot.respond /(?:vote|freedom|oppressed) ([^\s]+)\s?(.*)?$/, (msg) ->
     action = msg.match[1].trim().toLowerCase()
     arg = msg.match[2]?.trim()
 
