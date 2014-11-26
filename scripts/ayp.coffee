@@ -145,7 +145,7 @@ module.exports = (robot) ->
                     "Turns out,",
                     "Despite my best efforts",
                   ]
-                  msg.reply "#{prefix} #{AYP_SITE}/at/#{now}/ is now -> #{strip_url}"
+                  msg.reply "#{prefix} #{AYP_SITE}at/#{now}/ is now -> #{strip_url}"
 
 # This wraps up everything that builds the image strips of the comic
 #
