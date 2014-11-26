@@ -438,7 +438,7 @@ class PantsBuffer
       return callback(err, res) if err
 
       res = res.map (line) ->
-        [_, who, what] = line.match(/^([^\s]+): (.+)$/)
+        [_, who, what] = line.toString('utf8').match(/^([^\s]+): (.+)$/)
         [filterName(who), filterText(what)]
       callback(err, res)
 
