@@ -16,7 +16,7 @@ AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
 AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
 
 # AYP The website hooks
-AYP_SITE = "http://ayp.wtf.cat/"
+AYP_SITE = process.env.AYP_SITE or "http://ayp.wtf.cat/"
 AYP_ENDPOINT = "#{AYP_SITE}new/"
 AYP_SECRET = process.env.AYP_SECRET
 
@@ -132,15 +132,20 @@ module.exports = (robot) ->
             s3.put name, info, (err) ->
               return msg.reply "Woooops! Failed to upload: #{err}" if err
               strip_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
-              msg.reply "I made a thing: #{strip_url}"
 
               # Now let's tell `ayp.wtf.cat` about our great work here
-              return msg.reply "I'd update the site, but I don't know the secret :(" unless AYP_SECRET
+              return msg.reply "I'd update the site, but I don't know the secret :( Though, the image is #{strip_url}" unless AYP_SECRET
               robot.http(AYP_ENDPOINT).
                 header('Content-Type', 'application/json').
                 post JSON.stringify(url: strip_url, time: now, secret: AYP_SECRET), (err, res, body) ->
                   return msg.reply "Bad news. I was fed shit when I tried to update the site: #{err}" if err
-                  msg.reply "GOOD NEWS EVERYONE: #{AYP_SITE} got some fresh data"
+                  prefix = msg.random [
+                    "GOOD NEWS EVERYONE:",
+                    "This is awkward...",
+                    "Turns out,",
+                    "Despite my best efforts",
+                  ]
+                  msg.reply "#{prefix} #{AYP_SITE}at/#{now}/ is now -> #{strip_url}"
 
 # This wraps up everything that builds the image strips of the comic
 #
