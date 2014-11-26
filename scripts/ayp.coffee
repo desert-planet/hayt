@@ -65,6 +65,11 @@ filterName = (name) ->
     # looks like her, it's her.
     name = 'dusya'
 
+  if /minusx/i.test(name)
+    # Another one fond of aliases
+    name = 'minusx'
+
+
   if /laura/i.test(name)
     # Some kind of laura is one kind of laura
     name = 'laura'
