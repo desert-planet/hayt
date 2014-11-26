@@ -16,7 +16,7 @@ AYP_AWS_SECRET = process.env.AYP_AWS_SECRET
 AYP_AWS_BUCKET = process.env.AYP_AWS_BUCKET
 
 # AYP The website hooks
-AYP_SITE = "http://ayp.wtf.cat/"
+AYP_SITE = process.env.AYP_SITE or "http://ayp.wtf.cat/"
 AYP_ENDPOINT = "#{AYP_SITE}new/"
 AYP_SECRET = process.env.AYP_SECRET
 
