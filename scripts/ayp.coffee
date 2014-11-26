@@ -65,7 +65,7 @@ filterName = (name) ->
     # looks like her, it's her.
     name = 'dusya'
 
-  if /minusx/i.test(name)
+  if /minus/i.test(name)
     # Another one fond of aliases
     name = 'minusx'
 
