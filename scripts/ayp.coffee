@@ -41,7 +41,7 @@ AYP_TEXT_PADDING              = 2
 
 # The size anf font of the text to use in the text bubbles
 AYP_FONT_SIZE                 = 12
-AYP_FONT_FILE                 = "arial.ttf"
+AYP_FONT_FILE                 = "DroidSans.ttf"
 
 
 ## Paths to find media
