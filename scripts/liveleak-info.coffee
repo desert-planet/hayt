@@ -27,7 +27,8 @@ PHANTOMJS_LIVELEAK_PATH = path.join __dirname, '../utils/phantomjs-liveleak.coff
 
 module.exports = (robot) ->
   robot.hear /(http?:\/\/www\.liveleak\.com\/view\?.+?)(?:\s|$)/i, (msg) ->
-    getTitle msg, msg.match[1]
+    url_parsed = url.parse(msg.match[1])
+    getTitle msg, url_parsed.href
 
 getTitle = (msg, url) ->
   output = ''
