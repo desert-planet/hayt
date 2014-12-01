@@ -21,18 +21,18 @@ url = require 'url'
 path = require 'path'
 child_process = require 'child_process'
 spawn = child_process.spawn
+PHANTOMJS_PATH = path.join __dirname, '../node_modules/.bin/phantomjs'
 PHANTOMJS_LIVELEAK_PATH = path.join __dirname, '../utils/phantomjs-liveleak.coffee'
 
 
 module.exports = (robot) ->
   robot.hear /(http?:\/\/www\.liveleak\.com\/view\?.+?)(?:\s|$)/i, (msg) ->
-    url_parsed = url.parse(msg.match[1])
-    getTitle msg, url_parsed.href
+    getTitle msg, msg.match[1]
 
 getTitle = (msg, url) ->
   output = ''
   # kick off glorious phantomjs, hope it's in PATH
-  phantomjs = spawn 'phantomjs', [PHANTOMJS_LIVELEAK_PATH, url]
+  phantomjs = spawn PHANTOMJS_PATH, [PHANTOMJS_LIVELEAK_PATH, url]
   phantomjs.stdout.on 'data', (data) ->
     # need to string concat because data is weird
     output += data
