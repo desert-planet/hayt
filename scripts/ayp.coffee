@@ -73,6 +73,10 @@ filterName = (name) ->
   if /laura/i.test(name)
     # Some kind of laura is one kind of laura
     name = 'laura'
+    
+  if /arbo/i.test(name)
+    # Bouncers are hard or something, whatever. 
+    name = 'arbo'
 
   return name
 
