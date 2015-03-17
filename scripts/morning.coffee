@@ -11,7 +11,7 @@
 #   Hello or Good Day make hubot say hello to you back
 #   Good Morning makes hubot say good morning to you back
 ONE_DAY = 86400000
-last_time_i_wouldnt_shut_the_fuck_up = 0
+lastTimeHaytHadToRespondToAHelloLikeAnAnnoyingAsshole = 0
 hellos = [
     "Well hello there, %",
     "Hey %, Hello!",
@@ -29,8 +29,8 @@ mornings = [
 module.exports = (robot) ->
     robot.hear /(he(ll|rr)o|good( [d'])?ay(e)?)/i, (msg) ->
         now = Date.now()
-        if now - last_time_i_wouldnt_shut_the_fuck_up > ONE_DAY
-            last_time_i_wouldnt_shut_the_fuck_up = now
+        if now - lastTimeHaytHadToRespondToAHelloLikeAnAnnoyingAsshole > ONE_DAY
+            lastTimeHaytHadToRespondToAHelloLikeAnAnnoyingAsshole = now
             hello = msg.random hellos
             msg.send hello.replace "%", msg.message.user.name
 
