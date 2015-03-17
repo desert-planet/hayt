@@ -185,4 +185,4 @@ Supported commands:
 
       # Shut up, loony bin
       else
-        msg.reply "That make no sense, and you're probably crazy."
+        msg.reply "That made no sense, and you're probably crazy."
