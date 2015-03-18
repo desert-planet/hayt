@@ -1,4 +1,5 @@
 [
   "hubot-calculator",
-  "hubot-markov"
+  "hubot-markov",
+  "hubot-fliptable"
 ]

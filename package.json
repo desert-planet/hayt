@@ -35,7 +35,8 @@
     "redis": "~0.12.1",
     "node-gd": "~0.2.3",
     "node-s3": "~1.1.0",
-    "phantomjs": "^1.9.12"
+    "phantomjs": "^1.9.12",
+    "hubot-fliptable": ">= 0.0.0"
   },
 
   "engines": {
