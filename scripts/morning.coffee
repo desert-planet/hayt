@@ -35,5 +35,8 @@ module.exports = (robot) ->
             msg.send hello.replace "%", msg.message.user.name
 
     robot.hear /(^(good )?m(a|o)rnin(g)?)/i, (msg) ->
-        hello = msg.random mornings
-        msg.send hello.replace "%", msg.message.user.name
+        now = Date.now()
+        if now - lastTimeHaytHadToRespondToAHelloLikeAnAnnoyingAsshole > ONE_DAY
+            lastTimeHaytHadToRespondToAHelloLikeAnAnnoyingAsshole = now
+            hello = msg.random mornings
+            msg.send hello.replace "%", msg.message.user.name
