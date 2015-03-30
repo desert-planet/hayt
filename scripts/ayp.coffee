@@ -86,7 +86,7 @@ filterText = (text) ->
   text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
   
   # Emails 'R' Secret
-  text = text.replace(/(?![^@\s]+@)[^@\s]+\.[^@\s]+/, "[redacted]")
+  text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/, "$1[redacted]")
 
   # Twitter length, then truncate with `...`
   limit = 140
