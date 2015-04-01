@@ -31,6 +31,13 @@ module.exports = (robot) ->
     else
       report roll dice, sides
     msg.reply answer
+  robot.respond /roll (\d+)dF/i, (msg) ->
+    dice = parseInt msg.match[1]
+    answer = if dice > 100
+      "I'm not going to roll more than 100 fudge dice for you."
+    else
+      report fudgeRoll dice
+    msg.reply answer
 
 report = (results) ->
   if results?
@@ -50,3 +57,9 @@ roll = (dice, sides) ->
 
 rollOne = (sides) ->
   1 + Math.floor(Math.random() * sides)
+
+fudgeRoll = (dice) ->
+  fudge() for i in [0...dice]
+
+fudge = ->
+  Math.floor(Math.random() * 3) - 1
