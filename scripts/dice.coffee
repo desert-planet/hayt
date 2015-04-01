@@ -11,6 +11,7 @@
 #   hubot roll (die|one) - Roll one six-sided dice
 #   hubot roll dice - Roll two six-sided dice
 #   hubot roll <x>d<y> - roll x dice, each of which has y sides
+#   hubot roll <x>dF - roll x fudge dice, each of which has +, +, 0, 0, -, and - sides.
 #
 # Author:
 #   ab9
