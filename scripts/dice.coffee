@@ -31,7 +31,7 @@ module.exports = (robot) ->
     else if dice > 100
       "I'm not going to roll more than 100 dice for you."
     else
-      report roll dice, sides
+      report modifier, roll dice, sides
     msg.reply answer
   robot.respond /roll (\d+)dF/i, (msg) ->
     dice = parseInt msg.match[1]
@@ -41,7 +41,7 @@ module.exports = (robot) ->
       report fudgeRoll dice
     msg.reply answer
 
-report = (results) ->
+report = (modifier, results) ->
   if results?
     switch results.length
       when 0
