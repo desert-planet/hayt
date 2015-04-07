@@ -72,8 +72,11 @@ report = (modifier, results) ->
           answer
 
 modified = (total, modifier) ->
-  if modifier
-    "With the modifier, #{total} #{modifier} is #{total+modifier}."
+  mod = Math.abs(modifier)
+  if modifier < 0
+    " With the modifier, #{total} - #{mod} is #{total-mod}."
+  else if modifier > 0
+    " With the modifier, #{total} + #{mod} is #{total+mod}."
 
 roll = (dice, sides) ->
   rollOne(sides) for i in [0...dice]
