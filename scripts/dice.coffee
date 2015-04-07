@@ -22,7 +22,7 @@ module.exports = (robot) ->
     msg.reply report [rollOne(6)]
   robot.respond /roll dice/i, (msg) ->
     msg.reply report roll 2, 6
-  robot.respond /roll (\d+)d(\d+)/i, (msg) ->
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?$/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     answer = if sides < 1
