@@ -54,11 +54,19 @@ report = (modifier, results) ->
       when 1
         total = results[0]
         "I rolled a #{total}."
+        if modifier
+          modified total, modifier
       else
         total = results.reduce (x, y) -> x + y
         finalComma = if (results.length > 2) then "," else ""
         last = results.pop()
         "I rolled #{results.join(", ")}#{finalComma} and #{last}, making #{total}."
+        if modifier
+          modified total, modifier
+
+modified = (total, modifier) ->
+  if modifier
+    "With the modifier, #{total} #{modifier} is #{total+modifier}."
 
 roll = (dice, sides) ->
   rollOne(sides) for i in [0...dice]
