@@ -45,6 +45,11 @@
   },
 
   "scripts": {
-	"test": "echo We should have some tests"
+	"test": "mocha tests.coffee --compilers coffee:coffee-script/register"
+  },
+
+  "devDependencies": {
+    "chalk": "^0.5.1",
+    "mocha": "^2.0.1"
   }
 }
