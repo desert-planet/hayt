@@ -25,6 +25,7 @@ module.exports = (robot) ->
   robot.respond /roll (\d+)d(\d+)([\+-]\d+)?$/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
+    modifier = parseInt msg.match[3]
     answer = if sides < 1
       "I don't know how to roll a zero-sided die."
     else if dice > 100
