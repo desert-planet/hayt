@@ -17,7 +17,7 @@ mantra = "It is by will alone I set my mind in motion.\n
 It is by the juice of sapho that thoughts acquire speed,\n
 the lips acquire stains,\n
 the stains become a warning.\n
-It is by will alone I set my mind in motion.\n"
+It is by will alone I set my mind in motion."
 
 module.exports = (robot) ->
   robot.respond /(mantra)/i, (msg) ->
