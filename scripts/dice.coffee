@@ -18,6 +18,9 @@
 #   https://github.com/github/hubot-scripts/blob/master/src/scripts/dice.coffee
 #   drobati
 #   Added fudge dice and modifiers.
+#
+# Regex Tests:
+#   https://regex101.com/r/mC7vQ3/3
 
 module.exports = (robot) ->
   robot.respond /roll (die|one)/i, (msg) ->
