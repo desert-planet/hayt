@@ -40,6 +40,7 @@ module.exports = (robot) ->
     msg.reply answer
   robot.respond /roll (\d+)dF([\+-]\d+)?/i, (msg) ->
     dice = parseInt msg.match[1]
+    modifier = parseInt msg.match[2]
     answer = if dice > 100
       "I'm not going to roll more than 100 fudge dice for you."
     else
