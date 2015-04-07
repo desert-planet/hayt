@@ -53,19 +53,23 @@ report = (modifier, results) ->
         "I didn't roll any dice."
       when 1
         total = results[0]
-        "I rolled a #{total}."
-        if modifier
-          modified total, modifier
+        answer = "I rolled a #{total}."
+        if not isNaN(modifier)
+          answer += modified total, modifier
+        else
+          answer
       else
         total = results.reduce (x, y) -> x + y
-        if results.length < 10
+        answer = if results.length < 10
           finalComma = if (results.length > 2) then "," else ""
           last = results.pop()
           "I rolled #{results.join(", ")}#{finalComma} and #{last}, making #{total}."
         else
           "I rolled a handful of dice, making #{total}."
-        if modifier
-          modified total, modifier
+        if not isNaN(modifier)
+          answer += modified total, modifier
+        else
+          answer
 
 modified = (total, modifier) ->
   if modifier
