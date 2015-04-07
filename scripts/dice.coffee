@@ -44,7 +44,7 @@ module.exports = (robot) ->
     answer = if dice > 100
       "I'm not going to roll more than 100 fudge dice for you."
     else
-      report fudgeRoll dice
+      report modifier, fudgeRoll dice
     msg.reply answer
 
 report = (modifier, results) ->
