@@ -58,9 +58,12 @@ report = (modifier, results) ->
           modified total, modifier
       else
         total = results.reduce (x, y) -> x + y
-        finalComma = if (results.length > 2) then "," else ""
-        last = results.pop()
-        "I rolled #{results.join(", ")}#{finalComma} and #{last}, making #{total}."
+        if results.length < 10
+          finalComma = if (results.length > 2) then "," else ""
+          last = results.pop()
+          "I rolled #{results.join(", ")}#{finalComma} and #{last}, making #{total}."
+        else
+          "I rolled a handful of dice, making #{total}."
         if modifier
           modified total, modifier
 
