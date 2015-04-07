@@ -27,7 +27,7 @@ module.exports = (robot) ->
     msg.reply report [rollOne(6)]
   robot.respond /roll dice/i, (msg) ->
     msg.reply report roll 2, 6
-  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?$/i, (msg) ->
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     modifier = parseInt msg.match[3]
@@ -38,7 +38,7 @@ module.exports = (robot) ->
     else
       report modifier, roll dice, sides
     msg.reply answer
-  robot.respond /roll (\d+)dF/i, (msg) ->
+  robot.respond /roll (\d+)dF([\+-]\d+)?/i, (msg) ->
     dice = parseInt msg.match[1]
     answer = if dice > 100
       "I'm not going to roll more than 100 fudge dice for you."
