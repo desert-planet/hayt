@@ -1,5 +1,7 @@
 # Hayt - A Hubot
 
+[![Build Status](https://travis-ci.org/desert-planet/arrakis-hubot.svg?branch=master)](https://travis-ci.org/desert-planet/arrakis-hubot)
+
 Butts. `(_|_)`
 
 ![Peaches](http://s3.amazonaws.com/ayp/ayp-1416706859717.jpg)
