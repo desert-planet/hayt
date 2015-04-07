@@ -24,10 +24,10 @@
 
 module.exports = (robot) ->
   robot.respond /roll (die|one)/i, (msg) ->
-    msg.reply report [rollOne(6)]
+    msg.reply report 0, [rollOne(6)]
     
   robot.respond /roll dice/i, (msg) ->
-    msg.reply report roll 2, 6
+    msg.reply report 0, roll 2, 6
     
   robot.respond /roll (\d+)d(\d+)([\+-]\d+)?/i, (msg) ->
     dice = parseInt msg.match[1]
