@@ -52,7 +52,8 @@ report = (modifier, results) ->
       when 0
         "I didn't roll any dice."
       when 1
-        "I rolled a #{results[0]}."
+        total = results[0]
+        "I rolled a #{total}."
       else
         total = results.reduce (x, y) -> x + y
         finalComma = if (results.length > 2) then "," else ""
