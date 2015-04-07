@@ -16,6 +16,8 @@
 # Author:
 #   ab9
 #   https://github.com/github/hubot-scripts/blob/master/src/scripts/dice.coffee
+#   drobati
+#   Added fudge dice and modifiers.
 
 module.exports = (robot) ->
   robot.respond /roll (die|one)/i, (msg) ->
