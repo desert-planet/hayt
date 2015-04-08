@@ -21,7 +21,7 @@
     "url":  "https://github.com/desert-planet/arrakis-hubot.git"
   },
   "dependencies": {
-	"coffee-script":     "~1.8.x",
+    "coffee-script":     "~1.8.x",
     "hubot":             ">= 2.6.0 < 3.0.0",
     "hubot-scripts":     ">= 2.5.0 < 3.0.0",
     "hubot-irc":         "git+https://github.com/sshirokov/hubot-irc",
@@ -46,7 +46,7 @@
   },
 
   "scripts": {
-	"test": "mocha tests.coffee --compilers coffee:coffee-script/register"
+    "test": "mocha tests.coffee --compilers coffee:coffee-script/register"
   },
 
   "devDependencies": {
