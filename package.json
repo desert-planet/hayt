@@ -46,7 +46,7 @@
   },
 
   "scripts": {
-    "test": "mocha test/dice_test.coffee --compilers coffee:coffee-script/register"
+    "test": "mocha $(find tests/* -type f) --compilers coffee:coffee-script/register"
   },
 
   "devDependencies": {
