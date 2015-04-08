@@ -1,4 +1,4 @@
-Helper = require('../node_modules/hubot-test-helper/src/index.coffee')
+Helper = require('hubot-tese-helper')
 
 helper = new Helper('../scripts/dice.coffee')
 
