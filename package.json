@@ -46,7 +46,9 @@
   },
 
   "scripts": {
-    "test": "mocha tests.coffee --compilers coffee:coffee-script/register"
+    "test": "mocha tests.coffee --compilers coffee:coffee-script/register",
+    "test": "ls /home/travis/build/desert-planet/arrakis-hubot/node_modules",
+    "test": "ls /home/travis/build/desert-planet/arrakis-hubot"
   },
 
   "devDependencies": {
