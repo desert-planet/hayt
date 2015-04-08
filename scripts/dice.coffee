@@ -81,6 +81,8 @@ modified = (total, modifier) ->
     " With the modifier, #{total} - #{mod} is #{total-mod}."
   else if modifier > 0
     " With the modifier, #{total} + #{mod} is #{total+mod}."
+  else
+    ""
 
 roll = (dice, sides) ->
   rollOne(sides) for i in [0...dice]
