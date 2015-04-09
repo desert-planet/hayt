@@ -38,7 +38,7 @@ describe 'when user rolls', ->
       for i in [0...count] by 2
         # Get each pair of request and response.
         request = messages[i]
-        response = messages[i+2]
+        response = messages[i+1]
 
         # Split out request and response
         user = request[0]
