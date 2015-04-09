@@ -25,3 +25,37 @@ describe 'when user rolls', ->
         ['eric', '@hubot roll 1d-1']
         # Nothing returns for last command.
       ]
+
+  context 'die', ->
+    beforeEach ->
+      user_list = ['alice', 'bob', 'eric']
+      for name in user_list
+        room.user.say name, '@hubot roll die'
+
+    it 'should be "I rolled a 1d6."', ->
+      messages = room.messages
+      count = messages.length
+      for i in [0...count] by 2
+        # Get each pair of request and response.
+        request = messages[i]
+        response = messages[i+2]
+        
+        # Split out request and response
+        user = request[0]
+        user_msg = request[1]
+        bot = response[0]
+        bot_msg = response[1]
+        
+        # TODO Parse bot_msg so that the roll is checkable.
+        
+        # Assertions
+        expect(user_list).to.include(user);
+        expect(user_msg)to.eql '@hubot roll die'
+        expect(bot)to.eql 'hubot'
+        expect(bot_msg).to.be.a('string')
+  
+  context 'dice', ->
+  
+  context 'configurable-sided dice', ->
+  
+  context 'fudge dice', ->
