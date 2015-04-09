@@ -6,11 +6,12 @@ expect = require('chai').expect
 
 describe 'when user rolls', ->
   room = null
+  user_list = ['alice', 'bob', 'eric']
 
   beforeEach ->
     room = helper.createRoom()
 
-  context 'invalid dice', ->
+  context 'an invalid dice', ->
     beforeEach ->
       room.user.say 'alice', '@hubot roll 1d1'
       room.user.say 'bob', '@hubot roll 1d0'
@@ -26,9 +27,8 @@ describe 'when user rolls', ->
         # Nothing returns for last command.
       ]
 
-  context 'die', ->
+  context 'a die', ->
     beforeEach ->
-      user_list = ['alice', 'bob', 'eric']
       for name in user_list
         room.user.say name, '@hubot roll die'
 
