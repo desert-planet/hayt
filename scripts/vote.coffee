@@ -156,7 +156,7 @@ Supported commands:
                 else
                   Vote.current?.no msg.message.user.name
        reply = "Your vote " +
-        (if result then "totally counted." else "was absolutely worthless!")
+        (if result then "totally counted with a #{voteResult}." else "was absolutely worthless!")
        msg.reply reply
 
       # Super Important Issues to vote about
