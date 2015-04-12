@@ -42,5 +42,5 @@ describe 'user voting', ->
         ['hubot', 'eric: Your vote totally counted with a #{value}.']
         ['betsy', '@hubot vote random']
         ['hubot', 'betsy: Your vote totally counted with a #{value}.']
-        ['hubot', 'Vote #{result}, time's up! (60 seconds)']
+        ['hubot', 'Vote #{result}, time\'s up! (60 seconds)']
       ]
