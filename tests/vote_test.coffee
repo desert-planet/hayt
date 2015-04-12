@@ -41,8 +41,8 @@ describe 'user voting', ->
         bot = response.shift()
         msg = response.shift()
         expect(bot).to.eql 'hubot'
-        pattern = "#{user}: Your vote totally counted with a [yes|no]."
-        assert(msg.matches /pattern/)
+        pattern = "/#{user}: Your vote totally counted with a [yes|no]./"
+        assert(msg.match pattern)
   
       # Submit random votes.
       vote_random room.messages, 'alice'
