@@ -140,12 +140,14 @@ Supported commands:
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
+
       when "no"
         return msg.reply "There's nothing to disagree with." unless Vote.current?
         result = Vote.current?.no msg.message.user.name
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
+
       when "random"
        return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
        voteResult = msg.random ["yes", "no"]
@@ -156,6 +158,7 @@ Supported commands:
        reply = "Your vote " +
         (if result then "totally counted." else "was absolutely worthless!")
        msg.reply reply
+
       # Super Important Issues to vote about
       when "topic"
         try
