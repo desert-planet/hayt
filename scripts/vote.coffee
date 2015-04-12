@@ -117,6 +117,7 @@ Supported commands:
   .voting?                          - What is going on, RIGHT NOW.
   .vote yes                         - Vote yes in the current vote
   .vote no                          - Vote no in the current vote
+  .vote random                      - Vote one way or the other, who cares
   .vote [timeout] topic <new topic> - Propose a new topic, with optional timeout (in minutes)
   .vote [timeout] on <new thing>    - Vote on a thing, with optional timeout (in minutes)
 """
@@ -140,12 +141,24 @@ Supported commands:
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
+
       when "no"
         return msg.reply "There's nothing to disagree with." unless Vote.current?
         result = Vote.current?.no msg.message.user.name
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
+
+      when "random"
+       return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
+       voteResult = msg.random ["yes", "no"]
+       result = if voteResult == "yes"
+                  Vote.current?.yes msg.message.user.name
+                else
+                  Vote.current?.no msg.message.user.name
+       reply = "Your vote " +
+        (if result then "totally counted." else "was absolutely worthless!")
+       msg.reply reply
 
       # Super Important Issues to vote about
       when "topic"
