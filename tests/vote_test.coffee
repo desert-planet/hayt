@@ -42,7 +42,7 @@ describe 'user voting', ->
       expect(room.messages.shift()).to.eql ['alice', '@hubot vote poop']
       expect(room.messages.shift()).to.eql ['hubot', 'New Vote: Should I poop!?']
       
-      test_random room.messages 'alice'
+      test_random room.messages, 'alice'
       
       expect(room.messages.shift()).to.eql ['tom', '@hubot vote random']
       expect(room.messages.shift()).to.eql ['hubot', 'tom: Your vote totally counted with a #{value}.']
