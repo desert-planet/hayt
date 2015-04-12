@@ -3,6 +3,7 @@ Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/vote.coffee')
 
 expect = require('chai').expect
+assert = require('chai').assert
 
 sleep = (ms) ->
   start = new Date().getTime()
@@ -29,18 +30,31 @@ describe 'user voting', ->
       room.user.say 'betsy', '@hubot vote random'
       sleep 60000 # 60 seconds
 
-      expect(room.messages).to.eql [
-        ['alice', '@hubot vote poop']
-        ['hubot', 'New Vote: Should I poop!?']
-        ['alice', '@hubot vote random']
-        ['hubot', 'alice: Your vote totally counted with a #{value}.']
-        ['tom', '@hubot vote random']
-        ['hubot', 'tom: Your vote totally counted with a #{value}.']
-        ['sally', '@hubot vote random']
-        ['hubot', 'sally: Your vote totally counted with a #{value}.']
-        ['eric', '@hubot vote random']
-        ['hubot', 'eric: Your vote totally counted with a #{value}.']
-        ['betsy', '@hubot vote random']
-        ['hubot', 'betsy: Your vote totally counted with a #{value}.']
-        ['hubot', 'Vote #{result}, time\'s up! (60 seconds)']
-      ]
+      test_random = (messages, user) ->
+        request = room.messages.shift()
+        response = room.messages.shift()
+        expect(request).to.eql ['#{user}', '@hubot vote random']
+        bot = response.shift()
+        msg = response.shift()
+        expect(bot).to.eql 'hubot'
+        assert(msg.matches /'#{user}: Your vote totally counted with a [yes|no].'/)
+        
+      expect(room.messages.shift()).to.eql ['alice', '@hubot vote poop']
+      expect(room.messages.shift()).to.eql ['hubot', 'New Vote: Should I poop!?']
+      
+      test_random room.messages 'alice'
+      
+      expect(room.messages.shift()).to.eql ['tom', '@hubot vote random']
+      expect(room.messages.shift()).to.eql ['hubot', 'tom: Your vote totally counted with a #{value}.']
+      
+      expect(room.messages.shift()).to.eql ['sally', '@hubot vote random']
+      expect(room.messages.shift()).to.eql ['hubot', 'sally: Your vote totally counted with a #{value}.']
+      
+      expect(room.messages.shift()).to.eql ['eric', '@hubot vote random']
+      expect(room.messages.shift()).to.eql ['hubot', 'eric: Your vote totally counted with a #{value}.']
+      
+      expect(room.messages.shift()).to.eql ['betsy', '@hubot vote random']
+      expect(room.messages.shift()).to.eql ['hubot', 'betsy: Your vote totally counted with a #{value}.']
+      
+      expect(room.messages.shift()).to.eql ['hubot', 'Vote #{result}, time\'s up! (60 seconds)']
+      expect(room.messages.shift()).to.eql ["hubot", "http://i.imgur.com/ZTukQOl.gif"]
