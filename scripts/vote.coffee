@@ -17,7 +17,6 @@
 ## Dat model
 class Vote
   @current = null
-  length: 60 * 1000
 
   ## Internal API
   finish: () =>
@@ -71,7 +70,8 @@ class Vote
     return true
 
   ## Public Voting API
-  constructor: (@robot, @msg, @description, @vote_cb) ->
+  constructor: (@robot, @msg, @description, @time, @vote_cb) ->
+    @length = @time * 1000 * 60
     @finished = false
     @expired = false
     @votes =
@@ -113,12 +113,12 @@ module.exports = (robot) ->
   robot.respond /vote\??$/i, (msg) ->
     msg.send """Voting allows you to pretend you have the power of a god.
 Supported commands:
-  .vote?                  - This help noise
-  .voting?                - What is going on, RIGHT NOW.
-  .vote yes               - Vote yes in the current vote
-  .vote no                - Vote no in the current vote
-  .vote topic <new topic> - Propose a new topic
-  .vote on <new thing>    - Vote on a thing
+  .vote?                            - This help noise
+  .voting?                          - What is going on, RIGHT NOW.
+  .vote yes                         - Vote yes in the current vote
+  .vote no                          - Vote no in the current vote
+  .vote [timeout] topic <new topic> - Propose a new topic, with optional timeout (in minutes)
+  .vote [timeout] on <new thing>    - Vote on a thing, with optional timeout (in minutes)
 """
 
   robot.respond /voting\??$/i, (msg) ->
@@ -127,9 +127,10 @@ Supported commands:
     msg.reply if Vote.current then sure_am else nope
 
   # Election driver
-  robot.respond /(?:vote|freedom|oppressed) ([^\s]+)\s?(.*)?$/, (msg) ->
-    action = msg.match[1].trim().toLowerCase()
-    arg = msg.match[2]?.trim()
+  robot.respond /(?:vote|freedom|oppressed) (\d+ )?([^\s]+)\s?(.*)?$/, (msg) ->
+    timeout = msg.match[1].length > 0 ? parseInt(msg.match[1].trim()) : 1
+    action = msg.match[2].trim().toLowerCase()
+    arg = msg.match[3]?.trim()
 
     switch action
       # Vote on a current issue
@@ -149,7 +150,7 @@ Supported commands:
       # Super Important Issues to vote about
       when "topic"
         try
-          vote = new Vote robot, msg, "Topic: '#{arg}'", ->
+          vote = new Vote robot, msg, "Topic: '#{arg}'", timeout, ->
             msg.topic arg
           vote.start()
         catch error
@@ -157,7 +158,7 @@ Supported commands:
 
       when "on"
         try
-          vote = new Vote robot, msg, "Thing: '#{arg}'", ->
+          vote = new Vote robot, msg, "Thing: '#{arg}'", timeout, ->
             msg.send msg.random [
               "Skalnik approves #{arg}",
               "YES TO #{arg}!!!!!!",
@@ -170,7 +171,7 @@ Supported commands:
 
       when "poop"
         try
-          vote = new Vote robot, msg, "Should I poop!?", ->
+          vote = new Vote robot, msg, "Should I poop!?", 1, ->
             msg.send msg.random [
               "Poop is coming out",
               "I am pooping",
