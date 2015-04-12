@@ -31,8 +31,8 @@ describe 'user voting', ->
       sleep 60000 # 60 seconds
 
       test_random = (messages, user) ->
-        request = room.messages.shift()
-        response = room.messages.shift()
+        request = messages.shift()
+        response = messages.shift()
         expect(request).to.eql ['#{user}', '@hubot vote random']
         bot = response.shift()
         msg = response.shift()
