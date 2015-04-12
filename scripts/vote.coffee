@@ -146,7 +146,7 @@ Supported commands:
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
-     when "random"
+      when "random"
        return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
        voteResult = msg.random ["yes", "no"]
        result = if voteResult == "yes"

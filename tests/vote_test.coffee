@@ -13,4 +13,4 @@ describe 'user voting', ->
   context 'vote?', ->
     it 'should tell the user how to vote', ->
       room.user.say 'alice', '@hubot vote?'
-      expect(room.messages[0]).to.eql "Voting allows you to pretend you have the power of a god."
+      expect(room.messages[1][1].split("\n")[0]).to.eql "Voting allows you to pretend you have the power of a god."
