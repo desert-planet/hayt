@@ -22,13 +22,8 @@ describe 'user voting', ->
     afterEach ->
       this.clock.restore()
 
-    it 'should expire after only 10 seconds', ->
-      room.user.say 'alice', '@hubot vote 10 on Foo'
-      this.clock.tick(10000)
-      expect(room.messages[2][1]).to.contain "Vote failed, time's up!"
-
     it "shouldn't expire for 10 minutes", ->
-      room.user.say 'alice', '@hubot vote 600 on Foo'
+      room.user.say 'alice', '@hubot vote 10 on Foo'
       this.clock.tick(300000)
       expect(room.messages.length).to.eql 2
       this.clock.tick(300000)
