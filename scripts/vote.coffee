@@ -71,7 +71,7 @@ class Vote
 
   ## Public Voting API
   constructor: (@robot, @msg, @description, @time, @vote_cb) ->
-    @length = @time * 1000 * 60
+    @length = @time * 1000
     @finished = false
     @expired = false
     @votes =
@@ -118,8 +118,8 @@ Supported commands:
   .vote yes                         - Vote yes in the current vote
   .vote no                          - Vote no in the current vote
   .vote random                      - Vote one way or the other, who cares
-  .vote [timeout] topic <new topic> - Propose a new topic, with optional timeout (in minutes)
-  .vote [timeout] on <new thing>    - Vote on a thing, with optional timeout (in minutes)
+  .vote [timeout] topic <new topic> - Propose a new topic, with optional timeout (in seconds)
+  .vote [timeout] on <new thing>    - Vote on a thing, with optional timeout (in seconds)
 """
 
   robot.respond /voting\??$/i, (msg) ->
@@ -129,7 +129,10 @@ Supported commands:
 
   # Election driver
   robot.respond /(?:vote|freedom|oppressed) (\d+ )?([^\s]+)\s?(.*)?$/, (msg) ->
-    timeout = msg.match[1].length > 0 ? parseInt(msg.match[1].trim()) : 1
+    timeout = 60 # default timeout is 1 minute
+    if msg.match[1] and msg.match[1].length > 0
+      timeout = parseInt(msg.match[1].trim())
+
     action = msg.match[2].trim().toLowerCase()
     arg = msg.match[3]?.trim()
 
