@@ -107,9 +107,10 @@ rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
 
   # Rerolling logic
-  if meta_modifiers['reroll']? meta_modifiers['reroll']? < sides
-    reroll_max = meta_modifiers['reroll_max']? || -1
-    while result <= meta_modifiers['reroll'] && (reroll_max > 0 || reroll_max == -1)
+  if meta_modifiers['reroll']? and meta_modifiers['reroll'] < sides
+    reroll_max = meta_modifiers['reroll_max']
+    reroll_max ?= -1
+    while result <= meta_modifiers['reroll'] and (reroll_max > 0 or reroll_max == -1)
       result = 1 + Math.floor(Math.random() * sides)
       reroll_max -= 1 if reroll_max > 0
 
