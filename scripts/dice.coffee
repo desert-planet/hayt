@@ -31,22 +31,19 @@ module.exports = (robot) ->
   robot.respond /roll dice/i, (msg) ->
     msg.reply report 0, roll 2, 6
     
-  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?(\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*/i, (msg) ->
+  # Behold my regex, for it is terrible and mighty upon the Earth - annabunches
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?((?:\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*)/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     modifier = parseInt msg.match[3]
 
-    console.log msg.match
-
     # Extract the optional match modifiers
     meta_modifiers = {}
     if msg.match[4]?
-      for i in [4..msg.match.length-1] by 1
-        match_data = msg.match[i].trim().split(' ')
-        meta_modifiers[match_data[0]] = parseInt match_data[1]
+      match_data = msg.match[4].trim().split(' ')
+      for i in [0..match_data.length-1] by 2
+        meta_modifiers[match_data[i]] = parseInt match_data[i+1]
 
-    console.log(meta_modifiers)
-    
     answer = if sides < 2
       "You want to roll dice with less than two sides. Wow."
     else if dice > 100
@@ -110,11 +107,11 @@ rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
 
   # Rerolling logic
-  if sides > meta_modifiers['reroll']?
+  if meta_modifiers['reroll']? meta_modifiers['reroll']? < sides
     reroll_max = meta_modifiers['reroll_max']? || -1
-    while result <= meta_modifiers['reroll']? && (reroll_max > 0 || reroll_max == -1)
+    while result <= meta_modifiers['reroll'] && (reroll_max > 0 || reroll_max == -1)
       result = 1 + Math.floor(Math.random() * sides)
-      reroll_max -= 1
+      reroll_max -= 1 if reroll_max > 0
 
   return result
     
