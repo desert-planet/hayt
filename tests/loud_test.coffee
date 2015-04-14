@@ -21,7 +21,7 @@ describe 'being loud', ->
     it 'should echo the first loud into chat after a second loud', ->
       room.user.say 'alice', 'FOO'
       room.user.say 'bob',   'BAR'
-      expect(room.messages[3]).to.eql ['hubot', 'FOO']
+      expect(room.messages[2]).to.eql ['hubot', 'FOO']
 
   context 'loud deletion', ->
     it 'should only have 1 loud stored after deleting the second', ->
