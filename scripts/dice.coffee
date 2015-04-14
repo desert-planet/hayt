@@ -108,9 +108,11 @@ roll = (dice, sides, meta_modifiers) ->
 
 rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
+
+  # Rerolling logic
   if sides > meta_modifiers['reroll']?
     reroll_max = meta_modifiers['reroll_max']? || -1
-    while meta_modifiers['reroll']? >= result && (reroll_max > 0 || reroll_max == -1)
+    while result <= meta_modifiers['reroll']? && (reroll_max > 0 || reroll_max == -1)
       result = 1 + Math.floor(Math.random() * sides)
       reroll_max -= 1
 
