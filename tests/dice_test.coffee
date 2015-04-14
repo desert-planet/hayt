@@ -69,11 +69,11 @@ describe 'when user rolls', ->
   context 'and rerolls 1s twice, but is having terrible luck', ->
     beforeEach ->
       random_stub = stub(Math, "random")
-      random_stub.onCall().returns(0) # 1
+      random_stub.returns(0) # 1
       room.user.say 'alice', '@hubot roll 4d6 reroll 1 reroll_max 2'
 
     afterEach ->
       random_stub.restore()
 
     it 'should return 1s', ->
-      expect(room.messages[1][1]).to.eql "I rolled 1, 1, 1, and 1, making 4."
+      expect(room.messages[1][1]).to.contain "I rolled 1, 1, 1, and 1, making 4."
