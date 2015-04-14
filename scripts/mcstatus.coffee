@@ -6,16 +6,16 @@
 #   None
 #
 # Configuration:
-#   server_url and server_port, below
+#   MINECRAFT_HOST and MINECRAFT_PORT
 #
 # Commands:
-#   mcstatus - Report the status of the configured minecraft server.
+#   mcstatus [host] [port] - Report the status of a minecraft server.
 #
 # Author:
 #   annabunches
 
-default_url = 'mc.wtf.cat'
-default_port = '10070'
+default_url = process.env.MINECRAFT_HOST
+default_port = process.env.MINECRAFT_PORT
 
 get_mc_server_status = (msg, url, port) ->
   request_url = "http://api.syfaro.net/server/status?ip=#{url}&port=#{port}&players=true"
@@ -44,5 +44,7 @@ get_mc_server_status = (msg, url, port) ->
 
 
 module.exports = (robot) ->
-  robot.respond /mcstatus/i, (res) ->
-    get_mc_server_status(res, default_url, default_port)
+  robot.respond /mcstatus( +\S+)?( +\d+)?/i, (res) ->
+    host = res.match[1]?.trim() || process.env.MINECRAFT_HOST
+    port = res.match[2]?.trim() || process.env.MINECRAFT_PORT
+    get_mc_server_status(res, host, port)
