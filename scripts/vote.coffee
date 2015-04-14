@@ -136,14 +136,14 @@ Supported commands:
       # Vote on a current issue
       when "yes"
         return msg.reply "There's no vote going on." unless Vote.current?
-        result = Vote.current?.yes msg.message.user.name
+        result = Vote.current?.yes msg.message.user
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
 
       when "no"
         return msg.reply "There's nothing to disagree with." unless Vote.current?
-        result = Vote.current?.no msg.message.user.name
+        result = Vote.current?.no msg.message.user
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
@@ -152,9 +152,9 @@ Supported commands:
        return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
        voteResult = msg.random ["yes", "no"]
        result = if voteResult == "yes"
-                  Vote.current?.yes msg.message.user.name
+                  Vote.current?.yes msg.message.user
                 else
-                  Vote.current?.no msg.message.user.name
+                  Vote.current?.no msg.message.user
        reply = "Your vote " +
         (if result then "totally counted." else "was absolutely worthless!")
        msg.reply reply
