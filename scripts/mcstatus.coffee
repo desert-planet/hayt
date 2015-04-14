@@ -18,12 +18,11 @@ default_url = 'mc.wtf.cat'
 default_port = '10070'
 
 get_mc_server_status = (msg, url, port) ->
+  request_url = "http://api.syfaro.net/server/status?ip=#{url}&port=#{port}&players=true"
+
   msg.http(request_url)
   .header(Accept: 'application/json')
   .get() (err, res, body) ->
-
-    request_url = "http://api.syfaro.net/server/status?ip=#{url}&port=#{port}&players=true"
-    
     if err?
       msg.send "Error: #{err}"
       return
