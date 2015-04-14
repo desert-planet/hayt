@@ -31,10 +31,10 @@ describe 'when user rolls', ->
   context 'and drops lowest die', ->
     beforeEach ->
       random_stub = stub(Math, "random")
-      random_stub.onCall(0).returns(1.0) # 6
-      random_stub.onCall(1).returns(0.833) # 5
-      random_stub.onCall(2).returns(0.667) # 4
-      random_stub.onCall(3).returns(0.5) # 3
+      random_stub.onCall(0).returns(0.9) # 6
+      random_stub.onCall(1).returns(0.7) # 5
+      random_stub.onCall(2).returns(0.5) # 4
+      random_stub.onCall(3).returns(0.4) # 3
       room.user.say 'alice', '@hubot roll 4d6 drop_low 1'
 
     afterEach ->
@@ -50,11 +50,11 @@ describe 'when user rolls', ->
     beforeEach ->
       random_stub = stub(Math, "random")
       random_stub.onCall(0).returns(0) # 1
-      random_stub.onCall(1).returns(0.333) # 2
-      random_stub.onCall(2).returns(0.5) # 3
-      random_stub.onCall(3).returns(0.667) # 4
-      random_stub.onCall(4).returns(0.833) # 5
-      random_stub.onCall(5).returns(1.0) # 6
+      random_stub.onCall(1).returns(0.3) # 2
+      random_stub.onCall(2).returns(0.4) # 3
+      random_stub.onCall(3).returns(0.5) # 4
+      random_stub.onCall(4).returns(0.7) # 5
+      random_stub.onCall(5).returns(0.9) # 6
       room.user.say 'alice', '@hubot roll 4d6 reroll 2'
 
     afterEach ->
