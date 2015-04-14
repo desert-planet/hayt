@@ -10,7 +10,9 @@
 # Commands:
 #   hubot roll (die|one) - Roll one six-sided dice
 #   hubot roll dice - Roll two six-sided dice
-#   hubot roll <x>d<y> - roll x dice, each of which has y sides
+#   hubot roll <x>d<y> [reroll N] [reroll_max R] [drop_(low|high) M] - roll x dice, each of which has y sides. 
+#                                                                      Optionally, reroll dice that roll M or lower up to R times (default forever),
+#                                                                      and drop the lowest or highest M dice from the result.
 #   hubot roll <x>dF - roll x fudge dice, each of which has +, +, 0, 0, -, and - sides.
 #
 # Author:
@@ -29,16 +31,28 @@ module.exports = (robot) ->
   robot.respond /roll dice/i, (msg) ->
     msg.reply report 0, roll 2, 6
     
-  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?/i, (msg) ->
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?(\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     modifier = parseInt msg.match[3]
+
+    console.log msg.match
+
+    # Extract the optional match modifiers
+    meta_modifiers = {}
+    if msg.match[4]?
+      for i in [4..msg.match.length-1] by 1
+        match_data = msg.match[i].trim().split(' ')
+        meta_modifiers[match_data[0]] = parseInt match_data[1]
+
+    console.log(meta_modifiers)
+    
     answer = if sides < 2
       "You want to roll dice with less than two sides. Wow."
     else if dice > 100
       "I'm not going to roll more than 100 dice for you."
     else
-      report modifier, roll dice, sides
+      report modifier, meta_modifiers, roll(dice, sides, meta_modifiers)
     msg.reply answer
     
   robot.respond /roll (\d+)dF([\+-]\d+)?/i, (msg) ->
@@ -50,7 +64,7 @@ module.exports = (robot) ->
       report modifier, fudgeRoll dice
     msg.reply answer
 
-report = (modifier, results) ->
+report = (modifier, meta_modifiers, results) ->
   if results?
     switch results.length
       when 0
@@ -63,6 +77,11 @@ report = (modifier, results) ->
         else
           answer
       else
+        if meta_modifiers['drop_low']?
+          results.sort().splice(0, meta_modifiers['drop_low'])
+        if meta_modifiers['drop_high']?
+          results.sort().splice(-1, meta_modifiers['drop_high'])
+
         total = results.reduce (x, y) -> x + y
         answer = if results.length < 10
           finalComma = if (results.length > 2) then "," else ""
@@ -84,11 +103,19 @@ modified = (total, modifier) ->
   else
     ""
 
-roll = (dice, sides) ->
-  rollOne(sides) for i in [0...dice]
+roll = (dice, sides, meta_modifiers) ->
+  rollOne(sides, meta_modifiers) for i in [0...dice]
 
-rollOne = (sides) ->
-  1 + Math.floor(Math.random() * sides)
+rollOne = (sides, meta_modifiers) ->
+  result = 1 + Math.floor(Math.random() * sides)
+  if sides > meta_modifiers['reroll']?
+    reroll_max = meta_modifiers['reroll_max']? || -1
+    while meta_modifiers['reroll']? >= result && (reroll_max > 0 || reroll_max == -1)
+      result = 1 + Math.floor(Math.random() * sides)
+      reroll_max -= 1
+
+  return result
+    
 
 fudgeRoll = (dice) ->
   fudge() for i in [0...dice]
