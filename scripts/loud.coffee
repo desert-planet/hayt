@@ -37,7 +37,7 @@ module.exports = (robot) ->
       when 'delete'
         index = robot.brain.get('louds').indexOf(data)
         if index != -1
-          robot.brain.get('louds').delete(index)
+          robot.brain.get('louds').splice(index, 1)
           res.send "Loud deleted."
         else
           res.send "Couldn't find that loud."
