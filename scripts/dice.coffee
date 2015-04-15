@@ -34,15 +34,17 @@ module.exports = (robot) ->
     msg.reply report 0, roll 2, 6
     
   # Behold my regex, for it is terrible and mighty upon the Earth - annabunches
-  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?((?:\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*)/i, (msg) ->
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?(!)?((?:\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*)/i, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     modifier = parseInt msg.match[3]
 
     # Extract the optional match modifiers
     meta_modifiers = {}
-    if msg.match[4]?
-      match_data = msg.match[4].trim().split(' ')
+    meta_modifiers['explode'] = msg.match[4]?
+
+    if msg.match[5]?
+      match_data = msg.match[5].trim().split(' ')
       for i in [0..match_data.length-1] by 2
         meta_modifiers[match_data[i]] = parseInt match_data[i+1]
 
@@ -100,6 +102,9 @@ modified = (total, modifier) ->
 roll = (dice, sides, meta_modifiers) ->
   results = (rollOne(sides, meta_modifiers) for i in [0...dice])
 
+  if meta_modifiers['explode']
+    results = explode(results, sides, meta_modifiers)
+
   if meta_modifiers['drop_low']?
     results.sort().splice(0, meta_modifiers['drop_low'])
   if meta_modifiers['drop_high']?
@@ -120,7 +125,21 @@ rollOne = (sides, meta_modifiers) ->
       reroll_max -= 1 if reroll_max > 0
 
   return result
-    
+
+
+# Exploding dice. KABOOM.
+explode = (results, sides, meta_modifiers) ->
+  # Base case
+  if results.length == 0
+    return []
+
+  new_results = []
+  for result in results
+    if result == sides
+      new_results.push(rollOne(sides, meta_modifiers))
+
+  results.concat(explode(new_results, sides, meta_modifiers))
+
 
 fudgeRoll = (dice) ->
   fudge() for i in [0...dice]

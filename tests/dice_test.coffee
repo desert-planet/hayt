@@ -123,3 +123,25 @@ describe 'when user rolls', ->
 
     it 'should output as if no dice were rolled', ->
       expect(room.messages[1][1]).to.contain "I didn't roll any dice."
+
+  context 'exploding dice', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 10
+      random_stub.onCall(1).returns(0.99) # 10
+      random_stub.onCall(2).returns(0.5) # 6
+      random_stub.onCall(3).returns(0.4) # 5
+      random_stub.onCall(4).returns(0.99) # 10
+      random_stub.onCall(5).returns(0) # 1
+      random_stub.onCall(6).returns(0.99) # 10
+      random_stub.onCall(7).returns(0.5) # 6
+      random_stub.onCall(8).returns(0.4) # 5, shouldn't get rolled
+      room.user.say 'alice', '@hubot roll 4d10!'
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should explode properly', ->
+      console.log(room.messages)
+      expect(room.messages[1][1]).to.contain "I rolled 10, 10, 6, 5, 10, 1, 10, and 6"
+      expect(random_stub.callCount).to.eql 8
