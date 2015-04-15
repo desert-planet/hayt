@@ -51,7 +51,7 @@ module.exports = (robot) ->
     else if dice > 100
       "I'm not going to roll more than 100 dice for you."
     else
-      report modifier, meta_modifiers, roll(dice, sides, meta_modifiers)
+      report modifier, roll(dice, sides, meta_modifiers)
     msg.reply answer
     
   robot.respond /roll (\d+)dF([\+-]\d+)?/i, (msg) ->
@@ -63,7 +63,7 @@ module.exports = (robot) ->
       report modifier, fudgeRoll dice
     msg.reply answer
 
-report = (modifier, meta_modifiers, results) ->
+report = (modifier, results) ->
   if results?
     switch results.length
       when 0
@@ -76,11 +76,6 @@ report = (modifier, meta_modifiers, results) ->
         else
           answer
       else
-        if meta_modifiers['drop_low']?
-          results.sort().splice(0, meta_modifiers['drop_low'])
-        if meta_modifiers['drop_high']?
-          results.sort().splice(-1, meta_modifiers['drop_high'])
-
         total = results.reduce (x, y) -> x + y
         answer = if results.length < 10
           finalComma = if (results.length > 2) then "," else ""
@@ -103,7 +98,15 @@ modified = (total, modifier) ->
     ""
 
 roll = (dice, sides, meta_modifiers) ->
-  rollOne(sides, meta_modifiers) for i in [0...dice]
+  results = (rollOne(sides, meta_modifiers) for i in [0...dice])
+
+  if meta_modifiers['drop_low']?
+    results.sort().splice(0, meta_modifiers['drop_low'])
+  if meta_modifiers['drop_high']?
+    results.sort().splice(-1, meta_modifiers['drop_high'])
+
+  return results
+
 
 rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)

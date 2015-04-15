@@ -27,7 +27,7 @@ describe 'when user rolls', ->
         # Nothing returns for last command.
       ]
 
-  context 'and drops lowest die', ->
+  context 'and drops the lowest die', ->
     beforeEach ->
       random_stub = stub(Math, "random")
       random_stub.onCall(0).returns(0.9) # 6
