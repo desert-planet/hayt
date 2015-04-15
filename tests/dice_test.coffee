@@ -103,9 +103,23 @@ describe 'when user rolls', ->
       random_stub = stub(Math, 'random')
       random_stub.onCall(0).returns(0.99) # 20
       random_stub.onCall(1).returns(0) # 1
+      room.user.say 'alice', '@hubot roll 2d20 drop_low 1'
 
     afterEach ->
       random_stub.restore()
 
     it 'should output as if a single die were rolled', ->
       expect(room.messages[1][1]).to.contain 'I rolled a 20.'
+
+  context '2 dice and drops both of them', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 20
+      random_stub.onCall(1).returns(0) # 1
+      room.user.say 'alice', '@hubot roll 2d20 drop_low 2'
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should output as if no dice were rolled', ->
+      expect(room.messages[1][1]).to.contain "I didn't roll any dice."
