@@ -97,3 +97,15 @@ describe 'when user rolls', ->
     it "should just skip rerolling", ->
       expect(random_stub.callCount).to.eql 4
       expect(room.messages[1][1]).to.match /I rolled 1, 2, 3, and 4/
+
+  context '2 dice and drops the lowest', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 20
+      random_stub.onCall(1).returns(0) # 1
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should output as if a single die were rolled', ->
+      expect(room.messages[1][1]).to.contain 'I rolled a 20.'

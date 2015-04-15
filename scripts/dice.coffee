@@ -20,6 +20,8 @@
 #   https://github.com/github/hubot-scripts/blob/master/src/scripts/dice.coffee
 #   drobati
 #   Added fudge dice and modifiers.
+#   annabunches
+#   Added some advanced bullshit.
 #
 # Regex Tests:
 #   https://regex101.com/r/mC7vQ3/3
