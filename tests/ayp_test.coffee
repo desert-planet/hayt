@@ -1,7 +1,7 @@
 assert = require 'assert'
 
 Helper = require('hubot-test-helper')
-helper = new Helper('../scripts/dice.coffee')
+helper = new Helper('../scripts/ayp.coffee')
 
 
 describe 'AYP', ->
