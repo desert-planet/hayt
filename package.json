@@ -24,7 +24,7 @@
     "coffee-script":     "~1.8.x",
     "hubot":             ">= 2.6.0 < 3.0.0",
     "hubot-scripts":     ">= 2.5.0 < 3.0.0",
-    "hubot-irc":         "git+https://github.com/sshirokov/hubot-irc#emit-when-sending",
+    "hubot-irc":         "git+https://github.com/sshirokov/hubot-irc#arrakis",
     "underscore":        "1.5.x",
     "underscore.string": "2.3.0",
     "cheerio":           "0.12.x",
