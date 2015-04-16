@@ -68,11 +68,11 @@ filterName = (name) ->
   if /minus/i.test(name)
     # Another one fond of aliases
     name = 'minusx'
-    
+
   if /jense/i.test(name) or /prawn/i.test(name)
     # Has bouncer, bounces anyway
     name = 'prawn'
-    
+
   if /geckomuerto/i.test(name)
     # ;_;
     name = 'geckomuerto'
@@ -80,9 +80,9 @@ filterName = (name) ->
   if /laura/i.test(name)
     # Some kind of laura is one kind of laura
     name = 'laura'
-    
+
   if /arbo/i.test(name)
-    # Bouncers are hard or something, whatever. 
+    # Bouncers are hard or something, whatever.
     name = 'arbo'
 
   return name
@@ -91,7 +91,7 @@ filterName = (name) ->
 filterText = (text) ->
   # Urls are secret. Not for you. Not for anyone.
   text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
-  
+
   # Emails 'R' Secret
   text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/, "$1[redacted]")
 
@@ -108,6 +108,9 @@ filterText = (text) ->
 ## Robot event bindings
 module.exports = (robot) ->
   buffer = new PantsBuffer()
+
+  robot.adapter.on 'say', (target, target, str) ->
+    console.log "WOULD ADD: #{target.user.name}: #{str}"
 
   # We listen to everything.
   # Everything.
