@@ -109,8 +109,12 @@ util = require 'util'
 module.exports = (robot) ->
   buffer = new PantsBuffer()
 
-  robot.adapter.on 'say', (target, str) ->
-    console.log "WOULD ADD: #{robot.name}: #{str}"
+  # Store everything that the robot says in the PantsBuffer
+  # Note:
+  #   This is not a standard feature, and requires an adapter
+  #   that emits a `say` event when the robot speaks
+  robot.adapter.on 'say', (envelope, str) ->
+    buffer.store robot.name.trim(), str.trim()
 
   # We listen to everything.
   # Everything.
