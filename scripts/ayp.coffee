@@ -68,7 +68,14 @@ filterName = (name) ->
   if /minus/i.test(name)
     # Another one fond of aliases
     name = 'minusx'
-
+    
+  if /jense/i.test(name) or /prawn/i.test(name)
+    # Has bouncer, bounces anyway
+    name = 'prawn'
+    
+  if /geckomuerto/i.test(name)
+    # ;_;
+    name = 'geckomuerto'
 
   if /laura/i.test(name)
     # Some kind of laura is one kind of laura
