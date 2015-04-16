@@ -110,7 +110,7 @@ module.exports = (robot) ->
   buffer = new PantsBuffer()
 
   robot.adapter.on 'say', (target, str) ->
-    console.log "WOULD ADD: #{util.inspect target}: #{str}"
+    console.log "WOULD ADD: #{robot.name}: #{str}"
 
   # We listen to everything.
   # Everything.
