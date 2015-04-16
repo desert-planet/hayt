@@ -109,7 +109,7 @@ filterText = (text) ->
 module.exports = (robot) ->
   buffer = new PantsBuffer()
 
-  robot.adapter.on 'say', (target, target, str) ->
+  robot.adapter.on 'say', (target, str) ->
     console.log "WOULD ADD: #{target.user.name}: #{str}"
 
   # We listen to everything.
