@@ -104,13 +104,13 @@ filterText = (text) ->
 
   return text
 
-
+util = require 'util'
 ## Robot event bindings
 module.exports = (robot) ->
   buffer = new PantsBuffer()
 
   robot.adapter.on 'say', (target, str) ->
-    console.log "WOULD ADD: #{target.user.name}: #{str}"
+    console.log "WOULD ADD: #{util.inspect target}: #{str}"
 
   # We listen to everything.
   # Everything.
