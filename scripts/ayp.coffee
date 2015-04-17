@@ -118,7 +118,7 @@ module.exports = (robot) ->
 
   # We listen to everything.
   # Everything.
-  robot.catchAll (msg) ->
+  robot.hear /^(?!.*^\.)/i (msg) ->
     return if !msg.message.text
 
     buffer.store(
