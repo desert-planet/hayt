@@ -252,7 +252,7 @@ class AYPStrip
   # cb invoked as `cb(err, image)`. `err` is only set on failure
   buildPanel: (lines, cb) =>
     # Setup a transparant frame that we'll composite characters and text into.
-    frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_WIDTH)
+    frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_HEIGHT)
     frame.saveAlpha(1)
     clear = frame.colorAllocateAlpha(0, 0, 0, 127)
     frame.fill(0, 0, clear)
