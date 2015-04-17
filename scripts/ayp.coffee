@@ -167,7 +167,7 @@ module.exports = (robot) ->
                     "Despite my best efforts",
                     "Bleep, Bloop, Bop:",
                     "I have done the thing,",
-                    "Tada!"
+                    "Tada!",
                   ]
                   msg.reply "#{prefix} #{AYP_SITE}at/#{now}/ is now -> #{strip_url}"
 
