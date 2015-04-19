@@ -76,6 +76,10 @@ filterName = (name) ->
   if /geckomuerto/i.test(name)
     # ;_;
     name = 'geckomuerto'
+    
+  if /cody/i.test(name)
+    # I don't even understand this one
+    name = 'cody_'
 
   if /laura/i.test(name)
     # Some kind of laura is one kind of laura
