@@ -119,7 +119,7 @@ module.exports = (robot) ->
   # We listen to everything.
   # Almost...everything...
   # Don't listen to robot commands via the alias (.)
-  robot.hear /^[^\.].*/i (msg) ->
+  robot.hear /^[^\.].*/i, (msg) ->
     return if !msg.message.text
 
     buffer.store(
