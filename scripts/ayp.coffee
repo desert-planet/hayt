@@ -76,7 +76,7 @@ filterName = (name) ->
   if /geckomuerto/i.test(name)
     # ;_;
     name = 'geckomuerto'
-    
+
   if /cody/i.test(name)
     # I don't even understand this one
     name = 'cody_'
@@ -499,7 +499,7 @@ class PantsBuffer
     stamp = Date.now()
     body = "#{who}: #{what}"
     @storage.zadd [@key(), stamp, body], (err, response) =>
-       return console.error "WARNING: Failed to store: '#{who}: #{what}' @ #{stmp}: #{err}" if err
+       return console.error "WARNING: Failed to store: '#{who}: #{what}' @ #{stamp}: #{err}" if err
 
   # Trim the logging buffer to `@options.days` since we don't care about
   # being a general purpose logger.

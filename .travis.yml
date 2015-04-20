@@ -4,3 +4,5 @@ node_js:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libgd2-xpm-dev
+services:
+  - redis-server
