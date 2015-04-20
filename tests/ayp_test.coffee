@@ -8,7 +8,7 @@ describe 'AYP', ->
 
   beforeEach ->
     room = helper.createRoom()
-    room.user.say 'shithead', '@hubot ayp'
+    room.user.say 'shithead', '@hubot hello, this is dog'
 
   it 'compiled if it got this fucking far', ->
     assert room.messages.length > 0
