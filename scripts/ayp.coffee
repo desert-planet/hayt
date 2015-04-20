@@ -121,8 +121,9 @@ module.exports = (robot) ->
     buffer.store robot.name.trim(), str.trim()
 
   # We listen to everything.
-  # Everything.
-  robot.catchAll (msg) ->
+  # Almost...everything...
+  # Don't listen to robot commands via the alias (.)
+  robot.hear /^[^\.].*/i, (msg) ->
     return if !msg.message.text
 
     buffer.store(
