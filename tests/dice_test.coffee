@@ -34,7 +34,7 @@ describe 'when user rolls', ->
       random_stub.onCall(1).returns(0.7) # 5
       random_stub.onCall(2).returns(0.5) # 4
       random_stub.onCall(3).returns(0.4) # 3
-      room.user.say 'alice', '@hubot roll 4d6 drop_low 1'
+      room.user.say 'alice', '@hubot roll 4d6d1'
 
     afterEach ->
       random_stub.restore()
@@ -54,7 +54,7 @@ describe 'when user rolls', ->
       random_stub.onCall(3).returns(0.5) # 4
       random_stub.onCall(4).returns(0.7) # 5
       random_stub.onCall(5).returns(0.9) # 6
-      room.user.say 'alice', '@hubot roll 4d6 reroll 2'
+      room.user.say 'alice', '@hubot roll 4d6r<3'
 
     afterEach ->
       random_stub.restore()
@@ -65,11 +65,11 @@ describe 'when user rolls', ->
     it 'should total 18', ->
       expect(room.messages[1][1]).to.contain "making 18."
 
-  context 'and rerolls 1s twice, but is having terrible luck', ->
+  context 'and rerolls 1s once, but is having terrible luck', ->
     beforeEach ->
       random_stub = stub(Math, "random")
       random_stub.returns(0) # 1
-      room.user.say 'alice', '@hubot roll 4d6 reroll 1 reroll_max 2'
+      room.user.say 'alice', '@hubot roll 4d6ro<2'
 
     afterEach ->
       random_stub.restore()
@@ -77,8 +77,8 @@ describe 'when user rolls', ->
     it 'should return 1s', ->
       expect(room.messages[1][1]).to.contain "I rolled 1, 1, 1, and 1, making 4."
 
-    it 'should call Math.random 12 times', ->
-      expect(random_stub.callCount).to.eql 12
+    it 'should call Math.random 8 times', ->
+      expect(random_stub.callCount).to.eql 8
 
   context 'and rerolls all possible dice values', ->
     beforeEach ->
@@ -89,21 +89,21 @@ describe 'when user rolls', ->
       random_stub.onCall(3).returns(0.5) # 4
       random_stub.onCall(4).returns(0.7) # 5
       random_stub.onCall(5).returns(0.9) # 6
-      room.user.say 'alice', '@hubot roll 4d6 reroll 6'
+      room.user.say 'alice', '@hubot roll 4d6r<7'
 
     afterEach ->
       random_stub.restore()
 
     it "should just skip rerolling", ->
-      expect(random_stub.callCount).to.eql 4
       expect(room.messages[1][1]).to.match /I rolled 1, 2, 3, and 4/
+      expect(random_stub.callCount).to.eql 4
 
   context '2 dice and drops the lowest', ->
     beforeEach ->
       random_stub = stub(Math, 'random')
       random_stub.onCall(0).returns(0.99) # 20
       random_stub.onCall(1).returns(0) # 1
-      room.user.say 'alice', '@hubot roll 2d20 drop_low 1'
+      room.user.say 'alice', '@hubot roll 2d20d1'
 
     afterEach ->
       random_stub.restore()
@@ -116,7 +116,7 @@ describe 'when user rolls', ->
       random_stub = stub(Math, 'random')
       random_stub.onCall(0).returns(0.99) # 20
       random_stub.onCall(1).returns(0) # 1
-      room.user.say 'alice', '@hubot roll 2d20 drop_low 2'
+      room.user.say 'alice', '@hubot roll 2d20d2'
 
     afterEach ->
       random_stub.restore()
@@ -143,5 +143,5 @@ describe 'when user rolls', ->
 
     it 'should explode properly', ->
       console.log(room.messages)
-      expect(room.messages[1][1]).to.contain "I rolled 10, 10, 6, 5, 10, 1, 10, and 6"
+      expect(room.messages[1][1]).to.match /I rolled \d+, \d+, \d+, \d+, \d+, \d+, \d+, and \d+/
       expect(random_stub.callCount).to.eql 8

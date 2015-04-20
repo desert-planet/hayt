@@ -10,9 +10,10 @@
 # Commands:
 #   hubot roll (die|one) - Roll one six-sided dice
 #   hubot roll dice - Roll two six-sided dice
-#   hubot roll <x>d<y> [reroll N] [reroll_max R] [drop_(low|high) M] - roll x dice, each of which has y sides. 
-#                                                                      Optionally, reroll dice that roll M or lower up to R times (default forever),
-#                                                                      and drop the lowest or highest M dice from the result.
+#   hubot roll <x>d<y>(+|-)<z> - roll x dice, each of which has y sides. Alternately, add/subtract z from the total.
+#                                Also supports a subset of the modifiers on https://wiki.roll20.net/Dice_Reference
+#                                Current supported modifiers (see link for details):
+#                                Exploding Dice, Keep / Drop Dice, Rerolling Dice
 #   hubot roll <x>dF - roll x fudge dice, each of which has +, +, 0, 0, -, and - sides.
 #
 # Author:
@@ -33,20 +34,12 @@ module.exports = (robot) ->
   robot.respond /roll dice/i, (msg) ->
     msg.reply report 0, roll 2, 6
     
-  # Behold my regex, for it is terrible and mighty upon the Earth - annabunches
-  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?(!)?((?:\s+(?:reroll|reroll_max|drop_low|drop_high)\s+\d+)*)/i, (msg) ->
+  robot.respond /roll (\d+)d(\d+)([\+-]\d+)?(\S*)/, (msg) ->
     dice = parseInt msg.match[1]
     sides = parseInt msg.match[2]
     modifier = parseInt msg.match[3]
 
-    # Extract the optional match modifiers
-    meta_modifiers = {}
-    meta_modifiers['explode'] = msg.match[4]?
-
-    if msg.match[5]?
-      match_data = msg.match[5].trim().split(' ')
-      for i in [0..match_data.length-1] by 2
-        meta_modifiers[match_data[i]] = parseInt match_data[i+1]
+    meta_modifiers = parse_mods(msg.match[4])
 
     answer = if sides < 2
       "You want to roll dice with less than two sides. Wow."
@@ -102,13 +95,18 @@ modified = (total, modifier) ->
 roll = (dice, sides, meta_modifiers) ->
   results = (rollOne(sides, meta_modifiers) for i in [0...dice])
 
-  if meta_modifiers['explode']
+  if meta_modifiers['explode']?
     results = explode(results, sides, meta_modifiers)
 
+  results.sort()
   if meta_modifiers['drop_low']?
-    results.sort().splice(0, meta_modifiers['drop_low'])
+    results = results[meta_modifiers['drop_low']..]
   if meta_modifiers['drop_high']?
-    results.sort().splice(-1, meta_modifiers['drop_high'])
+    results = results[0..results.length - meta_modifiers['drop_high']]
+  if meta_modifiers['keep_low']?
+    results = results[0..meta_modifiers['keep_low']]
+  if meta_modifiers['keep_high']?
+    results = results[-1..meta_modifiers['keep_high']]
 
   return results
 
@@ -117,12 +115,13 @@ rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
 
   # Rerolling logic
-  if meta_modifiers['reroll']? and meta_modifiers['reroll'] < sides
-    reroll_max = meta_modifiers['reroll_max']
-    reroll_max ?= -1
-    while result <= meta_modifiers['reroll'] and (reroll_max > 0 or reroll_max == -1)
+  if meta_modifiers['reroll']?['lt']? and meta_modifiers['reroll']['lt'] > sides
+    return result # skip rerolling when we would roll forever
+
+  if meta_modifiers['reroll']?
+    while result < meta_modifiers['reroll']['lt'] or result > meta_modifiers['reroll']['gt']
       result = 1 + Math.floor(Math.random() * sides)
-      reroll_max -= 1 if reroll_max > 0
+      if meta_modifiers['reroll']['once'] then break
 
   return result
 
@@ -146,3 +145,64 @@ fudgeRoll = (dice) ->
 
 fudge = ->
   Math.floor(Math.random() * 3) - 1
+
+
+# Parse the modifier string and return a more useful object
+parse_mods = (data) ->
+  result = {}
+
+  if not data
+    return result
+  
+  while data.length > 0
+    switch data[0]
+      # Exploding
+      when '!'
+        result['explode'] = true
+        data = data[1..]
+
+      # Keep/Drop
+      when 'd'
+        match = data.match(/^d([lh])?(\d+)/)
+        switch match[1]
+          when 'h'
+            result['drop_high'] = parseInt match[2]
+          when 'l', undefined
+            result['drop_low'] = parseInt match[2]
+        data = data[match[0].length..]
+      when 'k'
+        match = data.match(/^k([lh])?(\d+)/)
+        switch match[1]
+          when 'l'
+            result['keep_low'] = parseInt match[2]
+          when 'h', undefined
+            result['keep_high'] = parseInt match[2]
+        data = data[match[0].length..]
+
+      # Rerolling
+      when 'r'
+        match = data.match(/^r(o)?(<|>)(\d+)/)
+        reroll_once = false
+        reroll_lt = undefined
+        reroll_gt = undefined
+        if match[1] == 'o' then reroll_once = true
+        if match[2] == '<' then reroll_lt = parseInt match[3]
+        if match[2] == '>' then reroll_gt = parseInt match[3]
+        # ignore impossible reroll logic that we can detect easily here
+        if reroll_gt? and ((reroll_gt <= 0) or (reroll_lt? and reroll_lt > reroll_gt))
+          result['reroll'] = null
+        else
+          result['reroll'] = {
+            'once': reroll_once,
+            'lt': reroll_lt,
+            'gt': reroll_gt
+          }
+        data = data[match[0].length..]
+
+      # This suggests we have unparseable data in our mod string.
+      # Bail out with nothing.
+      # TODO(annabunches): warn the user that their data sucks
+      else
+        break
+
+  return result
