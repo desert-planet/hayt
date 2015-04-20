@@ -142,6 +142,52 @@ describe 'when user rolls', ->
       random_stub.restore()
 
     it 'should explode properly', ->
-      console.log(room.messages)
       expect(room.messages[1][1]).to.match /I rolled \d+, \d+, \d+, \d+, \d+, \d+, \d+, and \d+/
       expect(random_stub.callCount).to.eql 8
+
+  context 'and keeps only the highest 2 dice rolled', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 10
+      random_stub.onCall(1).returns(0.5) # 6
+      random_stub.onCall(2).returns(0.4) # 5
+      random_stub.onCall(3).returns(0.4) # 5
+      random_stub.onCall(4).returns(0) # 1
+      room.user.say 'alice', '@hubot roll 5d10k2'
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should have 2 results, totalling 16', ->
+      expect(room.messages[1][1]).to.match /I rolled \d+ and \d+/
+      expect(room.messages[1][1]).to.match /making 16/
+
+  context 'and keeps only the lowest 2 dice rolled', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 10
+      random_stub.onCall(1).returns(0.5) # 6
+      random_stub.onCall(2).returns(0.4) # 5
+      random_stub.onCall(3).returns(0.4) # 5
+      random_stub.onCall(4).returns(0) # 1
+      room.user.say 'alice', '@hubot roll 5d10kl2'
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should have 2 results, totalling 6', ->
+      expect(room.messages[1][1]).to.match /I rolled \d+ and \d+/
+      expect(room.messages[1][1]).to.match /making 6/
+
+  context 'and keeps only the lowest die', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 20
+      random_stub.onCall(1).returns(0) # 1
+      room.user.say 'alice', '@hubot roll 2d20dh1'
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should have a single, low result', ->
+      expect(room.messages[1][1]).to.match /I rolled a 1/

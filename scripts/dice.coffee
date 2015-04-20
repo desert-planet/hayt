@@ -98,15 +98,15 @@ roll = (dice, sides, meta_modifiers) ->
   if meta_modifiers['explode']?
     results = explode(results, sides, meta_modifiers)
 
-  results.sort()
+  results.sort((a, b) -> return a - b)
   if meta_modifiers['drop_low']?
     results = results[meta_modifiers['drop_low']..]
   if meta_modifiers['drop_high']?
-    results = results[0..results.length - meta_modifiers['drop_high']]
+    results = results[...-1 * meta_modifiers['drop_high']]
   if meta_modifiers['keep_low']?
-    results = results[0..meta_modifiers['keep_low']]
+    results = results[...meta_modifiers['keep_low']]
   if meta_modifiers['keep_high']?
-    results = results[-1..meta_modifiers['keep_high']]
+    results = results[-1 * meta_modifiers['keep_high']..]
 
   return results
 
