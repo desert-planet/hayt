@@ -3,9 +3,6 @@ assert = require 'assert'
 Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/ayp.coffee')
 
-util = require 'util'
-
-
 describe 'AYP', ->
   room = null
 
