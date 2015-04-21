@@ -13,7 +13,9 @@
 #   hubot roll <x>d<y>(+|-)<z> - roll x dice, each of which has y sides. Alternately, add/subtract z from the total.
 #                                Also supports a subset of the modifiers on https://wiki.roll20.net/Dice_Reference
 #                                Current supported modifiers (see link for details):
-#                                Exploding Dice, Keep / Drop Dice, Rerolling Dice
+#                                Exploding Dice
+#                                Keep / Drop Dice
+#                                Rerolling Dice (only supports < and >)
 #   hubot roll <x>dF - roll x fudge dice, each of which has +, +, 0, 0, -, and - sides.
 #
 # Author:
@@ -115,11 +117,11 @@ rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
 
   # Rerolling logic
-  if meta_modifiers['reroll']?['lt']? and meta_modifiers['reroll']['lt'] > sides
+  if meta_modifiers['reroll']?['lt']? and meta_modifiers['reroll']['lt'] >= sides
     return result # skip rerolling when we would roll forever
 
   if meta_modifiers['reroll']?
-    while result < meta_modifiers['reroll']['lt'] or result > meta_modifiers['reroll']['gt']
+    while result <= meta_modifiers['reroll']['lt'] or result >= meta_modifiers['reroll']['gt']
       result = 1 + Math.floor(Math.random() * sides)
       if meta_modifiers['reroll']['once'] then break
 
@@ -189,7 +191,7 @@ parse_mods = (data) ->
         if match[2] == '<' then reroll_lt = parseInt match[3]
         if match[2] == '>' then reroll_gt = parseInt match[3]
         # ignore impossible reroll logic that we can detect easily here
-        if reroll_gt? and ((reroll_gt <= 0) or (reroll_lt? and reroll_lt > reroll_gt))
+        if reroll_gt? and ((reroll_gt <= 1) or (reroll_lt? and reroll_lt >= reroll_gt))
           result['reroll'] = null
         else
           result['reroll'] = {

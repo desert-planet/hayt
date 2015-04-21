@@ -54,7 +54,7 @@ describe 'when user rolls', ->
       random_stub.onCall(3).returns(0.5) # 4
       random_stub.onCall(4).returns(0.7) # 5
       random_stub.onCall(5).returns(0.9) # 6
-      room.user.say 'alice', '@hubot roll 4d6r<3'
+      room.user.say 'alice', '@hubot roll 4d6r<2'
 
     afterEach ->
       random_stub.restore()
@@ -69,7 +69,7 @@ describe 'when user rolls', ->
     beforeEach ->
       random_stub = stub(Math, "random")
       random_stub.returns(0) # 1
-      room.user.say 'alice', '@hubot roll 4d6ro<2'
+      room.user.say 'alice', '@hubot roll 4d6ro<1'
 
     afterEach ->
       random_stub.restore()
@@ -89,7 +89,7 @@ describe 'when user rolls', ->
       random_stub.onCall(3).returns(0.5) # 4
       random_stub.onCall(4).returns(0.7) # 5
       random_stub.onCall(5).returns(0.9) # 6
-      room.user.say 'alice', '@hubot roll 4d6r<7'
+      room.user.say 'alice', '@hubot roll 4d6r<6'
 
     afterEach ->
       random_stub.restore()
