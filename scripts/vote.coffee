@@ -50,7 +50,7 @@ class Vote
     # We're not done unless we get three votes
     return if (@votes.yes.length + @votes.no.length) < 3
     # We're not done if there's no difference between the votes
-    return if (Math.abs(@votes.yes.length - @votes.no.length) < 0)
+    return if (Math.abs(@votes.yes.length - @votes.no.length) <= 0)
     # Is this still being contested?
     return if (Date.now() - @votes.prev) < 10000
     @finish()
