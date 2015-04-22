@@ -129,7 +129,7 @@ rollOne = (sides, meta_modifiers) ->
   if meta_modifiers['reroll_func'](0, false) and meta_modifiers['reroll_func'](sides, false)
     return result # skip rerolling when we would roll forever
 
-  while meta_modifiers['reroll_func'] result
+  while meta_modifiers['reroll_func'](result)
     result = 1 + Math.floor(Math.random() * sides)
     if meta_modifiers['reroll_once'] then break
 
