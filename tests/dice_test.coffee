@@ -208,3 +208,36 @@ describe 'when user rolls', ->
 
     it 'should have a single, low result', ->
       expect(room.messages[1][1]).to.match /I rolled a 1/
+
+  context 'and specifies a success threshold', ->
+    beforeEach ->
+      random_stub = stub(Math, 'random')
+      random_stub.onCall(0).returns(0.99) # 10
+      random_stub.onCall(1).returns(0.6) # 7
+      random_stub.onCall(2).returns(0.4) # 5
+      random_stub.onCall(3).returns(0.4) # 5
+      random_stub.onCall(4).returns(0) # 1
+      random_stub.onCall(5).returns(0) # 1
+
+    afterEach ->
+      random_stub.restore()
+
+    it 'should have 2 successes at >= 7', ->
+      room.user.say 'alice', '@hubot roll 6d10>7'
+      expect(room.messages[1][1]).to.match /2 successes./
+
+    it 'should have 4 successes at <= 5', ->
+      room.user.say 'alice', '@hubot roll 6d10<5'
+      expect(room.messages[1][1]).to.match /4 successes./
+
+    it 'should have 1 success at >= 9', ->
+      room.user.say 'alice', '@hubot roll 6d10>9'
+      expect(room.messages[1][1]).to.match /1 success./
+
+    it 'should have 1 success with 1d10>9', ->
+      room.user.say 'alice', '@hubot roll 1d10>9'
+      expect(room.messages[1][1]).to.match /I rolled a success./
+
+    it 'should have a failure with 1d10<9', ->
+      room.user.say 'alice', '@hubot roll 1d10<9'
+      expect(room.messages[1][1]).to.match /I rolled a failure./

@@ -16,6 +16,7 @@
 #                                Exploding Dice
 #                                Keep / Drop Dice
 #                                Rerolling Dice (only supports < and >)
+#                                Target Number / Successes
 #   hubot roll <x>dF - roll x fudge dice, each of which has +, +, 0, 0, -, and - sides.
 #
 # Author:
@@ -48,7 +49,7 @@ module.exports = (robot) ->
     else if dice > 100
       "I'm not going to roll more than 100 dice for you."
     else
-      report modifier, roll(dice, sides, meta_modifiers)
+      report modifier, roll(dice, sides, meta_modifiers), meta_modifiers['success_func']
     msg.reply answer
     
   robot.respond /roll (\d+)dF([\+-]\d+)?/i, (msg) ->
@@ -60,20 +61,28 @@ module.exports = (robot) ->
       report modifier, fudgeRoll dice
     msg.reply answer
 
-report = (modifier, results) ->
+report = (modifier, results, success_func) ->
   if results?
     switch results.length
       when 0
         "I didn't roll any dice."
       when 1
-        total = results[0]
+        if success_func?
+          total = if success_func(results[0]) then 'success' else 'failure'
+        else
+          total = results[0]
         answer = "I rolled a #{total}."
         if not isNaN(modifier)
           answer += modified total, modifier
         else
           answer
       else
-        total = results.reduce (x, y) -> x + y
+        if success_func?
+          num_total = results.reduce ((x, y) -> if success_func(y) then x + 1 else x), 0
+          total = "#{num_total} success#{'es' if num_total != 1}"
+        else
+          total = results.reduce (x, y) -> x + y
+
         answer = if results.length < 10
           finalComma = if (results.length > 2) then "," else ""
           last = results.pop()
@@ -152,6 +161,7 @@ fudge = ->
 parse_mods = (data) ->
   result = {
     'reroll_func': (x) -> false
+    'success_func': undefined
   }
 
   if not data
@@ -198,10 +208,25 @@ parse_mods = (data) ->
 
         data = data[match[0].length..]
 
+      # Success / Failure
+      when '>', '<'
+        match = data.match(/^(<|>)(\d+)?/)
+        success = parseInt match[2]
+
+        if match[1] == '>'
+          result['success_func'] = (x) ->
+            return x >= success
+        if match[1] == '<'
+          result['success_func'] = (x) ->
+            return x <= success
+
+        data = data[match[0].length..]
+
       # This suggests we have unparseable data in our mod string.
       # Bail out with nothing.
       # TODO(annabunches): warn the user that their data sucks
       else
-        break
+        # Consume the bad data for now, otherwise we spin forever
+        data = data[1..]
 
   return result
