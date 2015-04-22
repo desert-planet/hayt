@@ -126,13 +126,12 @@ rollOne = (sides, meta_modifiers) ->
   result = 1 + Math.floor(Math.random() * sides)
 
   # Rerolling logic
-  if meta_modifiers['reroll']?['lt']? and meta_modifiers['reroll']['lt'] >= sides
+  if meta_modifiers['reroll_func'](0, false) and meta_modifiers['reroll_func'](sides, false)
     return result # skip rerolling when we would roll forever
 
-  if meta_modifiers['reroll']?
-    while result <= meta_modifiers['reroll']['lt'] or result >= meta_modifiers['reroll']['gt']
-      result = 1 + Math.floor(Math.random() * sides)
-      if meta_modifiers['reroll']['once'] then break
+  while meta_modifiers['reroll_func'](result)
+    result = 1 + Math.floor(Math.random() * sides)
+    if meta_modifiers['reroll_once'] then break
 
   return result
 
@@ -161,6 +160,7 @@ fudge = ->
 # Parse the modifier string and return a more useful object
 parse_mods = (data) ->
   result = {
+    'reroll_func': (x) -> false
     'success_func': undefined
   }
 
@@ -196,20 +196,16 @@ parse_mods = (data) ->
       when 'r'
         match = data.match(/^r(o)?(<|>)(\d+)/)
         reroll_once = false
-        reroll_lt = undefined
-        reroll_gt = undefined
+        reroll_value = parseInt match[3]
         if match[1] == 'o' then reroll_once = true
-        if match[2] == '<' then reroll_lt = parseInt match[3]
-        if match[2] == '>' then reroll_gt = parseInt match[3]
-        # ignore impossible reroll logic that we can detect easily here
-        if reroll_gt? and ((reroll_gt <= 1) or (reroll_lt? and reroll_lt >= reroll_gt))
-          result['reroll'] = null
-        else
-          result['reroll'] = {
-            'once': reroll_once,
-            'lt': reroll_lt,
-            'gt': reroll_gt
-          }
+        if match[2] == '<'
+          reroll_func = (x) -> x <= reroll_value
+        if match[2] == '>'
+          reroll_func = (x) -> x >= reroll_value
+        if reroll_func?
+          result['reroll_func'] = reroll_func
+          result['reroll_once'] = reroll_once
+
         data = data[match[0].length..]
 
       # Success / Failure
