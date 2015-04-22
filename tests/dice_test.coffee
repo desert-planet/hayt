@@ -98,6 +98,23 @@ describe 'when user rolls', ->
       expect(room.messages[1][1]).to.match /I rolled 1, 2, 3, and 4/
       expect(random_stub.callCount).to.eql 4
 
+  context 'and rerolls anything over 4', ->
+    beforeEach ->
+      random_stub = stub(Math, "random")
+      random_stub.onCall(0).returns(0.7) # 5
+      random_stub.onCall(1).returns(0.9) # 6
+      random_stub.onCall(2).returns(0)   # 1
+      random_stub.onCall(3).returns(0.3) # 2
+      random_stub.onCall(4).returns(0.4) # 3
+      random_stub.onCall(5).returns(0.5) # 4
+      room.user.say 'alice', '@hubot roll 4d6r>5'
+
+    afterEach ->
+      random_stub.restore()
+
+    it "should only have low rolls", ->
+      expect(room.messages[1][1]).to.match /I rolled [1-4], [1-4], [1-4], and [1-4]/
+
   context '2 dice and drops the lowest', ->
     beforeEach ->
       random_stub = stub(Math, 'random')
