@@ -205,6 +205,7 @@ parse_mods = (data) ->
       # Bail out with nothing.
       # TODO(annabunches): warn the user that their data sucks
       else
-        break
+        # Consume the bad data for now, otherwise we spin forever
+        data = data[1..]
 
   return result
