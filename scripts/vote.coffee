@@ -49,8 +49,8 @@ class Vote
     return if @finished or @expired
     # We're not done unless we get three votes
     return if (@votes.yes.length + @votes.no.length) < 3
-    # We're not done if it's only a two vote difference
-    return if (Math.abs(@votes.yes.length - @votes.no.length) < 2)
+    # We're not done if there's no difference between the votes
+    return if (Math.abs(@votes.yes.length - @votes.no.length) < 1)
     # Is this still being contested?
     return if (Date.now() - @votes.prev) < 10000
     @finish()
