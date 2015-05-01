@@ -37,7 +37,7 @@ class Vote
       do @vote_cb
       return true
     else
-      msg.send "Vote failed #{@votes.yes.length} to #{votes.no.length}"
+      @msg.send "Vote failed #{@votes.yes.length} to #{@votes.no.length}"
       return false
 
 
