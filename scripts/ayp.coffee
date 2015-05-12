@@ -447,7 +447,7 @@ class AYPStrip
     perform = =>
       HTTP.create(AYP_ENDPOINT).
         header('Content-Type', 'application/json').
-        post(JSON.stringify(url: @info.image_url, time: @info.when, secret: AYP_SECRET)) (err, res, body) ->
+        post(JSON.stringify(url: @info.image_url, time: @info.when, secret: AYP_SECRET)) (err, res, body) =>
           return cb(err) if err
           return cb(new Error("Bad response: #{res?.statusCode}")) unless res?.statusCode in [200...400]
 
