@@ -180,6 +180,7 @@ class AYPStrip
   # Constructor just stores the script and callback
   # and passes flow to the builder.
   constructor: (@script, @ready) ->
+    # TODO(sshirokov): Update `@script` to use `@info.script` errywhere
     @info =
       when: Date.now()  # The creation stamp in ms since epoch
       script: @script   # The script for this comic
