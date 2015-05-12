@@ -224,7 +224,7 @@ class AYPStrip
               @compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
               left += panel.width # Panel width
               left += Math.round(totalPadding / 2)
-          @ready(false, (@info.image = bg))
+          @ready(false, (@info.image = bg), this)
 
   # Turn the `@script` into 3 panels
   # using two lines per panel, then invokes `cb`.
