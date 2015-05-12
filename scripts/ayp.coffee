@@ -141,17 +141,9 @@ module.exports = (robot) ->
         # Save locally, upload, cleanup
         now = strip.info.when
         name = "ayp-#{now}.jpg"
-        strip.buildJPEG (err, data) ->
-            return msg.reply "What the hell is a JAY PEG?! #{err}" if err
-            return msg.reply "You hve no S3 creds bub" unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
-
-            info =
-              headers:
-                'Content-Type': 'image/jpeg'
-              body: data
-            s3.put name, info, (err) ->
-              return msg.reply "Woooops! Failed to upload: #{err}" if err
-              strip_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
+        strip.upload (err, url) ->
+              return msg.reply "What the hell is a JAY PEG?! #{err}" if err
+              strip_url = url
 
               # Now let's tell `ayp.wtf.cat` about our great work here
               return msg.reply "I'd update the site, but I don't know the secret :( Though, the image is #{strip_url}" unless AYP_SECRET
@@ -460,6 +452,8 @@ class AYPStrip
   #
   # cb invoked as `cb(error, url)`
   upload: (cb=(->)) =>
+    return cb(new Error("You hve no S3 creds bub")) unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
+
     perform = =>
       name = "ayp-#{@info.when}.jpg"
       info =
