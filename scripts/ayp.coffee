@@ -141,14 +141,8 @@ module.exports = (robot) ->
         # Save locally, upload, cleanup
         now = strip.info.when
         name = "ayp-#{now}.jpg"
-        outPath = path.resolve("/tmp", name)
-        image.saveJpeg outPath, 95, (err) ->
-          return console.error "Failed to write result:", err if err
-
-          fs.readFile outPath, (err, data) ->
-            # We can unlink unconditionally now that we have it or failed
-            fs.unlink(outPath, ->)
-            return msg.reply "I somehow lost the file I just put down at #{outpath}. Like a moron :(" if err
+        strip.buildJPEG (err, data) ->
+            return msg.reply "What the hell is a JAY PEG?! #{err}" if err
             return msg.reply "You hve no S3 creds bub" unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
 
             info =
@@ -187,11 +181,12 @@ class AYPStrip
   # and passes flow to the builder.
   constructor: (@script, @ready) ->
     @info =
-      when: Date.now()
-      script: @script
-      image: null
-      image_url: null
-      url: null
+      when: Date.now()  # The creation stamp in ms since epoch
+      script: @script   # The script for this comic
+      image: null       # The GD object
+      image_jpeg: null  # The data as JPEG
+      image_url: null   # The URL in S3
+      url: null         # The URL on the site
 
     do @buildComic
 
@@ -447,7 +442,7 @@ class AYPStrip
     else
       msg
 
-    # Composite `sprite` onto `dst` in full.
+  # Composite `sprite` onto `dst` in full.
   # Offsets `sprite` `+left` from the left
   # and `+top` from the top
   compositeImage: (dst, sprite, left, top) ->
@@ -459,6 +454,28 @@ class AYPStrip
       0, 0,      # src x, y
       dim..., dim... # No size change
     return dst
+
+  # Build a JPEG version of the image and invoke the callback
+  # with the data. The resulting data is also stored in
+  # @info.image_jpeg
+  #
+  # Requires `@info.image` to exist
+  #
+  # cb invoked as `cb(error, data)`
+  buildJPEG: (cb=(->)) =>
+    return cb(new Error("@info.image does not exist")) unless @info.image
+
+    # Save locally, cleanup
+    name = "ayp-#{@info.when}.jpg"
+    outPath = path.resolve("/tmp", name)
+    @info.image.saveJpeg outPath, 95, (err) ->
+      return cb(new Error("Failed to write result: #{err}")) if err
+      fs.readFile outPath, (err, data) ->
+        return cb(new Error("Failed to read file I just wrote to #{outPath}: #{err}")) if err
+        # We can unlink unconditionally now that we have it or failed
+        fs.unlink(outPath, ->)
+        cb(false, data)
+
 
 # PantsBuffer is the abstraction of "The Logs".
 #
