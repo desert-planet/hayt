@@ -8,6 +8,7 @@ Redis = require 'redis'
 GD = require 'node-gd'
 S3 = require 'node-s3'
 HTTP = require 'scoped-http-client'
+Twitter = require '../lib/twitter'
 
 ## Knobs and buttons
 
@@ -143,6 +144,7 @@ module.exports = (robot) ->
         strip.post (err, url) ->
           return msg.reply "What the hell is a JAY PEG?! #{err}" if err
 
+          # Tell our good friends that we made them something
           prefix = msg.random [
             "GOOD NEWS EVERYONE:",
             "This is awkward...",
@@ -153,6 +155,21 @@ module.exports = (robot) ->
             "Tada!",
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
+
+          # Tweet a link to the comic, with some sort of text to go with it.
+          prefix = msg.random [
+            "The one that doesn't make sense",
+            "In which nothing happens",
+            "Laughter, sorrow, nonsense.",
+            "#arrakis",
+            "#dickbutt",
+          ]
+          Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
+            sorry = msg.random ["sorry", "it's your fault"]
+            return msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
+            msg.send url
+
+
 
 # This wraps up everything that builds the image strips of the comic
 #
