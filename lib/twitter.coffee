@@ -15,9 +15,20 @@ module.exports =
   # as a tweet, and calls you back with it, as well
   # as a pre-built URL.
   #
+  # body - String to tweet
+  # opts - (optional) Any other parameters to add to the outgooing update
+  # cb   - Finish callback invoked in the form cb(err, tweet, url)
+  #
   # Callback invoked as `cb(err, tweet, url)`
-  tweet: (body, cb=(->)) =>
-    params = status: body
+  tweet: (body, opts, cb) =>
+    # "Optional" for you "Annoying" for me
+    if typeof(opts) is typeof(->)
+      cb = opts
+      opts = {}
+
+    (param[key] = opts[key] for own key of opts)
+    params.status = body
+
     client.post 'statuses/update', params, (error, tweet, response) ->
       return cb(error) if error
 
