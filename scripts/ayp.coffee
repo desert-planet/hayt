@@ -456,6 +456,25 @@ class AYPStrip
       dim..., dim... # No size change
     return dst
 
+  # Upload a strip S3 and updates @info.image_url
+  #
+  # cb invoked as `cb(error, url)`
+  upload: (cb=(->)) =>
+    perform = =>
+      name = "ayp-#{@info.when}.jpg"
+      info =
+        headers: {'Content-Type': 'image/jpeg'}
+        body: @info.image_jpeg
+      s3.put name, info, (err) ->
+              return cb(new Error("Woooops! Failed to upload: #{err}")) if err
+              return cb(false, @info.image_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}")
+
+    # Either upload existing JPEG data, or compile some and upload that
+    return perform() if @info.image_jpeg
+    @buildJPEG (err) ->
+      return cb(err) if err
+      do perform
+
   # Build a JPEG version of the image and invoke the callback
   # with the data. The resulting data is also stored in
   # @info.image_jpeg
