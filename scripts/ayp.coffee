@@ -140,27 +140,19 @@ module.exports = (robot) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
-        now = strip.info.when
-        strip.upload (err, url) ->
+        strip.post (err, url) ->
           return msg.reply "What the hell is a JAY PEG?! #{err}" if err
-          strip_url = url
 
-          # Now let's tell `ayp.wtf.cat` about our great work here
-          return msg.reply "I'd update the site, but I don't know the secret :( Though, the image is #{strip_url}" unless AYP_SECRET
-          robot.http(AYP_ENDPOINT).
-            header('Content-Type', 'application/json').
-            post JSON.stringify(url: strip_url, time: now, secret: AYP_SECRET), (err, res, body) ->
-              return msg.reply "Bad news. I was fed shit when I tried to update the site: #{err}" if err
-              prefix = msg.random [
-                "GOOD NEWS EVERYONE:",
-                "This is awkward...",
-                "Turns out,",
-                "Despite my best efforts",
-                "Bleep, Bloop, Bop:",
-                "I have done the thing,",
-                "Tada!",
-              ]
-              msg.reply "#{prefix} #{AYP_SITE}at/#{now}/ is now -> #{strip_url}"
+          prefix = msg.random [
+            "GOOD NEWS EVERYONE:",
+            "This is awkward...",
+            "Turns out,",
+            "Despite my best efforts",
+            "Bleep, Bloop, Bop:",
+            "I have done the thing,",
+            "Tada!",
+          ]
+          msg.reply "#{prefix} #{url} is now -> #{@info.image_url}"
 
 # This wraps up everything that builds the image strips of the comic
 #
