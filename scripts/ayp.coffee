@@ -482,9 +482,9 @@ class AYPStrip
     # Save locally, cleanup
     name = "ayp-#{@info.when}.jpg"
     outPath = path.resolve("/tmp", name)
-    @info.image.saveJpeg outPath, 95, (err) ->
+    @info.image.saveJpeg outPath, 95, (err) =>
       return cb(new Error("Failed to write result: #{err}")) if err
-      fs.readFile outPath, (err, data) ->
+      fs.readFile outPath, (err, data) =>
         return cb(new Error("Failed to read file I just wrote to #{outPath}: #{err}")) if err
         # We can unlink unconditionally now that we have it or failed
         fs.unlink(outPath, ->)
