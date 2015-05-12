@@ -195,7 +195,7 @@ class AYPStrip
   # is encountered.
   buildComic: =>
     @buildPanels (err, panels) =>
-      return @ready(err, null) if err
+      return @ready(err, null, this) if err
       loaders =
         png: GD.openPng
         jpg: GD.openJpeg
@@ -203,7 +203,7 @@ class AYPStrip
 
 
       fs.readdir BG_BASE, (err, files) =>
-        return @ready(err, null) if err
+        return @ready(err, null, this) if err
 
         # No hidden files
         files = files.filter (f) -> f[0] != '.'
@@ -215,7 +215,7 @@ class AYPStrip
         loader = loaders[ext]
 
         loader path.resolve(BG_BASE, selected), (err, bg) =>
-          return @ready(err, bg) if err
+          return @ready(err, bg, this) if err
           totalPadding = (AYP_PANEL_PADDING * 2)
           left = 0
           top = Math.round(totalPadding / 2)
