@@ -7,6 +7,8 @@ Url = require 'url'
 Redis = require 'redis'
 GD = require 'node-gd'
 S3 = require 'node-s3'
+HTTP = require 'scoped-http-client'
+Twitter = require '../lib/twitter'
 
 ## Knobs and buttons
 
@@ -135,46 +137,44 @@ module.exports = (robot) ->
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
-      new AYPStrip lines, (err, image) ->
+      new AYPStrip lines, (err, image, strip) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
-        now = Date.now()
-        name = "ayp-#{now}.jpg"
-        outPath = path.resolve("/tmp", name)
-        image.saveJpeg outPath, 95, (err) ->
-          return console.error "Failed to write result:", err if err
+        strip.post (err, url) ->
+          return msg.reply "What the hell is a JAY PEG?! #{err}" if err
 
-          fs.readFile outPath, (err, data) ->
-            # We can unlink unconditionally now that we have it or failed
-            fs.unlink(outPath, ->)
-            return msg.reply "I somehow lost the file I just put down at #{outpath}. Like a moron :(" if err
-            return msg.reply "You hve no S3 creds bub" unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
+          # Tell our good friends that we made them something
+          prefix = msg.random [
+            "GOOD NEWS EVERYONE:",
+            "This is awkward...",
+            "Turns out,",
+            "Despite my best efforts",
+            "Bleep, Bloop, Bop:",
+            "I have done the thing,",
+            "Tada!",
+          ]
+          msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
-            info =
-              headers:
-                'Content-Type': 'image/jpeg'
-              body: data
-            s3.put name, info, (err) ->
-              return msg.reply "Woooops! Failed to upload: #{err}" if err
-              strip_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}"
+          # Tweet a link to the comic, with some sort of text to go with it.
+          prefix = msg.random [
+            "The one that doesn't make sense",
+            "In which nothing happens",
+            "Laughter, sorrow, nonsense",
+            "#arrakis",
+            "#dickbutt",
+          ]
+          Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
+            sorry = msg.random ["sorry", "it's your fault"]
+            return msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
+            prefix = msg.random [
+              "SHARE FAVE RT",
+              "Connect with #brands",
+              "Promoted by #a",
+            ]
+            msg.send "#{prefix} #{url}"
 
-              # Now let's tell `ayp.wtf.cat` about our great work here
-              return msg.reply "I'd update the site, but I don't know the secret :( Though, the image is #{strip_url}" unless AYP_SECRET
-              robot.http(AYP_ENDPOINT).
-                header('Content-Type', 'application/json').
-                post JSON.stringify(url: strip_url, time: now, secret: AYP_SECRET), (err, res, body) ->
-                  return msg.reply "Bad news. I was fed shit when I tried to update the site: #{err}" if err
-                  prefix = msg.random [
-                    "GOOD NEWS EVERYONE:",
-                    "This is awkward...",
-                    "Turns out,",
-                    "Despite my best efforts",
-                    "Bleep, Bloop, Bop:",
-                    "I have done the thing,",
-                    "Tada!",
-                  ]
-                  msg.reply "#{prefix} #{AYP_SITE}at/#{now}/ is now -> #{strip_url}"
+
 
 # This wraps up everything that builds the image strips of the comic
 #
@@ -186,14 +186,23 @@ class AYPStrip
   # Constructor just stores the script and callback
   # and passes flow to the builder.
   constructor: (@script, @ready) ->
+    # TODO(sshirokov): Update `@script` to use `@info.script` errywhere
+    @info =
+      when: Date.now()  # The creation stamp in ms since epoch
+      script: @script   # The script for this comic
+      image: null       # The GD object
+      image_jpeg: null  # The data as JPEG
+      image_url: null   # The URL in S3
+      url: null         # The URL on the site
+
     do @buildComic
 
-  # Build a comic and invoke the @ready(err, res) callback with res
+  # Build a comic and invoke the @ready(err, res, this) callback with res
   # being the resulting image. `err` will be true if an error
   # is encountered.
   buildComic: =>
     @buildPanels (err, panels) =>
-      return @ready(err, null) if err
+      return @ready(err, null, this) if err
       loaders =
         png: GD.openPng
         jpg: GD.openJpeg
@@ -201,7 +210,7 @@ class AYPStrip
 
 
       fs.readdir BG_BASE, (err, files) =>
-        return @ready(err, null) if err
+        return @ready(err, null, this) if err
 
         # No hidden files
         files = files.filter (f) -> f[0] != '.'
@@ -213,7 +222,7 @@ class AYPStrip
         loader = loaders[ext]
 
         loader path.resolve(BG_BASE, selected), (err, bg) =>
-          return @ready(err, bg) if err
+          return @ready(err, bg, this) if err
           totalPadding = (AYP_PANEL_PADDING * 2)
           left = 0
           top = Math.round(totalPadding / 2)
@@ -222,7 +231,7 @@ class AYPStrip
               @compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
               left += panel.width # Panel width
               left += Math.round(totalPadding / 2)
-          @ready(false, bg)
+          @ready(false, (@info.image = bg), this)
 
   # Turn the `@script` into 3 panels
   # using two lines per panel, then invokes `cb`.
@@ -440,7 +449,7 @@ class AYPStrip
     else
       msg
 
-    # Composite `sprite` onto `dst` in full.
+  # Composite `sprite` onto `dst` in full.
   # Offsets `sprite` `+left` from the left
   # and `+top` from the top
   compositeImage: (dst, sprite, left, top) ->
@@ -452,6 +461,68 @@ class AYPStrip
       0, 0,      # src x, y
       dim..., dim... # No size change
     return dst
+
+  # Post a strip to the AYP site
+  # Invokes the callback as `cb(err, url)`
+  post: (cb=(->)) =>
+    return cb(new Error("No AYP_SECRET")) unless AYP_SECRET
+    perform = =>
+      HTTP.create(AYP_ENDPOINT).
+        header('Content-Type', 'application/json').
+        post(JSON.stringify(url: @info.image_url, time: @info.when, secret: AYP_SECRET)) (err, res, body) =>
+          return cb(err) if err
+          return cb(new Error("Bad response: #{res?.statusCode}")) unless res?.statusCode in [200...400]
+
+          @info.url = "#{AYP_SITE}at/#{@info.when}/"
+          cb(false, @info.url)
+
+    return perform() if @info.image_url
+    @upload (err) ->
+      return cb(err) if err
+      do perform
+
+  # Upload a strip S3 and updates @info.image_url
+  #
+  # cb invoked as `cb(error, url)`
+  upload: (cb=(->)) =>
+    return cb(new Error("You hve no S3 creds bub")) unless [AYP_AWS_KEY, AYP_AWS_SECRET, AYP_AWS_BUCKET].every (p) -> p?.length
+
+    perform = =>
+      name = "ayp-#{@info.when}.jpg"
+      info =
+        headers: {'Content-Type': 'image/jpeg'}
+        body: @info.image_jpeg
+      s3.put name, info, (err) =>
+        return cb(new Error("Woooops! Failed to upload: #{err}")) if err
+        return cb(false, @info.image_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}")
+
+    # Either upload existing JPEG data, or compile some and upload that
+    return perform() if @info.image_jpeg
+    @buildJPEG (err) ->
+      return cb(err) if err
+      do perform
+
+  # Build a JPEG version of the image and invoke the callback
+  # with the data. The resulting data is also stored in
+  # @info.image_jpeg
+  #
+  # Requires `@info.image` to exist
+  #
+  # cb invoked as `cb(error, data)`
+  buildJPEG: (cb=(->)) =>
+    return cb(new Error("@info.image does not exist")) unless @info.image
+
+    # Save locally, cleanup
+    name = "ayp-#{@info.when}.jpg"
+    outPath = path.resolve("/tmp", name)
+    @info.image.saveJpeg outPath, 95, (err) =>
+      return cb(new Error("Failed to write result: #{err}")) if err
+      fs.readFile outPath, (err, data) =>
+        return cb(new Error("Failed to read file I just wrote to #{outPath}: #{err}")) if err
+        # We can unlink unconditionally now that we have it or failed
+        fs.unlink(outPath, ->)
+        cb(false, (@info.image_jpeg = data))
+
 
 # PantsBuffer is the abstraction of "The Logs".
 #
