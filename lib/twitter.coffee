@@ -8,7 +8,7 @@ client = new Twitter
 
 # I give you, a pre-configured twitter client,
 # So you don't have to.
-module.exports =
+self = module.exports =
   client: client
 
   # A helper for the general case, posts `body`
@@ -39,3 +39,18 @@ module.exports =
       tid = tweet.id_str
       url = "https://twitter.com/#{myself}/status/#{tid}"
       return cb(undefined, tweet, url)
+
+  # Send a tweet, but with media.
+  #
+  # mediaData - Data of the media to attach to the tweet.
+  # body      - A String body of the tweet
+  # opts      - (Optional) any other parameters to pass
+  # cb        - Finish callback invoked as `cb(err, tweet, url)`
+  mediaTweet: (mediaData, body, opts, cb) =>
+    if typeof(opts) is typeof(->)
+      cb = opts
+      opts = {}
+
+    client.post 'media/upload', {media: mediaData}, (error, media, response) =>
+      return cb(error) if error
+      self.tweet body, media_ids: media.media_id_string, cb
