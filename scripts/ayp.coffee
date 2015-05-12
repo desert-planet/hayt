@@ -160,14 +160,19 @@ module.exports = (robot) ->
           prefix = msg.random [
             "The one that doesn't make sense",
             "In which nothing happens",
-            "Laughter, sorrow, nonsense.",
+            "Laughter, sorrow, nonsense",
             "#arrakis",
             "#dickbutt",
           ]
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
             return msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
-            msg.send url
+            prefix = msg.random [
+              "SHARE FAVE RT",
+              "Connect with #brands",
+              "Promoted by #a",
+            ]
+            msg.send "#{prefix} #{url}"
 
 
 
