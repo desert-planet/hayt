@@ -139,7 +139,7 @@ module.exports = (robot) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
-        now = Date.now()
+        now = strip.info.when
         name = "ayp-#{now}.jpg"
         outPath = path.resolve("/tmp", name)
         image.saveJpeg outPath, 95, (err) ->
@@ -187,6 +187,7 @@ class AYPStrip
   # and passes flow to the builder.
   constructor: (@script, @ready) ->
     @info =
+      when: Date.now()
       script: @script
       image: null
       image_url: null
