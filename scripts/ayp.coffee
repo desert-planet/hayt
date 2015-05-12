@@ -459,9 +459,9 @@ class AYPStrip
       info =
         headers: {'Content-Type': 'image/jpeg'}
         body: @info.image_jpeg
-      s3.put name, info, (err) ->
-              return cb(new Error("Woooops! Failed to upload: #{err}")) if err
-              return cb(false, @info.image_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}")
+      s3.put name, info, (err) =>
+        return cb(new Error("Woooops! Failed to upload: #{err}")) if err
+        return cb(false, @info.image_url = "http://s3.amazonaws.com/#{AYP_AWS_BUCKET}/#{name}")
 
     # Either upload existing JPEG data, or compile some and upload that
     return perform() if @info.image_jpeg
