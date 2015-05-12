@@ -135,7 +135,7 @@ module.exports = (robot) ->
   robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
-      new AYPStrip lines, (err, image) ->
+      new AYPStrip lines, (err, image, strip) ->
         return msg.reply "SOMETHING TERRIBLE HAPPENED: #{err}" if err
 
         # Save locally, upload, cleanup
@@ -186,9 +186,15 @@ class AYPStrip
   # Constructor just stores the script and callback
   # and passes flow to the builder.
   constructor: (@script, @ready) ->
+    @info =
+      script: @script
+      image: null
+      image_url: null
+      url: null
+
     do @buildComic
 
-  # Build a comic and invoke the @ready(err, res) callback with res
+  # Build a comic and invoke the @ready(err, res, this) callback with res
   # being the resulting image. `err` will be true if an error
   # is encountered.
   buildComic: =>
@@ -222,7 +228,7 @@ class AYPStrip
               @compositeImage bg, panel, Math.round(left += (totalPadding / 2)), top
               left += panel.width # Panel width
               left += Math.round(totalPadding / 2)
-          @ready(false, bg)
+          @ready(false, (@info.image = bg))
 
   # Turn the `@script` into 3 panels
   # using two lines per panel, then invokes `cb`.
