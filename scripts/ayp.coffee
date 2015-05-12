@@ -451,6 +451,7 @@ class AYPStrip
   # Post a strip to the AYP site
   # Invokes the callback as `cb(err, url)`
   post: (cb=(->)) =>
+    return cb(new Error("No AYP_SECRET")) unless AYP_SECRET
     perform = =>
       HTTP.create(AYP_ENDPOINT).
         header('Content-Type', 'application/json').
