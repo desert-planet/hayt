@@ -7,6 +7,7 @@ Url = require 'url'
 Redis = require 'redis'
 GD = require 'node-gd'
 S3 = require 'node-s3'
+HTTP = require 'scoped-http-client'
 
 ## Knobs and buttons
 
@@ -446,6 +447,24 @@ class AYPStrip
       0, 0,      # src x, y
       dim..., dim... # No size change
     return dst
+
+  # Post a strip to the AYP site
+  # Invokes the callback as `cb(err, url)`
+  post: (cb=(->)) =>
+    perform = =>
+      HTTP.create(AYP_ENDPOINT).
+        header('Content-Type', 'application/json').
+        post(JSON.stringify(url: @info.image_url, time: @info.when, secret: AYP_SECRET)) (err, res, body) ->
+          return cb(err) if err
+          return cb(new Error("Bad response: #{res?.statusCode}")) unless res?.statusCode in [200...400]
+
+          @info.url = "#{AYP_SITE}at/#{@info.when}/"
+          cb(false, @info.url)
+
+    return perform() if @info.image_url
+    @upload (err) ->
+      return cb(err) if err
+      do perform
 
   # Upload a strip S3 and updates @info.image_url
   #
