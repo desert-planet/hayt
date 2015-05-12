@@ -14,6 +14,8 @@
 # Author:
 #   sshirokov
 
+Twitter = require '../lib/twitter'
+
 ## Dat model
 class Vote
   @current = null
@@ -196,6 +198,15 @@ Supported commands:
               "http://i.imgur.com/pm4DXWS.jpg"
             ]
           vote.start()
+        catch error
+          msg.reply error
+
+      when "tweet"
+        try
+          vote = new Vote robot, msg, "Do we Tweet '#{arg}'", timeout, ->
+            Twitter.tweet arg, (err, tweet, url) ->
+              return msg.reply "It can't be done, #{err}" if err
+              msg.send "I hope you're all proud - #{url}"
         catch error
           msg.reply error
 
