@@ -474,7 +474,7 @@ class AYPStrip
         return cb(new Error("Failed to read file I just wrote to #{outPath}: #{err}")) if err
         # We can unlink unconditionally now that we have it or failed
         fs.unlink(outPath, ->)
-        cb(false, data)
+        cb(false, (@info.image_jpeg = data))
 
 
 # PantsBuffer is the abstraction of "The Logs".
