@@ -8,4 +8,19 @@ client = new Twitter
 
 # I give you, a pre-configured twitter client,
 # So you don't have to.
-module.exports = client
+module.exports =
+  client: client
+
+  # A helper for the general case, posts `body`
+  # as a tweet, and calls you back with it, as well
+  # as a pre-built URL
+  tweet: (body, cb=(err, tweet, url)) =>
+    params = status: body
+    client.post 'statuses/update', params, (error, tweet, response) ->
+      return cb(error)  if error
+
+      # LUCKY US
+      myself = tweet.user.screen_name
+      tid = tweet.id_str
+      url = "https://twitter.com/#{myself}/status/#{tid}"
+      return cb(tweet, url)
