@@ -152,7 +152,7 @@ module.exports = (robot) ->
             "I have done the thing,",
             "Tada!",
           ]
-          msg.reply "#{prefix} #{url} is now -> #{@info.image_url}"
+          msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
 # This wraps up everything that builds the image strips of the comic
 #
