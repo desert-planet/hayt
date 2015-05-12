@@ -26,8 +26,10 @@ module.exports =
       cb = opts
       opts = {}
 
-    (param[key] = opts[key] for own key of opts)
-    params.status = body
+    # If you're the kind of asshole that passes a `body:` key, you'll overwrite
+    # the initial string, but you probably like that, sick fuck.
+    params = status: body
+    (params[key] = opts[key] for own key of opts)
 
     client.post 'statuses/update', params, (error, tweet, response) ->
       return cb(error) if error
