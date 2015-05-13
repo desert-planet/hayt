@@ -207,6 +207,7 @@ Supported commands:
             Twitter.tweet arg, (err, tweet, url) ->
               return msg.reply "It can't be done, #{err}" if err
               msg.send "I hope you're all proud - #{url}"
+          vote.start()
         catch error
           msg.reply error
 
