@@ -1,12 +1,12 @@
 # Hayt - A Hubot
 
-[![Build Status](https://travis-ci.org/desert-planet/hayt.svg?branch=master)](https://travis-ci.org/desert-planet/arrakis-hubot)
+[![Build Status](https://travis-ci.org/desert-planet/hayt.svg?branch=master)](https://travis-ci.org/desert-planet/hayt)
 
 Butts. `(_|_)`
 
 ![Peaches](http://s3.amazonaws.com/ayp/ayp-1416706859717.jpg)
 
-**[Internationally standardized!](http://s3.amazonaws.com/ayp/ayp-1416707245276.jpg)**
+**[Internationally standardized!](http://ayp.wtf.cat/at/1416707245276/)**
 
 ### Testing Hayt Locally
 
