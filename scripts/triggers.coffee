@@ -19,13 +19,15 @@ module.exports = (robot) ->
   robot.respond /trigger (.*) to (.*)/, (msg) ->
     trigger = msg.match[1].trim()
     response = msg.match[2].trim()
+    triggers = robot.brain.get('triggers')
 
-    oldResponse = robot.brain.get('triggers')[trigger]
+    oldResponse = triggers[trigger]
     if oldResponse?
       msg.send "'#{trigger}' already triggers '#{oldResponse}'. Use trigger remove #{trigger} to delete it."
     else
-      robot.brain.set('triggers', robot.brain.get('triggers')[trigger] = response)
-      msg.send "I'll always say '#{response}' when I hear '#{phrase}'"
+      triggers[trigger] = response
+      robot.brain.set('triggers', triggers)
+      msg.send "I'll always say '#{response}' when I hear '#{trigger}'"
 
   robot.respond /trigger delete (.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
