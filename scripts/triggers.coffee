@@ -41,6 +41,9 @@ module.exports = (robot) ->
       msg.send "I have no idea what to say when I hear '#{trigger}'"
 
   robot.hear /(.*)/, (msg) ->
+    # Ignore ourselves
+    return if msg.message.user.name == robot.name
+
     triggers = robot.brain.get('triggers')
     fullMessage = msg.match[1].trim().toLowerCase()
     for own trigger, reply of triggers
