@@ -17,7 +17,7 @@
 
 module.exports = (robot) ->
   robot.respond /trigger (.*) to (.*)/, (msg) ->
-    trigger = msg.match[1].trim()
+    trigger = msg.match[1].trim().toLowerCase()
     response = msg.match[2].trim()
     triggers = robot.brain.get('triggers')
 
@@ -31,7 +31,7 @@ module.exports = (robot) ->
 
   robot.respond /trigger delete (.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
-    trigger = msg.match[1].trim()
+    trigger = msg.match[1].trim().toLowerCase()
 
     if triggers[trigger]?
       delete triggers[trigger]
@@ -42,7 +42,7 @@ module.exports = (robot) ->
 
   robot.hear /(.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
-    fullMessage = msg.match[1].trim()
+    fullMessage = msg.match[1].trim().toLowerCase()
     for own trigger, reply of triggers
       if fullMessage.indexOf(trigger) != -1
         msg.send reply
