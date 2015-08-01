@@ -16,6 +16,17 @@
 
 
 module.exports = (robot) ->
+  robot.respond /trigger delete (.*)/, (msg) ->
+    triggers = robot.brain.get('triggers')
+    trigger = msg.match[1].trim().toLowerCase()
+
+    if triggers[trigger]?
+      delete triggers[trigger]
+      robot.brain.set('triggers', triggers)
+      msg.send "I have forgot what to say when I hear '#{trigger}'"
+    else
+      msg.send "I have no idea what to say when I hear '#{trigger}'"
+
   robot.hear /(.*)/, (msg) ->
     # Ignore ourselves
     return if msg.message.user.name == robot.name
@@ -38,17 +49,6 @@ module.exports = (robot) ->
       triggers[trigger] = response
       robot.brain.set('triggers', triggers)
       msg.send "I'll always say '#{response}' when I hear '#{trigger}'"
-
-  robot.respond /trigger delete (.*)/, (msg) ->
-    triggers = robot.brain.get('triggers')
-    trigger = msg.match[1].trim().toLowerCase()
-
-    if triggers[trigger]?
-      delete triggers[trigger]
-      robot.brain.set('triggers', triggers)
-      msg.send "I have forgot what to say when I hear '#{trigger}'"
-    else
-      msg.send "I have no idea what to say when I hear '#{trigger}'"
 
   # Initialize the list of all triggers, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
