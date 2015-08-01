@@ -22,7 +22,7 @@ module.exports = (robot) ->
 
     oldResponse = robot.brain.get("trigger:#{trigger}")
     if oldResponse?
-      msg.send "'#{trigger}' already triggers '#{response}'. Use trigger remove #{trigger} to delete it."
+      msg.send "'#{trigger}' already triggers '#{oldResponse}'. Use trigger remove #{trigger} to delete it."
     else
       robot.brain.set("trigger:#{trigger}", response)
       robot.brain.set('triggers', robot.brain.get('triggers').push(trigger)
