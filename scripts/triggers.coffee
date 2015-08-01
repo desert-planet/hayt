@@ -41,9 +41,9 @@ module.exports = (robot) ->
   robot.hear /(.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
     fullMessage = msg.match[1].trim()
-    for trigger in Object.keys(triggers)
+    for own trigger, reply of triggers
       if fullMessage.indexOf(trigger) != -1
-        msg.send triggers[trigger]
+        msg.send reply
 
   # Initialize the list of all triggers, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
