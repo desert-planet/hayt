@@ -17,8 +17,8 @@
 
 module.exports = (robot) ->
   robot.respond /trigger (.*) with (.*)/, (msg) ->
-    trigger = msg.match[1]
-    response = msg.match[2]
+    trigger = msg.match[1].trim()
+    response = msg.match[2].trim()
 
     oldResponse = robot.brain.get('triggers')[trigger]
     if oldResponse?
@@ -29,7 +29,7 @@ module.exports = (robot) ->
 
   robot.respond /trigger remove (.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
-    trigger = msg.match[1]
+    trigger = msg.match[1].trim()
 
     if triggers[trigger]?
       delete triggers[trigger]
@@ -40,7 +40,7 @@ module.exports = (robot) ->
 
   robot.hear /(.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
-    fullMessage = msg.match[1]
+    fullMessage = msg.match[1].trim()
     for trigger in Object.keys(triggers)
       if fullMessage.indexOf(trigger) != -1
         msg.send triggers[trigger]
