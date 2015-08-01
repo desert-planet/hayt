@@ -16,6 +16,16 @@
 
 
 module.exports = (robot) ->
+  robot.hear /(.*)/, (msg) ->
+    # Ignore ourselves
+    return if msg.message.user.name == robot.name
+
+    triggers = robot.brain.get('triggers')
+    fullMessage = msg.match[1].trim().toLowerCase()
+    for own trigger, reply of triggers
+      if fullMessage.indexOf(trigger) != -1
+        msg.send reply
+
   robot.respond /trigger (.*) to (.*)/, (msg) ->
     trigger = msg.match[1].trim().toLowerCase()
     response = msg.match[2].trim()
@@ -39,16 +49,6 @@ module.exports = (robot) ->
       msg.send "I have forgot what to say when I hear '#{trigger}'"
     else
       msg.send "I have no idea what to say when I hear '#{trigger}'"
-
-  robot.hear /(.*)/, (msg) ->
-    # Ignore ourselves
-    return if msg.message.user.name == robot.name
-
-    triggers = robot.brain.get('triggers')
-    fullMessage = msg.match[1].trim().toLowerCase()
-    for own trigger, reply of triggers
-      if fullMessage.indexOf(trigger) != -1
-        msg.send reply
 
   # Initialize the list of all triggers, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->

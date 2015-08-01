@@ -27,4 +27,10 @@ describe 'triggers', ->
     response = 'Haha butts'
     room.user.say 'skalnik', "@hubot trigger #{trigger} to #{response}"
     room.user.say 'aBird', "All about dem #{trigger}!"
-    expect(room.messages[2]).to.eql ['hubot', response]
+    expect(room.messages[3]).to.eql ['hubot', response]
+
+  it 'ignores the robot itself', ->
+    trigger = 'butts'
+    response = 'Haha butts'
+    room.user.say 'skalnik', "@hubot trigger #{trigger} to #{response}"
+    expect(room.messages.length).to.eql 2
