@@ -35,7 +35,7 @@ module.exports = (robot) ->
     if branch[0] == '@' and branch.indexOf('/') != -1
       branch = branch.replace '@', ''
       [remote, branch] = branch.split '/'
-      prefix = "git remote add #{remote} https://github.com/#{remote}/arrakis-hubot"
+      prefix = "git remote add #{remote} https://github.com/#{remote}/hayt"
 
     msg.send "\"Deploying\" #{remote}/#{branch}"
     exec "#{prefix} ; git fetch --all && git checkout -f '#{remote}/#{branch}'  && git merge origin/master", (err, stdout, stderr) ->
