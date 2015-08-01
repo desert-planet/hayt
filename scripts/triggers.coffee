@@ -9,7 +9,7 @@
 #
 # Commands:
 #   trigger phrase to response - Make the robot respond with "response" when it hears "phrase"
-#   trigger remove phrase      - Delete the given trigger
+#   trigger delete phrase      - Delete the given trigger
 #
 # Author:
 #   skalnik
@@ -27,7 +27,7 @@ module.exports = (robot) ->
       robot.brain.set('triggers', robot.brain.get('triggers')[trigger] = response)
       msg.send "I'll always say '#{response}' when I hear '#{phrase}'"
 
-  robot.respond /trigger remove (.*)/, (msg) ->
+  robot.respond /trigger delete (.*)/, (msg) ->
     triggers = robot.brain.get('triggers')
     trigger = msg.match[1].trim()
 
