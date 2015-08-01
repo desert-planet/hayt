@@ -8,15 +8,15 @@
 #   None
 #
 # Commands:
-#   trigger phrase with response - Make the robot respond with "response" when it hears "phrase"
-#   trigger remove phrase        - Delete the given trigger
+#   trigger phrase to response - Make the robot respond with "response" when it hears "phrase"
+#   trigger remove phrase      - Delete the given trigger
 #
 # Author:
 #   skalnik
 
 
 module.exports = (robot) ->
-  robot.respond /trigger (.*) with (.*)/, (msg) ->
+  robot.respond /trigger (.*) to (.*)/, (msg) ->
     trigger = msg.match[1].trim()
     response = msg.match[2].trim()
 
