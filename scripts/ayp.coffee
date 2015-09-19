@@ -102,7 +102,7 @@ filterText = (text) ->
   text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/, "$1[redacted]")
   
   # Let users redact shit too
-  text = text.replace(/\[[^\]*]\]/, "[redacted]")
+  text = text.replace(/\[[^\]]*\]/, "[redacted]")
 
   # Twitter length, then truncate with `...`
   limit = 140
