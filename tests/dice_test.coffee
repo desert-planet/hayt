@@ -13,15 +13,22 @@ describe 'when user rolls', ->
 
   context 'dice with no sides', ->
     beforeEach ->
-      room.user.say 'alice', '@hubot roll 1d1'
       room.user.say 'bob', '@hubot roll 1d0'
+
+    it 'should be snarky message', ->
+      expect(room.messages).to.eql [
+        ['bob', '@hubot roll 1d0']
+        ['hubot', '@bob You want to roll dice with less than two sides. Wow.']
+      ]
+
+  context 'dice with one sides', ->
+    beforeEach ->
+      room.user.say 'alice', '@hubot roll 1d1'
 
     it 'should be snarky message', ->
       expect(room.messages).to.eql [
         ['alice', '@hubot roll 1d1']
         ['hubot', '@alice You want to roll dice with less than two sides. Wow.']
-        ['bob', '@hubot roll 1d0']
-        ['hubot', '@bob You want to roll dice with less than two sides. Wow.']
       ]
 
   context 'dice with stupid sides', ->
