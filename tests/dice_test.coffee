@@ -11,7 +11,7 @@ describe 'when user rolls', ->
   beforeEach ->
     room = helper.createRoom()
 
-  context 'No crash happens'
+  context 'No crash happens', ->
     beforeEach ->
       room.user.say 'alice', '@hubot roll 1d6'
       room.user.say 'alice', '@hubot roll 1d1'
