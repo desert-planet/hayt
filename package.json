@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "coffee-script":     "~1.8.x",
-    "hubot":             ">= 2.6.0 < 3.0.0",
+    "hubot":             "2.6.4",
     "hubot-scripts":     ">= 2.5.0 < 3.0.0",
     "hubot-irc":         "git+https://github.com/sshirokov/hubot-irc#arrakis",
     "underscore":        "1.5.x",
