@@ -156,6 +156,7 @@ module.exports = (robot) ->
             "Bleep, Bloop, Bop:",
             "I have done the thing,",
             "Tada!",
+            "I pooped a little:"
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
