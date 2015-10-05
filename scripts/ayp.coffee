@@ -149,6 +149,9 @@ module.exports = (robot) ->
 
           # Tell our good friends that we made them something
           prefix = msg.random [
+            "OH DEAR GOD!",
+            "So I sneezed and this came out",
+            "I found this on the internet",
             "GOOD NEWS EVERYONE:",
             "This is awkward...",
             "Turns out,",
@@ -156,18 +159,19 @@ module.exports = (robot) ->
             "Bleep, Bloop, Bop:",
             "I have done the thing,",
             "Tada!",
-            "I pooped a little:",
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
           # Tweet a link to the comic, with some sort of text to go with it.
           prefix = msg.random [
+            "Welp",
+            "Here you go",
+            "You made this? I made this.",
             "The one that doesn't make sense",
             "In which nothing happens",
             "Laughter, sorrow, nonsense",
             "#arrakis",
             "#dickbutt",
-            "I pooped a little:",
           ]
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
@@ -176,6 +180,7 @@ module.exports = (robot) ->
               "SHARE FAVE RT",
               "Connect with #brands",
               "Promoted by #a",
+              "I put it on twitter, shitbirds",
             ]
             msg.send "#{prefix} #{url}"
 
