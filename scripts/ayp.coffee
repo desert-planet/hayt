@@ -156,6 +156,7 @@ module.exports = (robot) ->
             "Bleep, Bloop, Bop:",
             "I have done the thing,",
             "Tada!",
+            "I pooped a little:",
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
@@ -166,6 +167,7 @@ module.exports = (robot) ->
             "Laughter, sorrow, nonsense",
             "#arrakis",
             "#dickbutt",
+            "I pooped a little:",
           ]
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
