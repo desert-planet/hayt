@@ -174,6 +174,7 @@ module.exports = (robot) ->
             "#dickbutt",
             "butts",
             "Have a comic",
+            "#pants",
           ]
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
