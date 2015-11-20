@@ -25,13 +25,12 @@ describe 'being loud', ->
       room.user.say 'bob',     'FOO@BAR'
       room.user.say 'charlie', 'FOO #BAR'
       room.user.say 'alice',   'FOO$'
-      room.user.say 'bob',     'FOO%'
       room.user.say 'charlie', 'FOO?'
       room.user.say 'alice',   'FOO & BAR'
       room.user.say 'bob',     'FOO%'
       room.user.say 'charlie', 'FOO"BAR"'
-      expect(room.robot.brain.get('louds').length).to.eql 12
-      expect(room.robot.brain.get('louds')).to.eql ['"FOO"', 'FOO+', 'FOO-', 'FOO@BAR', 'FOO #BAR', 'FOO$', 'FOO%', 'FOO & BAR', 'FOO%', 'FOO"BAR"']
+      expect(room.robot.brain.get('louds').length).to.eql 11
+      expect(room.robot.brain.get('louds')).to.eql ['"FOO"', 'FOO+', 'FOO-', 'FOO@BAR', 'FOO #BAR', 'FOO$', 'FOO & BAR', 'FOO%', 'FOO"BAR"']
       
     it 'should only have 1 loud stored after deleting the second', ->
       room.user.say 'alice', 'FOO'
