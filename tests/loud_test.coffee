@@ -30,6 +30,7 @@ describe 'being loud', ->
       room.user.say 'alice',   'FOO & BAR'
       room.user.say 'bob',     'FOO%'
       room.user.say 'charlie', 'FOO"BAR"'
+      console.log room.robot.brain.get('louds')
       expect(room.robot.brain.get('louds').length).to.eql 12
       expect(room.robot.brain.get('louds')).to.eql ['"FOO"', 'FOO+', 'FOO-', 'FOO@BAR', 'FOO #BAR', 'FOO$', 'FOO%', 'FOO & BAR', 'FOO%', 'FOO"BAR"']
       
