@@ -96,6 +96,10 @@ filterName = (name) ->
     # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
     name = 'solios'
 
+  # has multiple connections because computers Я hard
+  if /justinw/i.test(name)
+    name = 'justinw2'
+
   return name
 
 # Make any changes required to the text
