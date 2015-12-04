@@ -20,7 +20,7 @@ describe 'when user links', ->
       this.clock.tick(10000)
 
     it 'should be able to find title', ->
-      console.log messages
+      console.log room.messages
       expect(room.messages[1][1]).to.contain "Adele's Hello by the Movies"
 
   context 'youtube.com url with additional values', ->
@@ -29,7 +29,7 @@ describe 'when user links', ->
       this.clock.tick(10000)
 
     it 'should be able to find title', ->
-      console.log messages
+      console.log room.messages
       expect(room.messages[1][1]).to.contain "Shia Surprise"
 
   context 'youtu.be url', ->
@@ -38,7 +38,7 @@ describe 'when user links', ->
       this.clock.tick(10000)
 
     it 'should be able to find title', ->
-      console.log messages
+      console.log room.messages
       expect(room.messages[1][1]).to.contain "R2D2 learns a new trick"
 
   context 'youtu.be url with additional values', ->
@@ -47,6 +47,6 @@ describe 'when user links', ->
       this.clock.tick(10000)
 
     it 'should be able to find title', ->
-      console.log messages
+      console.log room.messages
       expect(room.messages[1][1]).to.contain "GoPro fall at Garden of the Gods"
 
