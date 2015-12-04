@@ -17,7 +17,7 @@ describe 'when user links', ->
   context 'youtube.com url', ->
     beforeEach ->
       room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
-      this.clock.tick(10000)
+      this.clock.tick(300000)
 
     it 'should be able to find title', ->
       console.log room.messages
