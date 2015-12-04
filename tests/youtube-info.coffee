@@ -17,7 +17,7 @@ describe 'when user links', ->
   context 'youtube.com url', ->
     beforeEach ->
       room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
-      this.clock.tick(3000)
+      this.clock.tick(10000)
 
     it 'should be able to find title', ->
       assert room.messages.length > 1
@@ -26,7 +26,7 @@ describe 'when user links', ->
   context 'youtube.com url with additional values', ->
     beforeEach ->
       room.user.say 'alice', 'https://www.youtube.com/watch?v=iq9DLJfpHd0&feature=youtu.be&ab_channel=CatRe-Tailer'
-      this.clock.tick(3000)
+      this.clock.tick(10000)
 
     it 'should be able to find title', ->
       assert room.messages.length > 1
@@ -35,7 +35,7 @@ describe 'when user links', ->
   context 'youtu.be url', ->
     beforeEach ->
       room.user.say 'alice', 'https://youtu.be/HP66dH1yEZo'
-      this.clock.tick(3000)
+      this.clock.tick(10000)
 
     it 'should be able to find title', ->
       assert room.messages.length > 1
@@ -44,7 +44,7 @@ describe 'when user links', ->
   context 'youtu.be url with additional values', ->
     beforeEach ->
       room.user.say 'alice', 'https://youtu.be/oVnAVcbMoSM?t=39s'
-      this.clock.tick(3000)
+      this.clock.tick(10000)
 
     it 'should be able to find title', ->
       assert room.messages.length > 1
