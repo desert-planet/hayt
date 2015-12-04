@@ -2,7 +2,7 @@ Helper = require('hubot-test-helper')
 
 helper = new Helper('../scripts/youtube-info.coffee')
 expect = require('chai').expect
-stub = require('sinon')
+sinon = require('sinon')
 
 describe 'when user links', ->
   room = null
