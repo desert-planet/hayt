@@ -23,7 +23,7 @@ request = require 'request'
 cheerio = require 'cheerio'
 
 module.exports = (robot) ->
-  robot.hear /youtube\.com\/watch\?v=(.+)/i, (msg) ->
+  robot.hear /youtube\.com\/watch\?v=(.+)|youtu.be\/(.+)/i, (msg) ->
     url_parsed = url.parse(msg.match[1])
     getTitle msg, url_parsed.href
 
