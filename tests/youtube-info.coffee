@@ -2,6 +2,7 @@ Helper = require('hubot-test-helper')
 
 helper = new Helper('../scripts/youtube-info.coffee')
 expect = require('chai').expect
+assert = require 'assert'
 sinon = require('sinon')
 
 describe 'when user links', ->
