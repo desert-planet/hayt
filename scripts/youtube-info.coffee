@@ -30,7 +30,6 @@ module.exports = (robot) ->
 getTitle = (msg, url) ->
   muhUrl = "https://youtube.com/watch?v=#{url}"
   request muhUrl, (err, res, body) ->
-    console.log err, res, body
     if err
       msg.send "couldn't do anything with #{muhUrl}"
     else
