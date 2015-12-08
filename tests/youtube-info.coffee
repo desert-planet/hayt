@@ -10,5 +10,5 @@ describe 'when user links', ->
     room = helper.createRoom()
     room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
 
-    it 'should be able to find title', ->
-        assert room.messages.length > 0
+  it 'should be able to find title', ->
+    assert room.messages.length > 0
