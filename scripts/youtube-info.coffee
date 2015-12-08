@@ -35,5 +35,4 @@ getTitle = (msg, url) ->
     else
       $ = cheerio.load(body)
       title = $('title').text()
-      console.log title
       msg.send title
