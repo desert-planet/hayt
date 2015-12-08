@@ -35,6 +35,6 @@ getInfo = (msg, url) ->
     else
       $ = cheerio.load(body)
       title = $('title').text()
-      blurb = $('.game_description_snippet').text()
+      blurb = $('.game_description_snippet').text()?.trim() || "I have no fucking idea what '#{title}' is about"
       msg.send title
       msg.send blurb
