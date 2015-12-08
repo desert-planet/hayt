@@ -17,7 +17,7 @@ describe 'when user links', ->
       room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
       setTimeout =>
         expect(room.messages[1][1]).to.contain "Adele's Hello by the Movies"
-      console.log room.messages
+        console.log room.messages
         done()
       , 10000
 
