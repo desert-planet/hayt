@@ -4,6 +4,7 @@ helper = new Helper('../scripts/youtube-info.coffee')
 expect = require('chai').expect
 
 describe 'when user links', ->
+  room = null
 
   beforeEach ->
     room = helper.createRoom()
