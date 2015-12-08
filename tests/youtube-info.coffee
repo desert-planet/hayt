@@ -13,7 +13,7 @@ describe 'when user links', ->
 
     it 'should be able to find title', (done) ->
 
-      @timeout 10000
+      @timeout(10000)
 
       room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
       setTimeout =>
@@ -26,7 +26,7 @@ describe 'when user links', ->
 
     it 'should be able to find title', (done) ->
 
-      @timeout 10000
+      @timeout(10000)
 
       room.user.say 'alice', 'https://www.youtube.com/watch?v=iq9DLJfpHd0&feature=youtu.be&ab_channel=CatRe-Tailer'
       setTimeout =>
@@ -39,7 +39,7 @@ describe 'when user links', ->
 
     it 'should be able to find title', (done) ->
 
-      @timeout 10000
+      @timeout(10000)
 
       room.user.say 'alice', 'https://youtu.be/HP66dH1yEZo'
       setTimeout =>
@@ -52,7 +52,7 @@ describe 'when user links', ->
 
     it 'should be able to find title', (done) ->
 
-      @timeout 10000
+      @timeout(10000)
 
       room.user.say 'alice', 'https://youtu.be/oVnAVcbMoSM?t=39s'
       setTimeout =>
