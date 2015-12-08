@@ -23,7 +23,7 @@ request = require 'request'
 cheerio = require 'cheerio'
 
 module.exports = (robot) ->
-  robot.hear /store.steampowered.com/app/(\d+)/i, (msg) ->
+  robot.hear /store.steampowered.com\/app\/(\d+)/i, (msg) ->
     url_parsed = url.parse(msg.match[1])
     getTitle msg, url_parsed.href
 
