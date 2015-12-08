@@ -1,5 +1,5 @@
 # Description
-#  Grab the title of a youtube video
+#  Grab the title of a ~~youtube video~~ steam game
 #
 # Dependencies:
 #  cheerio
