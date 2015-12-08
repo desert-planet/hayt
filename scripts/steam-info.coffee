@@ -28,7 +28,7 @@ module.exports = (robot) ->
     getTitle msg, url_parsed.href
 
 getTitle = (msg, url) ->
-  muhUrl = "http://store.steampowered.com/app/409160/#{url}/"
+  muhUrl = "http://store.steampowered.com/app/#{url}/"
   request muhUrl, (err, res, body) ->
     if err
       msg.send "couldn't do anything with #{muhUrl}. steam sucks"
