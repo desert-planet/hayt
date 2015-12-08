@@ -25,9 +25,9 @@ cheerio = require 'cheerio'
 module.exports = (robot) ->
   robot.hear /store.steampowered.com\/app\/(\d+)/i, (msg) ->
     url_parsed = url.parse(msg.match[1])
-    getTitle msg, url_parsed.href
+    getInfo msg, url_parsed.href
 
-getTitle = (msg, url) ->
+getInfo = (msg, url) ->
   muhUrl = "http://store.steampowered.com/app/#{url}/"
   request muhUrl, (err, res, body) ->
     if err
@@ -35,4 +35,6 @@ getTitle = (msg, url) ->
     else
       $ = cheerio.load(body)
       title = $('title').text()
+      blurb = $('.game_description_snippet').text()?.trim() || "I have no fucking idea what '#{title}' is about"
       msg.send title
+      msg.send blurb
