@@ -48,3 +48,11 @@ describe 'being loud', ->
       room.user.say 'alice', 'FOO'
       room.user.say 'bob',   'BAR'
       expect(room.messages[2]).to.eql ['hubot', 'FOO']
+
+  context 'louds in chat not from banned', ->
+    it 'should be produced whenever someone louds anew', ->
+      room.user.say 'alpha',   'FISH'
+      room.user.say 'bravo',   'CHICKEN'
+      room.user.say 'charlie', '@hubot loud ban FISH'
+      room.user.say 'delta',   'COW'
+      expect(room.messages[2]).to.eql ['hubot', 'CHICKEN']
