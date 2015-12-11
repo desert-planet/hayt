@@ -99,6 +99,9 @@ filterName = (name) ->
   # has multiple connections because computers Я hard
   if /justinw/i.test(name)
     name = 'justinw2'
+    
+  if /blah64/i.test(name)
+    name = 'Blah64'
 
   return name
 
