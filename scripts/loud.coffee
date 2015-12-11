@@ -38,7 +38,7 @@ module.exports = (robot) ->
     action = res.match[1].trim()
     data = res.match[2]?.trim()
 
-    switch action 
+    switch action
       when 'delete'
         index = robot.brain.get('louds').indexOf(data)
         if index != -1
