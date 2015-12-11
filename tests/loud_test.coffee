@@ -55,5 +55,4 @@ describe 'being loud', ->
       room.user.say 'bravo',   '@hubot loud ban FISH'
       room.user.say 'charlie', 'CHICKEN'
       room.user.say 'delta',   'COW'
-      console.log room.messages
       expect(room.messages[5]).to.eql ['hubot', 'CHICKEN']
