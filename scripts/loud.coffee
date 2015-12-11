@@ -21,8 +21,6 @@ module.exports = (robot) ->
   robot.hear /^([A-Z"][A-Z0-9 .,'"()\?!&%$#@+-]+)$/, (res) ->
     # Pick a loud from the stored list and say it. Skip if there are no louds.
     old_loud = res.random(robot.brain.get('louds'))
-    if old_loud in robot.brain.get('louds_banned')
-      old_loud = res.random(robot.brain.get('louds'))
 
     if old_loud?
       res.send old_loud
@@ -30,7 +28,7 @@ module.exports = (robot) ->
     # Save new loud in the list, but only if it is unique
     new_loud = res.match[1].trim()
     if new_loud not in robot.brain.get('louds')
-      robot.brain.get('louds').push(new_loud)
+      robot.brain.get('louds').push(new_loud) if new_loud not in robot.brain.get('louds_banned')
 
   robot.respond /loud (\w+)\s*(.*)?$/i, (res) ->
     action = res.match[1].trim()
@@ -38,17 +36,11 @@ module.exports = (robot) ->
 
     switch action
       when 'delete'
-        index = robot.brain.get('louds').indexOf(data)
-        if index != -1
-          robot.brain.get('louds').splice(index, 1)
-          res.send "Loud deleted."
-        else
-          res.send "Couldn't find that loud."
+        deleteLoud(data)
 
       when 'ban'
-        if data in robot.brain.get('louds')
-          if data not in robot.brain.get('louds_banned')
-            robot.brain.get('louds_banned').push(data)
+        robot.brain.get('louds_banned').push(data) if not data in robot.brain.get('louds_banned')
+        deleteLoud(data)
 
       when 'nuke'
         if process.env.DEBUG != 'true'
@@ -67,6 +59,14 @@ module.exports = (robot) ->
         for loud in louds
           res.send loud
 
+    deleteLoud = (data) ->
+      index = robot.brain.get('louds').indexOf(data)
+      if index != -1
+        robot.brain.get('louds').splice(index, 1)
+        res.send "Loud deleted."
+      else
+        res.send "Couldn't find that loud."
+
   # Initialize the louds list, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('louds')?
@@ -74,4 +74,4 @@ module.exports = (robot) ->
     if not robot.brain.get('louds_banned')?
       robot.brain.set('louds_banned', [])
 
-  getRandomLoud = (res) ->
+
