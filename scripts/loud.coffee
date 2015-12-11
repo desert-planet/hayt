@@ -51,7 +51,7 @@ module.exports = (robot) ->
         if data in robot.brain.get('louds')
           if data not in robot.brain.get('louds_banned')
             robot.brain.get('louds_banned').push(data)
-    
+
       when 'nuke'
         if process.env.DEBUG != 'true'
           res.send "Nukes are only available in debug mode."
