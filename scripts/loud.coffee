@@ -74,5 +74,5 @@ module.exports = (robot) ->
     if not robot.brain.get('louds')?
       robot.brain.set('louds', [])
 
-getRandomLoud =>
+getRandomLoud = ->
   res.random(robot.brain.get('louds'))
