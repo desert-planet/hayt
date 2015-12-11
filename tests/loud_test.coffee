@@ -30,7 +30,7 @@ describe 'being loud', ->
       room.user.say 'alice',   'FOO & BAR'
       room.user.say 'charlie', 'FOO"BAR"'
       expect(room.robot.brain.get('louds').length).to.eql 11
-      
+
     it 'should only have 1 loud stored after deleting the second', ->
       room.user.say 'alice', 'FOO'
       room.user.say 'bob',   'BAR'
