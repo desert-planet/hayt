@@ -20,7 +20,12 @@
 module.exports = (robot) ->
   robot.hear /^([A-Z"][A-Z0-9 .,'"()\?!&%$#@+-]+)$/, (res) ->
     # Pick a loud from the stored list and say it. Skip if there are no louds.
-    old_loud = res.random(robot.brain.get('louds'))
+    old_loud = getRandomLoud()
+    while true
+      if old_loud not in robot.brain.get('louds_banned')
+        break
+      old_loud = getRandomLoud()
+
     if old_loud?
       res.send old_loud
 
