@@ -71,3 +71,7 @@ module.exports = (robot) ->
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('louds')?
       robot.brain.set('louds', [])
+    if not robot.brain.get('louds_banned')?
+      robot.brain.set('louds_banned', [])
+
+  getRandomLoud = (res) ->
