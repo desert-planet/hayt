@@ -43,6 +43,12 @@ describe 'being loud', ->
       room.user.say 'alice', '@hubot loud ban BAR '
       expect(room.robot.brain.get('louds_banned')).to.eql ['BAR']
 
+    it 'should be able to removed banned words', ->
+      room.user.say 'alpha',   'BAR'
+      room.user.say 'bravo',   '@hubot loud ban BAR'
+      room.user.say 'charlie', '@hubot loud unban BAR'
+      expect(room.robot.brain.get('louds_banned')).to.eql []
+
   context 'louds in chat', ->
     it 'should be produced whenever someone louds anew', ->
       room.user.say 'alice', 'FOO'

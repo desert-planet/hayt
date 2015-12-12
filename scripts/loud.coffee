@@ -34,21 +34,25 @@ module.exports = (robot) ->
     action = res.match[1].trim()
     data = res.match[2]?.trim()
 
-    deleteLoud = (data) ->
-      index = robot.brain.get('louds').indexOf(data)
+    deleteLoud = (data, brain) ->
+      index = robot.brain.get(brain).indexOf(data)
       if index != -1
-        robot.brain.get('louds').splice(index, 1)
+        robot.brain.get(brain).splice(index, 1)
         res.send "Loud deleted."
       else
         res.send "Couldn't find that loud."
 
     switch action
       when 'delete'
-        deleteLoud(data)
+        deleteLoud(data, 'louds')
 
       when 'ban'
         robot.brain.get('louds_banned').push(data) if data not in robot.brain.get('louds_banned')
-        deleteLoud(data)
+        deleteLoud(data, 'louds')
+
+      when 'unban'
+        robot.brain.get('louds_banned').push(data) if data in robot.brain.get('louds_banned')
+        deleteLoud(data, 'louds_banned')
 
       when 'nuke'
         if process.env.DEBUG != 'true'
