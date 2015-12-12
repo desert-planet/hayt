@@ -70,12 +70,9 @@ module.exports = (robot) ->
         for loud in louds
           res.send loud
 
-
   # Initialize the louds list, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('louds')?
       robot.brain.set('louds', [])
     if not robot.brain.get('louds_banned')?
       robot.brain.set('louds_banned', [])
-
-
