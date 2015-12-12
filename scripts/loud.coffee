@@ -48,11 +48,10 @@ module.exports = (robot) ->
 
       when 'ban'
         robot.brain.get('louds_banned').push(data) if data not in robot.brain.get('louds_banned')
-        deleteLoud(data, 'louds')
+        deleteLoud(data, 'louds') if data in robot.brain.get('louds')
 
       when 'unban'
-        robot.brain.get('louds_banned').push(data) if data in robot.brain.get('louds_banned')
-        deleteLoud(data, 'louds_banned')
+        deleteLoud(data, 'louds_banned') if data in robot.brain.get('louds_banned')
 
       when 'nuke'
         if process.env.DEBUG != 'true'
