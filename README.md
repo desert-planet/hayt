@@ -4,7 +4,7 @@
 
 Butts. `(_|_)`
 
-![Peaches](http://s3.amazonaws.com/ayp/ayp-1416706859717.jpg)
+![A well oiled machine](http://s3.amazonaws.com/ayp/ayp-1417766653439.jpg)
 
 **[Internationally standardized!](http://ayp.wtf.cat/at/1416707245276/)**
 

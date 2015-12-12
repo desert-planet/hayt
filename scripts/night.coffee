@@ -22,7 +22,7 @@ ways_to_say_good_night = [
   "May you never urinate the sweet sweet sounds of 70's disco funk",
   "So long, and thanks for all the fish.",
   "Finally",
-  "À voir!",
+  "Au revoir!",
   "Don't let the back door hit ya where the good Lord split ya",
   "May your feet never fall off and grow back as cactuses",
   "TTYL",

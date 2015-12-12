@@ -71,8 +71,8 @@ filterName = (name) ->
     # Another one fond of aliases
     name = 'minusx'
 
-  if /jense/i.test(name) or /prawn/i.test(name)
-    # Has bouncer, bounces anyway
+  if /jense/i.test(name) or /prawn/i.test(name) or /sinjen/.test(name)
+    # Has bouncer, bounces anyway, and also no one likes her
     name = 'prawn'
 
   if /geckomuerto/i.test(name)
@@ -90,19 +90,31 @@ filterName = (name) ->
   if /arbo/i.test(name)
     # Bouncers are hard or something, whatever.
     name = 'arbo'
+    
+  if name == 'sflios'
+    # He visited this one time
+    # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
+    name = 'solios'
+
+  # has multiple connections because computers Я hard
+  if /justinw/i.test(name)
+    name = 'justinw2'
+    
+  if /blah64/i.test(name)
+    name = 'Blah64'
 
   return name
 
 # Make any changes required to the text
 filterText = (text) ->
   # Urls are secret. Not for you. Not for anyone.
-  text = text.replace(/(https?:\/\/[^\s]+)/, "[redacted]")
+  text = text.replace(/(https?:\/\/[^\s]+)/g, "[redacted]")
 
   # Emails 'R' Secret
-  text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/, "$1[redacted]")
+  text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/g, "$1[redacted]")
   
   # Let users redact shit too
-  text = text.replace(/\[[^\]]*\]/, "[redacted]")
+  text = text.replace(/\[[^\]]*\]/g, "[redacted]")
 
   # Twitter length, then truncate with `...`
   limit = 140
@@ -149,23 +161,31 @@ module.exports = (robot) ->
 
           # Tell our good friends that we made them something
           prefix = msg.random [
+            "OH DEAR GOD!",
+            "So I sneezed and this came out",
+            "I found this on the internet",
             "GOOD NEWS EVERYONE:",
             "This is awkward...",
             "Turns out,",
             "Despite my best efforts",
             "Bleep, Bloop, Bop:",
             "I have done the thing,",
-            "Tada!",
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
           # Tweet a link to the comic, with some sort of text to go with it.
           prefix = msg.random [
+            "Welp",
+            "Here you go",
+            "You made this? I made this.",
             "The one that doesn't make sense",
             "In which nothing happens",
             "Laughter, sorrow, nonsense",
             "#arrakis",
             "#dickbutt",
+            "butts",
+            "Have a comic",
+            "#pants",
           ]
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
@@ -174,6 +194,7 @@ module.exports = (robot) ->
               "SHARE FAVE RT",
               "Connect with #brands",
               "Promoted by #a",
+              "I put it on twitter, shitbirds",
             ]
             msg.send "#{prefix} #{url}"
 
