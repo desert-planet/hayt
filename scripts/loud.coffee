@@ -34,6 +34,14 @@ module.exports = (robot) ->
     action = res.match[1].trim()
     data = res.match[2]?.trim()
 
+    deleteLoud = (data) ->
+      index = robot.brain.get('louds').indexOf(data)
+      if index != -1
+        robot.brain.get('louds').splice(index, 1)
+        res.send "Loud deleted."
+      else
+        res.send "Couldn't find that loud."
+
     switch action
       when 'delete'
         deleteLoud(data)
@@ -59,13 +67,6 @@ module.exports = (robot) ->
         for loud in louds
           res.send loud
 
-    deleteLoud = (data) ->
-      index = robot.brain.get('louds').indexOf(data)
-      if index != -1
-        robot.brain.get('louds').splice(index, 1)
-        res.send "Loud deleted."
-      else
-        res.send "Couldn't find that loud."
 
   # Initialize the louds list, if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
