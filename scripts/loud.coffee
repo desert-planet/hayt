@@ -42,16 +42,20 @@ module.exports = (robot) ->
       else
         res.send "Couldn't find that loud."
 
+    addLoud = (data, brain) ->
+      robot.brain.get(brain).push(data) if data not in robot.brain.get(brain)
+
     switch action
       when 'delete'
         deleteLoud(data, 'louds')
 
       when 'ban'
-        robot.brain.get('louds_banned').push(data) if data not in robot.brain.get('louds_banned')
+        addLoud(data, 'louds_banned')
         deleteLoud(data, 'louds') if data in robot.brain.get('louds')
 
       when 'unban'
         deleteLoud(data, 'louds_banned') if data in robot.brain.get('louds_banned')
+        addLoud(data, 'louds')
 
       when 'nuke'
         if process.env.DEBUG != 'true'
