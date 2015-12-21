@@ -30,15 +30,35 @@ describe 'being loud', ->
       room.user.say 'alice',   'FOO & BAR'
       room.user.say 'charlie', 'FOO"BAR"'
       expect(room.robot.brain.get('louds').length).to.eql 11
-      
+
     it 'should only have 1 loud stored after deleting the second', ->
       room.user.say 'alice', 'FOO'
       room.user.say 'bob',   'BAR'
       room.user.say 'alice', '@hubot loud delete BAR'
       expect(room.robot.brain.get('louds')).to.eql ['FOO']
 
+    it 'should store banned words', ->
+      room.user.say 'alice', 'FOO'
+      room.user.say 'bob',   'BAR'
+      room.user.say 'alice', '@hubot loud ban BAR '
+      expect(room.robot.brain.get('louds_banned')).to.eql ['BAR']
+
+    it 'should be able to removed banned words', ->
+      room.user.say 'alpha',   'BAR'
+      room.user.say 'bravo',   '@hubot loud ban BAR'
+      room.user.say 'charlie', '@hubot loud unban BAR'
+      expect(room.robot.brain.get('louds_banned')).to.eql []
+
   context 'louds in chat', ->
     it 'should be produced whenever someone louds anew', ->
       room.user.say 'alice', 'FOO'
       room.user.say 'bob',   'BAR'
       expect(room.messages[2]).to.eql ['hubot', 'FOO']
+
+  context 'louds in chat not from banned', ->
+    it 'should be produced whenever someone louds anew', ->
+      room.user.say 'alpha',   'FISH'
+      room.user.say 'bravo',   '@hubot loud ban FISH'
+      room.user.say 'charlie', 'CHICKEN'
+      room.user.say 'delta',   'COW'
+      expect(room.messages[5]).to.eql ['hubot', 'CHICKEN']
