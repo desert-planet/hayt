@@ -22,5 +22,6 @@ module.exports = (robot) ->
 
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('adlib')?
+      # TODO: Figure out how to load in the adlibs in a textfile.
       robot.brain.set('adlib', [])
 
