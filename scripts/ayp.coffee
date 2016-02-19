@@ -103,6 +103,10 @@ filterName = (name) ->
   if /blah64/i.test(name)
     name = 'Blah64'
 
+  # All hosts are dongs
+  if /(dev|dong|dodge)host/i.test(name)
+    name = 'dong'
+
   return name
 
 # Make any changes required to the text
