@@ -18,7 +18,7 @@
 fs = require('fs')
 
 module.exports = (robot) ->
-  robot.hear /___+/, (res) ->
+  robot.hear /___/, (res) ->
     # Any text that has 3 or more underscores will result in adlib replacement.
     adlib = res.random robot.brain.get('adlib')
     res.send res.message.text.replace('___', adlib)
