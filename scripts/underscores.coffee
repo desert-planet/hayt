@@ -17,11 +17,22 @@
 #   drobati
 fs = require('fs')
 
+loadBrain = (robot) ->
+  fs.readFile 'answers.txt', 'utf8', (err, contents) =>
+    if err then throw err
+    list = contents.toString().split "\n"
+    robot.brain.set('adlib', list)
+
 module.exports = (robot) ->
-  robot.hear /___/, (res) ->
+  robot.hear /(_{3,})+/g, (res) ->
     # Any text that has 3 or more underscores will result in adlib replacement.
-    adlib = res.random robot.brain.get('adlib')
-    res.send res.message.text.replace('___', adlib)
+    message = res.message.text
+    matches = res.match
+    for match in matches
+        word = match.trim()
+        adlib = res.random robot.brain.get('adlib')
+        message = message.replace(word, adlib)
+    res.send message
 
   robot.respond /adlib (\w+)\s*(.*)?$/i, (res) ->
     action = res.match[1].trim()
@@ -34,6 +45,7 @@ module.exports = (robot) ->
           res.send "Adlib added."
         else
           res.send "Already have that adlib."
+
       when 'delete'
         index = robot.brain.get('adlib').indexOf(data)
         if index != -1
@@ -59,11 +71,16 @@ module.exports = (robot) ->
         for adlib in adlibs
           res.send adlibs
 
+      when 'setup'
+        if process.env.DEBUG != 'true'
+          res.send "Setting up brain is only available in debug mode."
+          return
+
+        robot.brain.remove 'adlib'
+        loadBrain robot
+        res.send "Adlib brain setup."
+
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('adlib')?
-      # TODO: Figure out how to load in the adlibs in a textfile.
-      fs.readFile 'answers.txt', 'utf8', (err, contents) =>
-        if err then throw err
-        list = contents.toString().split "\n"
-        robot.brain.set('adlib', list)
+      loadBrain robot
 
