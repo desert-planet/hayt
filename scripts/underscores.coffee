@@ -18,7 +18,7 @@
 fs = require('fs')
 
 loadBrain = (robot) ->
-  fs.readFile 'answers.txt', 'utf8', (err, contents) =>
+  fs.readFile 'data/answers.txt', 'utf8', (err, contents) =>
     if err then throw err
     list = contents.toString().split "\n"
     robot.brain.set('adlib', list)
