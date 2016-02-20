@@ -83,4 +83,3 @@ module.exports = (robot) ->
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('adlib')?
       loadBrain robot
-
