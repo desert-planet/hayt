@@ -10,6 +10,8 @@ Butts. `(_|_)`
 
 ### Testing Hayt Locally
 
+You will need to install libgd2-noxpm-dev, libicu-dev for node-gyp.
+
 You can test your hubot (hayt) by running the following.
 
     % bin/hubot
