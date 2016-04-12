@@ -106,6 +106,9 @@ filterName = (name) ->
   # All hosts are dongs
   if /(dev|dong|dodge)host/i.test(name)
     name = 'dong'
+    
+  if /meowth/i.test(name)
+    name = 'o_rly'
 
   return name
 
