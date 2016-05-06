@@ -38,6 +38,9 @@ module.exports = (robot) ->
         msg.send reply
 
   robot.respond /trigger (.*) to (.*)/, (msg) ->
+    # Spam/Bully protection
+    return msg.send "No" if /dusya/i.test(msg.message.user.name)
+    
     trigger = msg.match[1].trim().toLowerCase()
     response = msg.match[2].trim()
     triggers = robot.brain.get('triggers')
