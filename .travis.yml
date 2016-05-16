@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "0.10"
+sudo: false
+addons:
+  apt:
+    packages:
+    - libgd2-xpm-dev
+services:
+  - redis-server

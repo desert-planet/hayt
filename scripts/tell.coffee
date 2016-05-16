@@ -26,8 +26,10 @@ module.exports = (robot) ->
        localstorage[room][username] += tellmessage
      else
        localstorage[room][username] = tellmessage
+     msg.reply "Ok, I'll tell #{username}"
      return
- 
+
+
    # When a user enters, check if someone left them a message
    robot.enter (msg) ->
      username = msg.message.user.name

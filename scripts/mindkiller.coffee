@@ -24,5 +24,5 @@ Where the fear has gone there will be nothing.\n
 Only I will remain."
 
 module.exports = (robot) ->
-  robot.hear /(afraid|fear)/i, (msg) ->
+  robot.respond /(afraid|fear)/i, (msg) ->
     msg.send litany

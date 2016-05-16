@@ -1,57 +1,38 @@
 # Description
-#   Show video metadata when YouTube URLs are seen.
+#  Grab the title of a youtube video
 #
 # Dependencies:
-#   None
+#  cheerio
+#  request
 #
 # Configuration:
-#   None
+#  None
 #
 # Commands:
-#   None
+#  None
 #
 # Notes:
-#   For text-based adapters like IRC.
+#  youtube sucks
 #
 # Author:
-#   mmb
+#  justinwoo
 
-querystring = require 'querystring'
 url = require 'url'
+path = require 'path'
+request = require 'request'
+cheerio = require 'cheerio'
 
 module.exports = (robot) ->
-  robot.hear /(https?:\/\/www\.youtube\.com\/watch\?.+?)(?:\s|$)/i, (msg) ->
-    url_parsed = url.parse(msg.match[1])
-    query_parsed = querystring.parse(url_parsed.query)
+  robot.hear /(youtube\.com\/watch\?v=|youtu.be\/)(.+)/i, (msg) ->
+    url_parsed = url.parse(msg.match[2])
+    getTitle msg, url_parsed.href
 
-    if query_parsed.v
-      video_hash = query_parsed.v
-      showInfo msg, video_hash
-
-  robot.hear /(https?:\/\/youtu\.be\/)([a-z0-9\-_]+)/i, (msg) ->
-    video_hash = msg.match[2]
-    showInfo msg, video_hash
-
-showInfo = (msg, video_hash) ->
-  msg.http("http://gdata.youtube.com/feeds/api/videos/#{video_hash}")
-    .query({
-      alt: 'json'
-    }).get() (err, res, body) ->
-      if res.statusCode is 200
-        data = JSON.parse(body)
-        entry = data.entry
-        msg.send "YouTube: #{entry.title.$t} (#{formatTime(entry.media$group.yt$duration.seconds)})"
-      else
-        msg.send "YouTube: error: #{video_hash} returned #{res.statusCode}: #{body}"
-
-formatTime = (seconds) ->
-  min = Math.floor(seconds / 60)
-  sec = seconds % 60
-
-  result = ''
-  if (min > 0)
-    result += "#{min}m"
-  if (sec > 0)
-    result += "#{sec}s"
-
-  result
+getTitle = (msg, url) ->
+  muhUrl = "https://youtube.com/watch?v=#{url}"
+  request muhUrl, (err, res, body) ->
+    if err
+      msg.send "couldn't do anything with #{muhUrl}"
+    else
+      $ = cheerio.load(body)
+      title = $('title').text()
+      msg.send title
