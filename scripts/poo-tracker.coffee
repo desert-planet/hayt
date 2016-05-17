@@ -9,10 +9,6 @@ redis_client = Redis.createClient(info.port, info.hostname)
 redis_clent.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
-  setInterval ->
-    checkRedisForShit()
-  , 1000
-
   checkRedisForShit ->
     redis_clent.lindex POO_TRACKER_KEY, -1 -> (err, reply)
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
@@ -29,3 +25,6 @@ module.exports = (robot) ->
       return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
       return if reply == null
       return res.send "Latest poo: #{reply}"
+  setInterval ->
+    checkRedisForShit()
+  , 1000
