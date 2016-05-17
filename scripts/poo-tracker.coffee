@@ -9,7 +9,7 @@ redis_client = Redis.createClient(info.port, info.hostname)
 redis_clent.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
-  checkRedisForShit ->
+  checkRedisForShit = ->
     redis_clent.lindex POO_TRACKER_KEY, -1, (err, reply) ->
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
       return if reply == null
