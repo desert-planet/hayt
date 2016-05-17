@@ -6,7 +6,7 @@ POO_LATEST_KEY = "poops:latest_message"
 
 info = Url.parse process.env.POO_REDIS_URL or "redis://localhost:6379/0"
 redis_client = Redis.createClient(info.port, info.hostname)
-redis_clent.auth info.auth.split(":")[1] if info.auth
+redis_client.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
   checkRedisForShit = ->
@@ -18,8 +18,8 @@ module.exports = (robot) ->
       robot.messageRoom room, "#{reply}"
 
       # clean up
-      redis_clent.lrem POO_TRACKER_KEY, 0
-      redis_clent.set POO_LATEST_KEY, reply
+      redis_client.lrem POO_TRACKER_KEY, 0
+      redis_client.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
     redis_client.get POO_LATEST_KEY, (err, reply) ->
