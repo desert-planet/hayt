@@ -14,12 +14,13 @@ module.exports = (robot) ->
   , 1000
 
   checkRedisForShit ->
-    redis_clent.get POO_TRACKER_KEY -> (err, reply)
-      return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
+    redis_clent.lindex POO_TRACKER_KEY, -1 -> (err, reply)
+      return console.error("Failed get with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
       return if reply == null
 
       robot.messageRoom "#arrakis", "#{reply}"
-      redis_clent.del POO_TRACKER_KEY
+      redis_clent.ltrim POO_TRACKER_KEY, -1, -1
+      redis_clent.lpop POO_TRACKER_KEY
       redis_clent.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
