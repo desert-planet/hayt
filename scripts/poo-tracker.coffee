@@ -1,8 +1,8 @@
 Redis = require 'redis'
 Url = require 'url'
 
-POO_TRACKER_KEY = "poo:skalnik:message"
-POO_LATEST_KEY = "poo:skalnik:latest_message"
+POO_TRACKER_KEY = "poops"
+POO_LATEST_KEY = "poops:latest_message"
 
 info = Url.parse process.env.POO_REDIS_URL
 redis_client = Redis.createClient(info.port, info.hostname)
