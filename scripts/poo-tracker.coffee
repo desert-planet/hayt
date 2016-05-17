@@ -14,7 +14,8 @@ module.exports = (robot) ->
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
       return if reply == null
 
-      robot.messageRoom "#arrakis", "#{reply}"
+      room = process.env.HUBOT_IRC_ROOMS or "#arrakis"
+      robot.messageRoom room, "#{reply}"
 
       # clean up
       redis_clent.lrem POO_TRACKER_KEY, 0
