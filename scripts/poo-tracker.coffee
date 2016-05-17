@@ -15,7 +15,7 @@ module.exports = (robot) ->
 
   checkRedisForShit ->
     redis_clent.get POO_TRACKER_KEY -> (err, reply)
-      return console.error("Failed get of #{POO_TRACKER_KEY}: #{err}") if err
+      return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
       return if reply == null
 
       robot.messageRoom "#arrakis", "#{reply}"
