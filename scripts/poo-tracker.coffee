@@ -25,4 +25,6 @@ module.exports = (robot) ->
 
   robot.respond /poo tracker( me)?/i, (res) ->
     redis_client.get POO_LATEST_KEY -> (err, reply)
+      return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
+      return if reply == null
       return res.send "Latest poo: #{reply}"
