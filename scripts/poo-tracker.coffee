@@ -10,7 +10,7 @@ redis_clent.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
   checkRedisForShit ->
-    redis_clent.lindex POO_TRACKER_KEY, -1 -> (err, reply)
+    redis_clent.lindex POO_TRACKER_KEY, -1, (err, reply) ->
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
       return if reply == null
 
@@ -21,11 +21,11 @@ module.exports = (robot) ->
       redis_clent.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
-    redis_client.get POO_LATEST_KEY -> (err, reply)
+    redis_client.get POO_LATEST_KEY, (err, reply) ->
       return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
       return if reply == null
       return res.send "Latest poo: #{reply}"
-      
+
   setInterval ->
     checkRedisForShit()
   , 1000
