@@ -25,6 +25,7 @@ module.exports = (robot) ->
       return console.error("Failed get with key '#{POO_TRACKER_KEY}': #{err}") if err
       return if reply == null
       return res.send "Latest poo: #{reply}"
+      
   setInterval ->
     checkRedisForShit()
   , 1000
