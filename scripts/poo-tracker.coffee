@@ -19,8 +19,9 @@ module.exports = (robot) ->
       return if reply == null
 
       robot.messageRoom "#arrakis", "#{reply}"
-      redis_clent.ltrim POO_TRACKER_KEY, -1, -1
-      redis_clent.lpop POO_TRACKER_KEY
+
+      # clean up
+      redis_clent.lrem POO_TRACKER_KEY, 0
       redis_clent.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
