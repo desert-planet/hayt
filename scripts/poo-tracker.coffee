@@ -18,7 +18,7 @@ module.exports = (robot) ->
       return console.error("Failed get of #{POO_TRACKER_KEY}: #{err}") if err
       return if reply == null
 
-      robot.messageRoom "#arrakis", "We got a poo over here: #{reply}"
+      robot.messageRoom "#arrakis", "#{reply}"
       redis_clent.del POO_TRACKER_KEY
       redis_clent.set POO_LATEST_KEY, reply
 
