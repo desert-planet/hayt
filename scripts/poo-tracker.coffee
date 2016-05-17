@@ -4,7 +4,7 @@ Url = require 'url'
 POO_TRACKER_KEY = "poops"
 POO_LATEST_KEY = "poops:latest_message"
 
-info = Url.parse process.env.POO_REDIS_URL
+info = Url.parse process.env.POO_REDIS_URL or "redis://localhost:6379/0"
 redis_client = Redis.createClient(info.port, info.hostname)
 redis_clent.auth info.auth.split(":")[1] if info.auth
 
