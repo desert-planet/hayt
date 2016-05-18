@@ -12,7 +12,7 @@ module.exports = (robot) ->
   checkRedisForShit = ->
     redis_client.rpop POO_TRACKER_KEY, (err, reply) ->
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
-      return if reply == null
+      return if !reply
 
       room = process.env.HUBOT_IRC_ROOMS or "#arrakis"
       envelope = {}
