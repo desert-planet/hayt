@@ -6,6 +6,7 @@ redis_client = Redis.createClient(info.port, info.hostname)
 redis_client.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
+  console.log("Poop boot is #{robot.constructor.name}")
   POO_TRACKER_KEY = "poops"
   POO_LATEST_KEY = "poops:latest_message"
 
@@ -28,7 +29,7 @@ module.exports = (robot) ->
       return if reply == null
       return res.send "Latest poo: #{reply}"
 
-  robot.on 'connected', (message) ->
+  robot.on 'connected', ->
     setInterval ->
       checkRedisForShit()
     , 1000
