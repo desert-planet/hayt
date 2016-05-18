@@ -28,7 +28,7 @@ module.exports = (robot) ->
       return if reply == null
       return res.send "Latest poo: #{reply}"
 
-  robot.on 'registered', (message) ->
+  robot.on 'connected', (message) ->
     setInterval ->
       checkRedisForShit()
     , 1000
