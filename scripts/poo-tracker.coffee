@@ -18,7 +18,7 @@ module.exports = (robot) ->
       robot.say room, reply
 
       # clean up
-      redis_client.lrem POO_TRACKER_KEY, 0
+      redis_client.del POO_TRACKER_KEY
       redis_client.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
