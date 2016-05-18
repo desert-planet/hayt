@@ -5,6 +5,9 @@ info = Url.parse process.env.POO_REDIS_URL or "redis://localhost:6379/0"
 redis_client = Redis.createClient(info.port, info.hostname)
 redis_client.auth info.auth.split(":")[1] if info.auth
 
+class Envelope
+  constructor: (@room, @user) ->
+
 module.exports = (robot) ->
   POO_TRACKER_KEY = "poops"
   POO_LATEST_KEY = "poops:latest_message"
@@ -15,7 +18,8 @@ module.exports = (robot) ->
       return if reply == null
 
       room = process.env.HUBOT_IRC_ROOMS or "#arrakis"
-      e = room: room
+      e = new Envelope room, null
+      e.room 
       robot.send e, reply
       redis_client.set POO_LATEST_KEY, reply
 
