@@ -31,5 +31,5 @@ module.exports = (robot) ->
       return res.send "Latest poo: #{reply}"
 
   robot.enter (msg) ->
-    if msg.message.user.name == robot.name and !check_interval
+    if (msg.message.user.name == robot.name) and !check_interval
       check_interval = setInterval checkRedisForShit, 1000
