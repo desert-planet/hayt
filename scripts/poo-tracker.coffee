@@ -10,7 +10,7 @@ module.exports = (robot) ->
   POO_LATEST_KEY = "poops:latest_message"
 
   checkRedisForShit = ->
-    redis_client.lindex POO_TRACKER_KEY, -1, (err, reply) ->
+    redis_client.rpop POO_TRACKER_KEY, (err, reply) ->
       return console.error("Failed lindex with key '#{POO_TRACKER_KEY}' and index -1: #{err}") if err
       return if reply == null
 
