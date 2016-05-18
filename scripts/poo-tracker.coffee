@@ -6,7 +6,7 @@ redis_client = Redis.createClient(info.port, info.hostname)
 redis_client.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
-  console.log("Poop boot is #{robot.constructor.name}")
+  console.log("Poop boot is #{robot.constructor.name} adapter: #{robot.adapter}")
   POO_TRACKER_KEY = "poops"
   POO_LATEST_KEY = "poops:latest_message"
 
