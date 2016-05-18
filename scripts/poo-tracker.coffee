@@ -30,6 +30,7 @@ module.exports = (robot) ->
       return res.send "Latest poo: #{reply}"
 
   robot.on 'connected', ->
+    console.log("Connected event for poop tracker")
     setInterval ->
       checkRedisForShit()
     , 1000
