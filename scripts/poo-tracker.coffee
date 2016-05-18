@@ -15,7 +15,7 @@ module.exports = (robot) ->
       return if reply == null
 
       room = process.env.HUBOT_IRC_ROOMS or "#arrakis"
-      robot.say room, reply
+      robot.send room, reply
 
       # clean up
       redis_client.del POO_TRACKER_KEY
