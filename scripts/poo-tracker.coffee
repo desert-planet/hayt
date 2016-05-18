@@ -18,9 +18,11 @@ module.exports = (robot) ->
       return if reply == null
 
       room = process.env.HUBOT_IRC_ROOMS or "#arrakis"
-      e = new Envelope room, null
-      e.room 
-      robot.send e, reply
+      envelope = {}
+      envelope.user = {}
+      envelope.user.room = envelope.room = room
+      envelope.user.type = 'groupchat'
+      robot.send envelope, reply
       redis_client.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
