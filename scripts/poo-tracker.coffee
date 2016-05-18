@@ -6,7 +6,6 @@ redis_client = Redis.createClient(info.port, info.hostname)
 redis_client.auth info.auth.split(":")[1] if info.auth
 
 module.exports = (robot) ->
-  console.log("Poop boot is #{robot.constructor.name} adapter: #{robot.adapter.send}")
   POO_TRACKER_KEY = "poops"
   POO_LATEST_KEY = "poops:latest_message"
 
@@ -20,7 +19,7 @@ module.exports = (robot) ->
       envelope.user = {}
       envelope.user.room = envelope.room = room
       envelope.user.type = 'groupchat'
-      robot.send envelope, reply
+      robot.adapter.send envelope, reply
       redis_client.set POO_LATEST_KEY, reply
 
   robot.respond /poo tracker( me)?/i, (res) ->
@@ -29,7 +28,7 @@ module.exports = (robot) ->
       return if reply == null
       return res.send "Latest poo: #{reply}"
 
-  robot.on 'connected', ->
+  robot.adapter.on 'connected', ->
     console.log("Connected event for poop tracker")
     setInterval ->
       checkRedisForShit()
