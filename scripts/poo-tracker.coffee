@@ -5,6 +5,8 @@ info = Url.parse process.env.POO_REDIS_URL or "redis://localhost:6379/0"
 redis_client = Redis.createClient(info.port, info.hostname)
 redis_client.auth info.auth.split(":")[1] if info.auth
 
+check_interval = null
+
 module.exports = (robot) ->
   POO_TRACKER_KEY = "poops"
   POO_LATEST_KEY = "poops:latest_message"
@@ -28,6 +30,6 @@ module.exports = (robot) ->
       return if reply == null
       return res.send "Latest poo: #{reply}"
 
-  robot.adapter.on 'connected', ->
-    console.log("Connected event for poop tracker")
-    setInterval checkRedisForShit, 1000
+  robot.enter (msg) ->
+    if msg.message.user.name == robot.name and !check_interval
+      check_interval = setInterval checkRedisForShit, 1000
