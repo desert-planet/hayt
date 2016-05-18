@@ -30,6 +30,4 @@ module.exports = (robot) ->
 
   robot.adapter.on 'connected', ->
     console.log("Connected event for poop tracker")
-    setInterval ->
-      checkRedisForShit()
-    , 1000
+    setInterval checkRedisForShit, 1000
