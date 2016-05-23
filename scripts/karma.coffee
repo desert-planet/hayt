@@ -85,7 +85,7 @@ module.exports = (robot) ->
   allow_self = process.env.KARMA_ALLOW_SELF or "true"
 
   robot.hear /(?:[\(]([\w\d\. ]+)[\)]|([\w\d\.]+))\+\+(\s|$)/, (msg) ->
-    subject = msg.match[1].toLowerCase()
+    subject = (msg.match[1] || msg.match[2]).toLowerCase()
     if allow_self is true or msg.message.user.name.toLowerCase() != subject
       karma.increment subject
       msg.send "#{subject} #{karma.incrementResponse()} (Karma: #{karma.get(subject)})"
@@ -93,7 +93,7 @@ module.exports = (robot) ->
       msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
 
   robot.hear /(?:[\(]([\w\d\. ]+)[\)]|([\w\d\.]+))--(\s|$)/, (msg) ->
-    subject = msg.match[1].toLowerCase()
+    subject = (msg.match[1] || msg.match[2]).toLowerCase()
     if allow_self is true or msg.message.user.name.toLowerCase() != subject
       karma.decrement subject
       msg.send "#{subject} #{karma.decrementResponse()} (Karma: #{karma.get(subject)})"
