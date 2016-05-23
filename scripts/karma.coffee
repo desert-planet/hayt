@@ -84,24 +84,21 @@ module.exports = (robot) ->
   karma = new Karma robot
   allow_self = process.env.KARMA_ALLOW_SELF or "true"
 
-  robot.hear /(?:[\(]([\w\d\. ]+)[\)]|([\w\d\.]+))\+\+(\s|$)/g, (msg) ->
-    for subject in msg.match[1..]
-      subject = subject.toLowerCase()
-      if allow_self is true or msg.message.user.name.toLowerCase() != subject
-        karma.increment subject
-        msg.send "#{subject} #{karma.incrementResponse()} (Karma: #{karma.get(subject)})"
-      else
-        msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
+  robot.hear /(?:[\(]([\w\d\. ]+)[\)]|([\w\d\.]+))\+\+(\s|$)/, (msg) ->
+    subject = msg.match[1].toLowerCase()
+    if allow_self is true or msg.message.user.name.toLowerCase() != subject
+      karma.increment subject
+      msg.send "#{subject} #{karma.incrementResponse()} (Karma: #{karma.get(subject)})"
+    else
+      msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
 
   robot.hear /(?:[\(]([\w\d\. ]+)[\)]|([\w\d\.]+))--(\s|$)/, (msg) ->
-    console.log "Matches: #{msg.match}"
-    for subject in msg.match[1..]
-      subject = subject.toLowerCase()
-      if allow_self is true or msg.message.user.name.toLowerCase() != subject
-        karma.decrement subject
-        msg.send "#{subject} #{karma.decrementResponse()} (Karma: #{karma.get(subject)})"
-      else
-        msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
+    subject = msg.match[1].toLowerCase()
+    if allow_self is true or msg.message.user.name.toLowerCase() != subject
+      karma.decrement subject
+      msg.send "#{subject} #{karma.decrementResponse()} (Karma: #{karma.get(subject)})"
+    else
+      msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
 
   robot.respond /karma empty ?(\S+[^-\s])$/i, (msg) ->
     subject = msg.match[1].toLowerCase()
