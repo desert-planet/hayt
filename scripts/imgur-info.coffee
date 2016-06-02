@@ -34,8 +34,8 @@ getInfo = (msg, url) ->
       msg.send "couldn't do anything with #{muhUrl}. imgur sucks"
     else
       $ = cheerio.load(body)
-      title = $('title').text()
-      blurb = $('#captions > div.children > div:nth-child(2) > div > div.usertext.textbox.first1 > p').text()?.trim() || "wtf is a comment???"
+      title = $('title').text().trim()
+      blurb = $('.usertext.textbox.first1 > p').text()?.trim() || "wtf is a comment???"
       msg.send title
       msg.send blurb
 
