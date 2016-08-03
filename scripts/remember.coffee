@@ -48,13 +48,13 @@ module.exports = (robot) ->
           searchPattern = match[2]
           matchingKeys = findSimilarMemories(searchPattern)
           if matchingKeys.length > 0
-            value = "I remember:\n#{matchingKeys.join('\n')}"
+            value = "I remember:\n#{matchingKeys.join(', ')}"
           else
             value = "I don't remember anything matching `#{searchPattern}`"
         else
           matchingKeys = findSimilarMemories(key)
           if matchingKeys.length > 0
-            keys = matchingKeys.join('\n')
+            keys = matchingKeys.join(', ')
             value = "I don't remember `#{key}`. Did you mean:\n#{keys}"
           else
             value = "I don't remember anything matching `#{key}`"
@@ -72,7 +72,7 @@ module.exports = (robot) ->
     msg.finish()
     keys = []
     keys.push key for key of memories()
-    msg.send "I remember:\n#{keys.join('\n')}"
+    msg.send "I remember:\n#{keys.join(', ')}"
 
   robot.respond /what are your favorite memories/i, (msg) ->
     msg.finish()
@@ -80,7 +80,7 @@ module.exports = (robot) ->
       memoriesByRecollection()[key]
     sortedMemories.reverse()
 
-    msg.send "My favorite memories are:\n#{sortedMemories[0..20].join('\n')}"
+    msg.send "My favorite memories are:\n#{sortedMemories[0..20].join(', ')}"
 
   robot.respond /(me|random memory|memories)\s+?(.*)?$/i, (msg) ->
     msg.finish()
