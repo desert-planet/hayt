@@ -68,12 +68,6 @@ module.exports = (robot) ->
     delete memoriesByRecollection()[key]
     msg.send "I've forgotten #{key} is #{value}."
 
-  robot.respond /what do you remember/i, (msg) ->
-    msg.finish()
-    keys = []
-    keys.push key for key of memories()
-    msg.send "I remember:\n#{keys.join(', ')}"
-
   robot.respond /what are your favorite memories/i, (msg) ->
     msg.finish()
     sortedMemories = _.sortBy Object.keys(memoriesByRecollection()), (key) ->
