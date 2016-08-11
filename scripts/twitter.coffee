@@ -14,7 +14,7 @@ module.exports = (robot) ->
       insult = msg.random ["idiot", "dumb ass", "moron", "asshole", "jackass", "butthole", "butt"]
       # For *SOME RAISIN* the error is in a list? Who the fuck does this? Why is this a thing?
       [ {message = "no fucking clue"}, ... ] = err if err
-      return msg.reply "No, because #{message}, #{insult}." if err
+      return msg.reply "No, because #{message.replace(/.$/, '')}, #{insult}." if err
       msg.reply "Fine, did it."
 
 
