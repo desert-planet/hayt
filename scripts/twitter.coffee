@@ -1,4 +1,5 @@
 t = require '../lib/twitter'
+util = require 'util'
 
 module.exports = (robot) ->
   robot.respond /(?:retweet|rt|retwat)\s+(.+$)/i, (msg) ->
@@ -10,7 +11,10 @@ module.exports = (robot) ->
 
     return msg.reply "That's not a fucking tweet, moron" if not tid
     t.client.post "statuses/retweet/#{tid}", {}, (err, tweet, response) ->
-      return msg.reply "No, because #{err}" if err
+      insult = msg.random ["idiot", "dumb ass", "moron", "asshole", "jackass", "butthole", "butt"]
+      # For *SOME RAISIN* the error is in a list? Who the fuck does this? Why is this a thing?
+      [ {message = "no fucking clue"}, ... ] = err if err
+      return msg.reply "No, because #{message.replace(/.$/, '')}, #{insult}." if err
       msg.reply "Fine, did it."
 
 
