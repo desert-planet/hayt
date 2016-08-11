@@ -13,7 +13,7 @@ module.exports = (robot) ->
     t.client.post "statuses/retweet/#{tid}", {}, (err, tweet, response) ->
       insult = msg.random ["idiot", "dumb ass", "moron", "asshole", "jackass", "butthole", "butt"]
       # For *SOME RAISIN* the error is in a list? Who the fuck does this? Why is this a thing?
-      [ {message = "no fucking clue"}, ... ] = err of err
+      [ {message = "no fucking clue"}, ... ] = err if err
       return msg.reply "No, because #{err.message}, #{insult}." if err
       msg.reply "Fine, did it."
 
