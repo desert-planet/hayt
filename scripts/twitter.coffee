@@ -11,7 +11,8 @@ module.exports = (robot) ->
 
     return msg.reply "That's not a fucking tweet, moron" if not tid
     t.client.post "statuses/retweet/#{tid}", {}, (err, tweet, response) ->
-      return msg.reply "No, because #{util.inspect err}" if err
+      insult = msg.random ["idiot", "dumb ass", "moron", "asshole", "jackass", "butthole", "butt"]
+      return msg.reply "No, because #{err.message}, #{insult}." if err
       msg.reply "Fine, did it."
 
 
