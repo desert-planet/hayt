@@ -90,7 +90,7 @@ filterName = (name) ->
   if /arbo/i.test(name)
     # Bouncers are hard or something, whatever.
     name = 'arbo'
-    
+
   if name == 'sflios'
     # He visited this one time
     # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
@@ -99,14 +99,14 @@ filterName = (name) ->
   # has multiple connections because computers Я hard
   if /justinw/i.test(name)
     name = 'justinw2'
-    
+
   if /blah64/i.test(name)
     name = 'Blah64'
 
   # All hosts are dongs
   if /(dev|dong|dodge)host/i.test(name)
     name = 'dong'
-    
+
   if /meowth/i.test(name)
     name = 'o_rly'
 
@@ -119,7 +119,7 @@ filterText = (text) ->
 
   # Emails 'R' Secret
   text = text.replace(/([^@\s]+@)[^@\s]+\.[^@\s]+/g, "$1[redacted]")
-  
+
   # Let users redact shit too
   text = text.replace(/\[[^\]]*\]/g, "[redacted]")
 
@@ -156,7 +156,7 @@ module.exports = (robot) ->
     )
 
   # Ask for what currently serves as "output"
-  robot.respond /ayp(\s+(me)?)?\s*$/i, (msg) ->
+  robot.respond /(?:nmp|ayp)(\s+(me)?)?\s*$/i, (msg) ->
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
       new AYPStrip lines, (err, image, strip) ->
