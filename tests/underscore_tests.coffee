@@ -8,6 +8,7 @@ describe 'when user uses underscores', ->
 
   beforeEach ->
     room = helper.createRoom()
+    room.robot.brain.remove('adlib')
     room.robot.brain.set('adlib', ['dickbutt'])
 
   context 'respond with adlib', ->
