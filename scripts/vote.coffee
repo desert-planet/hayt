@@ -146,7 +146,7 @@ Supported commands:
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
 
-      when "no","jo","ne","ingen","nee","ei","non","ningunha","nein","nem","ekki","aon","nie","nao","nu","nej","dim","yox","yo'q","khong","geen","palibe","babu","ha ho","hakuna","ko si","akukho","dili","hindi","tidak","ora","tsy misy","tidak","kahore","neniu","pa gen okenn","nyet"
+      when "no","jo","ne","ingen","nee","ei","non","ningunha","nein","nem","ekki","aon","nie","nao","nu","nej","dim","yox","yo'q","khong","geen","palibe","babu","ha ho","hakuna","ko si","akukho","dili","hindi","tidak","ora","tsy misy","tidak","kahore","neniu","pa gen okenn","nyet","nope","nada","neg","negative"
         return msg.reply "There's nothing to disagree with." unless Vote.current?
         result = Vote.current?.no msg.message.user.name
         reply = "Your vote " +
