@@ -139,14 +139,14 @@ Supported commands:
 
     switch action
       # Vote on a current issue
-      when "yes"
+      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes"
         return msg.reply "There's no vote going on." unless Vote.current?
         result = Vote.current?.yes msg.message.user.name
         reply = "Your vote " +
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
 
-      when "no"
+      when "no","jo","ne","ingen","nee","ei","non","ningunha","nein","nem","ekki","aon","nie","nao","nu","nej","dim","yox","yo'q","khong","geen","palibe","babu","ha ho","hakuna","ko si","akukho","dili","hindi","tidak","ora","tsy misy","tidak","kahore","neniu","pa gen okenn","nyet"
         return msg.reply "There's nothing to disagree with." unless Vote.current?
         result = Vote.current?.no msg.message.user.name
         reply = "Your vote " +
