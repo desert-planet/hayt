@@ -10,3 +10,5 @@ module.exports = (robot) ->
       msg.send "Muta_work: FUCK YOU"
     else if /anonuser/.test(username)
       msg.send "Bazinga!"
+    else if /shyguy/.test(username)
+      msg.send "wb #{username}"
