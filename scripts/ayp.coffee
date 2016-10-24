@@ -91,8 +91,8 @@ filterName = (name) ->
     # Bouncers are hard or something, whatever.
     name = 'arbo'
 
-  if name == 'sflios'
-    # He visited this one time
+  if name == 'sflios' || name == 'PITlios'
+    # He visited this one time. And then moved that other time.
     # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
     name = 'solios'
 
