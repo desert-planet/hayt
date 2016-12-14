@@ -142,6 +142,7 @@ module.exports = (robot) ->
   #   This is not a standard feature, and requires an adapter
   #   that emits a `say` event when the robot speaks
   robot.adapter.on 'say', (envelope, str) ->
+    str = str or ""
     buffer.store robot.name.trim(), str.trim()
 
   # We listen to everything.
