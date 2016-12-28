@@ -338,6 +338,8 @@ class AYPStrip
             left = frame.width - char.width
 
           @compositeImage frame, char, left, top
+
+          isKenny = char.matchchar.match('default') == null
           scrambleLines = scrambleLines.concat(line.concat(isKenny))
 
       # Add the text after all the avatars are painted on
