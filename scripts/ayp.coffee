@@ -109,6 +109,9 @@ filterName = (name) ->
 
   if /meowth/i.test(name)
     name = 'o_rly'
+    
+  if /twerk/i.test(name)
+    name = 'high_twerk'
 
   return name
 
