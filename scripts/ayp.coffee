@@ -110,7 +110,7 @@ filterName = (name) ->
   if /meowth/i.test(name)
     name = 'o_rly'
     
-  if /twerk/i.test(name)
+  if /twerk/i.test(name) or /^high_tw/i.test(name)
     name = 'high_twerk'
 
   return name
