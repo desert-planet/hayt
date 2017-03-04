@@ -186,7 +186,7 @@ Supported commands:
         catch error
           msg.reply error
 
-      when "poop"
+      when "poop" || "💩"
         try
           vote = new Vote robot, msg, "Should I poop!?", 1, ->
             msg.send msg.random [
