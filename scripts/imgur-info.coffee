@@ -35,7 +35,5 @@ getInfo = (msg, url) ->
     else
       $ = cheerio.load(body)
       title = $('title').text().trim()
-      blurb = $('.usertext.textbox.first1 > p').text()?.trim() || "wtf is a comment???"
       msg.send title
-      msg.send blurb
 
