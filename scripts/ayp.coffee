@@ -112,6 +112,10 @@ filterName = (name) ->
     
   if /twerk/i.test(name) or /^high_tw/i.test(name)
     name = 'high_twerk'
+    
+  if name == 'esch' or name == 'egbe'
+    # No one knows why
+    name = 'esch'
 
   return name
 
