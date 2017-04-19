@@ -113,8 +113,8 @@ filterName = (name) ->
   if /twerk/i.test(name) or /^high_tw/i.test(name)
     name = 'high_twerk'
     
-  if name == 'esch' or name == 'egbe'
-    # No one knows why
+  if name == 'esch' or name == 'egbe' or /egg/i.test(name)
+    # No one knows why, but he's an asshole for it
     name = 'esch'
 
   return name
