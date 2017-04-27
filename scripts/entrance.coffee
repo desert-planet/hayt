@@ -12,3 +12,5 @@ module.exports = (robot) ->
       msg.send "wb #{username}"
     else if /twerk/.test(username)
       msg.send "wb #{username}!!!!!!!"
+    else if /kin/.test(username)
+      msg.send "Hello #{username}! We missed you!"
