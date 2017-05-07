@@ -116,6 +116,10 @@ filterName = (name) ->
   if name == 'esch' or name == 'egbe' or /egg/i.test(name)
     # No one knows why, but he's an asshole for it
     name = 'esch'
+    
+  # The bouncer muerto'd and now the lizard bounces
+  if /geckomuerto/i.test(name)
+    name = 'geckomuerto'
 
   return name
 
