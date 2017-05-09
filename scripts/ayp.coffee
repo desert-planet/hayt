@@ -120,6 +120,10 @@ filterName = (name) ->
   # The bouncer muerto'd and now the lizard bounces
   if /geckomuerto/i.test(name)
     name = 'geckomuerto'
+    
+  # Hold my beer, I'm about to computer a computer
+  if /drewzar/i.test(name)
+    name = 'Drewzar'
 
   return name
 
