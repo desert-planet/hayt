@@ -101,7 +101,7 @@ filterName = (name) ->
     name = 'justinw2'
 
   if /blah64/i.test(name)
-    name = 'Blah64'
+    name = 'blah64'
 
   # All hosts are dongs
   if /(dev|dong|dodge)host/i.test(name)
@@ -120,6 +120,10 @@ filterName = (name) ->
   # The bouncer muerto'd and now the lizard bounces
   if /geckomuerto/i.test(name)
     name = 'geckomuerto'
+    
+  # Hold my beer, I'm about to computer a computer
+  if /drewzar/i.test(name)
+    name = 'drewzar'
 
   return name
 
