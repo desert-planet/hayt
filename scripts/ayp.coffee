@@ -124,6 +124,10 @@ filterName = (name) ->
   # Hold my beer, I'm about to computer a computer
   if /drewzar/i.test(name)
     name = 'drewzar'
+    
+  # Lets just get the whole channel in this function
+  if /shyguy/i.test(name)
+    name = 'drewzar'
 
   return name
 
