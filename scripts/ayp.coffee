@@ -127,7 +127,7 @@ filterName = (name) ->
     
   # Lets just get the whole channel in this function
   if /shyguy/i.test(name)
-    name = 'drewzar'
+    name = 'shyguy'
 
   return name
 
