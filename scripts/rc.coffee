@@ -8,8 +8,9 @@ prettyMs = require 'pretty-ms'
 
 # Robot hooks
 module.exports = (robot) ->
-  robot.respond /(?:rc)\s+for\s([^\s]+)\s*$/i, (msg) ->
+  robot.respond /(?:rc)\s+for\s([^\s]+)\s*([^\s]+.*)?\s*$/i, (msg) ->
     who = msg.match[1].toLowerCase()
+    options = (msg.match[2] ? "").toLowerCase()
 
     new RCScore(who).fetch (err, self) =>
       if self.score == null
