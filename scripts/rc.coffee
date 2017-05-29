@@ -10,16 +10,19 @@ module.exports = (robot) ->
   robot.respond /(?:rc)\s+for\s([^\s]+)$/i, (msg) ->
     who = msg.match[1]
     new RCScore(who).fetch (err, info, self) =>
-      msg.reply "TODO(sshirokov): Err: #{err} Info: #{util.inspect info}: Self: #{self}"
+      {score: score, when: stamp} = info
+      if score == null
+        return msg.reply "Never heard of '#{who}'"
+      distance = Date.now() - stamp
+      msg.reply "Last I heard, #{who} was at #{score} #{distance} seconds ago"
 
   robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
     score = msg.match[1]
 
     new RCScore(who).set score, (err, res, self) ->
-      msg.reply "TODO(sshirokov): rc: #{who} => #{score}"
-      msg.reply "Err: #{err} Res: #{util.inspect res} -- #{self}"
-
+      return msg.reply "Whoooops: #{err}" if err
+      msg.reply "Your RC is now #{res.score}"
 
 # Bases and utilities
 class RCError extends Error
@@ -61,5 +64,7 @@ class RCScore extends RCBase
   fetch: (cb) =>
     @storage.zscore @key("latest"), @who, (err, stamp) =>
       return cb(err, null, this) if err
-      # Use `stamp` to fetch from `@key("@{who}:scores")`
-      cb(new RCError("TODO(sshirokov): Got score of #{stamp} for #{@who}"), null, this)
+      @storage.zscore @key("#{@who}:scores"), stamp, (err, score) =>
+        return cb(err, null, this) if err
+        @info = {score: score, when: stamp}
+        cb(false, @info, this)
