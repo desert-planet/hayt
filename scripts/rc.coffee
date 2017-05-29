@@ -7,6 +7,11 @@ Url = require 'url'
 
 
 module.exports = (robot) ->
+  robot.respond /(?:rc)\s+for\s([^\s]+)$/i, (msg) ->
+    who = msg.match[1]
+    new RCScore(who).fetch (err, info, self) =>
+      msg.reply "TODO(sshirokov): Err: #{err} Info: #{util.inspect info}: Self: #{self}"
+
   robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
     score = msg.match[1]
@@ -35,10 +40,9 @@ class RCBase
     @storage.auth info.auth.split(":")[1] if info.auth
 
 class RCScore extends RCBase
-  constructor: (@who=null, @options={}) -> super()
+  constructor: (@who, @options={}) -> super()
 
   set: (score, cb) =>
-    cb(new RCError("Setting score of nobody"), null, this) unless @who
     now = Date.now()
 
     @storage.multi([
@@ -54,5 +58,8 @@ class RCScore extends RCBase
   score: -> @info?.score
   timestamp: -> @info?.timestamp
 
-  fetch: (cb) ->
-    throw RCError("TODO(sshirokov): Update the latest scores and stamps, the call the CB")
+  fetch: (cb) =>
+    @storage.zscore @key("latest"), @who, (err, stamp) =>
+      return cb(err, null, this) if err
+      # Use `stamp` to fetch from `@key("@{who}:scores")`
+      cb(new RCError("TODO(sshirokov): Got score of #{stamp} for #{@who}"), null, this)
