@@ -2,6 +2,7 @@
 # We'll track your current mood, and it over time
 
 Redis = require 'redis'
+Url = require 'url'
 
 module.exports = (robot) ->
   robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
@@ -24,5 +25,5 @@ class RollCall
       'redis://localhost:6379'
     @storage = Redis.createClient(info.port, info.hostname)
     @storage.auth info.auth.split(":")[1] if info.auth
-    
+
     throw RCError("TODO(sshirokov): More?")
