@@ -9,3 +9,20 @@ module.exports = (robot) ->
     score = msg.match[1]
 
     return msg.reply "TODO(sshirokov): Not fucking yet: rc: #{who} => #{score}"
+
+class RCError extends Error
+
+class RollCall
+  # Constructor for `RollCall`
+  #
+  # TODO(sshirokov): Describe params
+  constructor: (@who=null, @options={}) ->
+    # Connect to redis
+    info = Url.parse process.env.REDISTOGO_URL or
+      process.env.REDISCLOUD_URL or
+      process.env.BOXEN_REDIS_URL or
+      'redis://localhost:6379'
+    @storage = Redis.createClient(info.port, info.hostname)
+    @storage.auth info.auth.split(":")[1] if info.auth
+    
+    throw RCError("TODO(sshirokov): More?")
