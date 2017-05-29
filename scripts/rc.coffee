@@ -14,7 +14,7 @@ module.exports = (robot) ->
       if score == null
         return msg.reply "Never heard of '#{who}'"
       distance = Date.now() - stamp
-      msg.reply "Last I heard, #{who} was at #{score} #{distance} seconds ago"
+      msg.reply "Last I heard, #{who} was at #{score} #{distance}ms ago"
 
   robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
