@@ -67,7 +67,10 @@ class RCScore extends RCBase
   fetch: (cb) =>
     @storage.zscore @key("latest"), @who, (err, stamp) =>
       return cb(err, null, this) if err
-      @storage.zscore @key("#{@who}:scores"), stamp, (err, score) =>
-        return cb(err, null, this) if err
-        @info = {score: score, when: stamp}
-        cb(false, @info, this)
+      @fetch_by_time stamp, cb
+
+  fetch_by_time: (time, cb) =>
+    @storage.zscore @key("#{@who}:scores"), time, (err, score) =>
+      return cb(err, null, this) if err
+      @info = {score: score, when: time}
+      cb(false, @info, this)
