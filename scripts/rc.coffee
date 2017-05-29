@@ -4,8 +4,9 @@ util = require 'util'
 
 Redis = require 'redis'
 Url = require 'url'
+prettyMs = require 'pretty-ms'
 
-
+# Robot hooks
 module.exports = (robot) ->
   robot.respond /(?:rc)\s+for\s([^\s]+)$/i, (msg) ->
     who = msg.match[1].toLowerCase()
@@ -14,7 +15,7 @@ module.exports = (robot) ->
       if score == null
         return msg.reply "Never heard of '#{who}'"
       distance = Date.now() - stamp
-      msg.reply "Last I heard, #{who} was at #{score} #{distance}ms ago"
+      msg.reply "Last I heard, #{who} was at #{score} #{prettyMs distance} ago"
 
   robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
@@ -42,6 +43,7 @@ class RCBase
     @storage = Redis.createClient(info.port, info.hostname)
     @storage.auth info.auth.split(":")[1] if info.auth
 
+# Drivers
 class RCScore extends RCBase
   constructor: (@who, @options={}) -> super()
 
