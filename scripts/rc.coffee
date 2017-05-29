@@ -11,9 +11,9 @@ module.exports = (robot) ->
     who = msg.message.user.name.toLowerCase()
     score = msg.match[1]
 
-    new RCScore(who).set score, (err, res) ->
+    new RCScore(who).set score, (err, res, self) ->
       msg.reply "TODO(sshirokov): rc: #{who} => #{score}"
-      msg.reply "Err: #{err} Res: #{util.inspect res}"
+      msg.reply "Err: #{err} Res: #{util.inspect res} -- #{self}"
 
 
 # Bases and utilities
@@ -37,19 +37,19 @@ class RCBase
 class RCScore extends RCBase
   constructor: (@who=null, @options={}) -> super()
 
-  set: (score, cb) ->
-    cb(new RCError("Setting score of nobody")) unless @who
+  set: (score, cb) =>
+    cb(new RCError("Setting score of nobody"), null, this) unless @who
     now = Date.now()
 
     @storage.multi([
       ["ZADD", @key("latest"), now, @who],
       ["ZADD", @key("#{@who}:scores"), score, now],
     ]).exec (err, replies) =>
-      return cb(err) if err
+      return cb(err, null, this) if err
       # Update the internal state if we succeed
       # So that .get is free
       @info = {score: score, when: now}
-      cb(false, @info)
+      cb(false, @info, this)
 
   score: -> @info?.score
   timestamp: -> @info?.timestamp
