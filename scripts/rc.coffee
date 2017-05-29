@@ -90,7 +90,6 @@ class RCScore extends RCBase
       [@score, @timestamp] = [score, now]
       cb(false, this)
 
-  # TODO(sshirokov): Take a timestamp to lookup by instead of just latest
   fetch: (cb) =>
     @storage.zscore @key("latest"), @who, (err, stamp) =>
       return cb(err, this) if err
