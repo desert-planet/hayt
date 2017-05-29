@@ -53,7 +53,6 @@ class RCScore extends RCBase
     @storage.multi([
       ["ZADD", @key("latest"), now, @who],
       ["ZADD", @key("#{@who}:scores"), score, now],
-      ["ZADD", @key("#{@who}:times"), score, now],
     ]).exec (err, replies) =>
       return cb(err, null, this) if err
       # Update the internal state if we succeed
