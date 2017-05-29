@@ -8,7 +8,7 @@ Url = require 'url'
 
 module.exports = (robot) ->
   robot.respond /(?:rc)\s+for\s([^\s]+)$/i, (msg) ->
-    who = msg.match[1]
+    who = msg.match[1].toLowerCase()
     new RCScore(who).fetch (err, info, self) =>
       {score: score, when: stamp} = info
       if score == null
