@@ -5,6 +5,10 @@ util = require 'util'
 Redis = require 'redis'
 Url = require 'url'
 prettyMs = require 'pretty-ms'
+wolfram = require 'wolfram'
+
+# Configs
+WOLFRAM_APPID = process.env.WOLFRAM_APPID
 
 # Robot hooks
 module.exports = (robot) ->
@@ -18,13 +22,22 @@ module.exports = (robot) ->
       distance = Date.now() - self.timestamp
       msg.reply "#{who} was at #{self.score} something like #{prettyMs distance} ago"
 
-  robot.respond /(?:rc)\s+(\d+.?\d*)$/i, (msg) ->
+  robot.respond /(?:rc)\s+([^\s]+)\s*$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
-    score = msg.match[1]
+    expr = msg.match[1]
 
-    new RCScore(who).set score, (err, self) ->
-      return msg.reply "Whoooops: #{err}" if err
-      msg.reply "Your RC is now #{self.score}"
+    submitScore = (score) ->
+      new RCScore(who).set score, (err, self) ->
+        return msg.reply "Whoooops: #{err}" if err
+        msg.reply "Your RC is now #{self.score}"
+
+    if isNaN(Number(expr))
+      console.log("Trying to turn '#{expr}' to decimal with wolfram")
+      wolframToDecimal expr, (err, score) ->
+        return msg.reply "Oh no: #{err}" if err
+        submitScore score
+    else
+      submitScore expr
 
 # Bases and utilities
 class RCError extends Error
@@ -43,6 +56,23 @@ class RCBase
       'redis://localhost:6379'
     @storage = Redis.createClient(info.port, info.hostname)
     @storage.auth info.auth.split(":")[1] if info.auth
+
+# Try to use wolfram alpha to evaluate expr
+# into a decimal form and then invoke cb(err, result)
+wolframToDecimal = (expr, cb) ->
+  return cb(new RCError("No Wolfram keys"), null) unless WOLFRAM_APPID
+  client = wolfram.createClient(WOLFRAM_APPID)
+  client.query expr, (err, res) ->
+    return cb(err, null) if err
+    console.log("Results: %j", res.map (e) -> e.title)
+    decimal = res.filter (e) ->
+      e.title == 'Result' or
+      e.title.match /Decimal approximation/
+    console.log("Result options: %j", decimal.map (e) -> [e.title, e?.subpods?[0]?.value])
+    decimal = decimal?[0]?.subpods?[0]?.value
+    decimal = parseFloat(decimal)
+    return cb("Couldn't make #{expr} into decimal", null) if isNaN(decimal)
+    cb(false, decimal)
 
 # Drivers
 class RCScore extends RCBase
