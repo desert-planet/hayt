@@ -55,7 +55,12 @@ module.exports = (robot) ->
       if options.match /recent/
         new RCScore(who).fetch_recent start, (err, self) =>
           return msg.reply "That fucking blew up: #{err}" if err
-          return msg.reply "It: #{util.inspect self.recent.map (r) -> r.score}"
+          if self.recent.length
+            latest = self.recent[..].pop()
+            age = Date.now() - latest.timestamp
+            recent = (s.score for s in self.recent[-5...]).join ', '
+            return msg.reply "Recent RCs for #{who}: #{recent}, latest from #{prettyMs age} total of #{self.recent.length} in the last #{prettyMs interval}"
+          return msg.reply "There wasn't enough data :("
       else if options.match /graph/
         throw RCError("TODO(sshirokov): Spark graph time for #{who}")
       else
