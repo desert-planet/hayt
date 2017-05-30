@@ -92,7 +92,7 @@ module.exports = (robot) ->
     else
       msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
 
-  robot.hear /(?:[\(]([\S\s]+)[\)]|([\S]+[^()]))--(\s|$)/, (msg) ->
+  robot.hear /(?:[\(]([\S\s]+)[\)]|([\S]+[^()][^ ]))--(\s|$)/, (msg) ->
     subject = (msg.match[1] || msg.match[2]).toLowerCase()
     if allow_self is true or msg.message.user.name.toLowerCase() != subject
       karma.decrement subject
