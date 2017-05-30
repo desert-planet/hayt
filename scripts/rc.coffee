@@ -20,7 +20,7 @@ module.exports = (robot) ->
   ##  - .rc for Someone
   ##     Get the last RC for a name
   ##
-  ##  - .rc recently # TODO(sshirokov): <--
+  ##  - .rc for Someone recently # TODO(sshirokov): <--
   ##     Get RC's from the past interval
   ##
   ##  - .rc for Someone graph #TODO(sshirokov): <--
@@ -32,11 +32,34 @@ module.exports = (robot) ->
     who = msg.match[1].toLowerCase()
     options = (msg.match[2] ? "").toLowerCase()
 
-    new RCScore(who).fetch (err, self) =>
-      if self.score == null
-        return msg.reply "Never heard of '#{who}'"
-      distance = Date.now() - self.timestamp
-      msg.reply "#{who} was at #{self.score} something like #{prettyMs distance} ago"
+    if not options
+      new RCScore(who).fetch (err, self) =>
+        if self.score == null
+          return msg.reply "Never heard of '#{who}'"
+        distance = Date.now() - self.timestamp
+        return msg.reply "#{who} was at #{self.score} something like #{prettyMs distance} ago"
+    else
+      # Do we have an interval ready?
+      interval = if match = options.match /(\d+)([hmd])/i
+        [count, unit, ...] = match[1...]
+        count = parseInt(count)
+        console.log "Count: #{count} unit #{unit}"
+        switch unit
+          when 'm' then count * 60
+          when 'd' then count * 24 * 60 * 60
+          when 'h' then count * 60 * 60
+      interval ||= 3 * 60 * 60
+      interval *= 1000 # To ms
+      start = Date.now() - interval
+
+      if options.match /recent/
+        new RCScore(who).fetch_recent start, (err, self) =>
+          return msg.reply "That fucking blew up: #{err}" if err
+          return msg.reply "It: #{util.inspect self.recent}"
+      else if options.match /graph/
+        throw RCError("TODO(sshirokov): Spark graph time for #{who}")
+      else
+        return msg.reply "What the fuck does #{options} even mean?"
 
   ## Check in for Roll Call
   ##  - .rc expression
@@ -121,4 +144,14 @@ class RCScore extends RCBase
     @storage.zscore @key("#{@who}:scores"), time, (err, score) =>
       return cb(err, this) if err
       [@score, @timestamp] = [score, time]
+      cb(false, this)
+
+  # Invoke callback as:
+  # cb(error, [RCscore, ...]) with all RCScores found
+  # after `start` for `@who`
+  fetch_recent: (start, cb) =>
+    @storage.zrevrangebyscore @key("#{@who}:times"), '+inf', start, (err, res) =>
+      return cb(err, this) if err
+      @recent = res
+      # TODO(sshirokov): Convert the times into RCScores and then invoke the callback
       cb(false, this)
