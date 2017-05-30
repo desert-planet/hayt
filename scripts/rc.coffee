@@ -21,10 +21,10 @@ module.exports = (robot) ->
   ##  - .rc for Someone
   ##     Get the last RC for a name
   ##
-  ##  - .rc for Someone recently # TODO(sshirokov): <--
+  ##  - .rc for Someone recently
   ##     Get RC's from the past interval
   ##
-  ##  - .rc for Someone graph #TODO(sshirokov): <--
+  ##  - .rc for Someone graph
   ##     Show a spark graph for the past bit for someone
   ##
   ##  + Intervals for interval operations that use time can be specified as
