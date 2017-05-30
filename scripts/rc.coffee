@@ -175,18 +175,11 @@ class RCScore extends RCBase
       # we're still done
       if not res.length
         @recent = []
-        console.log "No results, no error"
         return cb(false, this)
-      console.log "Results: %j", res
       jobs = ({result: null, error: false, request: time} for time in res)
-      console.log "Jobs: %j", jobs
       hasFailed = ->
-        console.log "Has failed: #{util.inspect jobs}"
-        res = jobs.filter((j) -> j.error).length
-        console.log "Failed?: #{res}"
-        res
+        jobs.filter((j) -> j.error).length
       hasFinished = ->
-        console.log "Has finished: #{util.inspect jobs}"
         finished = jobs.filter((j) -> j.result).length
         res = finished == jobs.length
         console.log "Finish? #{res}: #{finished}/#{jobs.length}"
