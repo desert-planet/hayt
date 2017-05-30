@@ -6,6 +6,7 @@ Redis = require 'redis'
 Url = require 'url'
 prettyMs = require 'pretty-ms'
 wolfram = require 'wolfram'
+sparkline = require 'sparkline'
 
 ## Config
 ##
@@ -62,7 +63,18 @@ module.exports = (robot) ->
             return msg.reply "Recent RCs for #{who}: #{recent}, latest from #{prettyMs age} total of #{self.recent.length} in the last #{prettyMs interval}"
           return msg.reply "There wasn't enough data :("
       else if options.match /graph/
-        throw RCError("TODO(sshirokov): Spark graph time for #{who}")
+        new RCScore(who).fetch_recent start, (err, self) =>
+          return msg.reply "That fucking blew up: #{err}" if err
+          return msg.reply "Can't draw with nothing ;(" if not self.recent.length
+
+          if self.recent.length
+            first = self.recent[0]
+            latest = self.recent[..].pop()
+            age = Date.now() - latest.timestamp
+            span = latest.timestamp - first.timestamp
+            recent = (parseFloat(s.score) for s in self.recent[-140...]).filter (score) ->
+              not isNaN(score)
+            return msg.reply "#{@who} #{sparkline recent} - Spans #{prettyMs span}, latest #{prettyMs age} old"
       else
         return msg.reply "What the fuck does #{options} even mean?"
 
