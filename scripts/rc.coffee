@@ -7,11 +7,27 @@ Url = require 'url'
 prettyMs = require 'pretty-ms'
 wolfram = require 'wolfram'
 
-# Configs
+## Config
+##
 WOLFRAM_APPID = process.env.WOLFRAM_APPID
 
-# Robot hooks
+## Robot hooks
+##
 module.exports = (robot) ->
+  ## Check out someone's RC or take a look
+  ## at some graphs.
+  ##
+  ##  - .rc for Someone
+  ##     Get the last RC for a name
+  ##
+  ##  - .rc recently # TODO(sshirokov): <--
+  ##     Get RC's from the past interval
+  ##
+  ##  - .rc for Someone graph #TODO(sshirokov): <--
+  ##     Show a spark graph for the past bit for someone
+  ##
+  ##  + Intervals for interval operations that use time can be specified as
+  ##    hours or days as "3h" or "5d", etc.
   robot.respond /(?:rc)\s+for\s([^\s]+)\s*([^\s]+.*)?\s*$/i, (msg) ->
     who = msg.match[1].toLowerCase()
     options = (msg.match[2] ? "").toLowerCase()
@@ -22,6 +38,10 @@ module.exports = (robot) ->
       distance = Date.now() - self.timestamp
       msg.reply "#{who} was at #{self.score} something like #{prettyMs distance} ago"
 
+  ## Check in for Roll Call
+  ##  - .rc expression
+  ##    Check in your current RC value, however you choose to express it
+  ##    It will be stored as a floating point decimal number.
   robot.respond /(?:rc)\s+([^\s]+)\s*$/i, (msg) ->
     who = msg.message.user.name.toLowerCase()
     expr = msg.match[1]
@@ -39,7 +59,8 @@ module.exports = (robot) ->
     else
       submitScore expr
 
-# Bases and utilities
+## Bases and utilities
+##
 class RCError extends Error
 class RCBase
   prefix: "rc:"
@@ -74,7 +95,8 @@ wolframToDecimal = (expr, cb) ->
     return cb("Couldn't make #{expr} into decimal", null) if isNaN(decimal)
     cb(false, decimal)
 
-# Drivers
+## Drivers
+##
 class RCScore extends RCBase
   constructor: (@who, @options={}) -> super()
 
