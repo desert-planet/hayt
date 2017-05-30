@@ -39,6 +39,7 @@
     "request": "2.14.0",
     "scoped-http-client": "~0.10.3",
     "soupselect": "0.2.0",
+    "sparkline": "0.1.x",
     "twitter": "~1.2.5",
     "underscore": "1.5.x",
     "underscore.string": "2.3.0",
