@@ -55,7 +55,7 @@ module.exports = (robot) ->
       if options.match /recent/
         new RCScore(who).fetch_recent start, (err, self) =>
           return msg.reply "That fucking blew up: #{err}" if err
-          return msg.reply "It: #{util.inspect self.recent}"
+          return msg.reply "It: #{util.inspect self.recent.map (r) -> r.score}"
       else if options.match /graph/
         throw RCError("TODO(sshirokov): Spark graph time for #{who}")
       else
@@ -141,6 +141,7 @@ class RCScore extends RCBase
       @fetch_by_time stamp, cb
 
   fetch_by_time: (time, cb) =>
+    console.log "Fetching by time: #{time} for #{@who}"
     @storage.zscore @key("#{@who}:scores"), time, (err, score) =>
       return cb(err, this) if err
       [@score, @timestamp] = [score, time]
@@ -150,8 +151,47 @@ class RCScore extends RCBase
   # cb(error, [RCscore, ...]) with all RCScores found
   # after `start` for `@who`
   fetch_recent: (start, cb) =>
+    console.log "fetch_recent: #{start} for #{@who}"
     @storage.zrevrangebyscore @key("#{@who}:times"), '+inf', start, (err, res) =>
       return cb(err, this) if err
-      @recent = res
-      # TODO(sshirokov): Convert the times into RCScores and then invoke the callback
-      cb(false, this)
+      # If no error happeend, but no results came back
+      # we're still done
+      if not res.length
+        @recent = []
+        console.log "No results, no error"
+        return cb(false, this)
+      console.log "Results: %j", res
+      jobs = ({result: null, error: false, request: time} for time in res)
+      console.log "Jobs: %j", jobs
+      hasFailed = ->
+        console.log "Has failed: #{util.inspect jobs}"
+        res = jobs.filter((j) -> j.error).length
+        console.log "Failed?: #{res}"
+        res
+      hasFinished = ->
+        console.log "Has finished: #{util.inspect jobs}"
+        finished = jobs.filter((j) -> j.result).length
+        res = finished == jobs.length
+        console.log "Finish? #{res}: #{finished}/#{jobs.length}"
+        res
+      for job in jobs
+        do (job) => new RCScore(@who).fetch_by_time parseInt(job.request), (err, self) =>
+          if not err
+            console.log "Fetched: Score: #{self.score} @ #{self.timestamp}"
+          else
+            console.err "Error in fetch: #{err}"
+          # If we are the first error, call the callback, and mark the job failed
+          # so that future jobs can skip execution. We'll pass on whatever we already
+          # computed in the callback.
+          if err and not hasFailed()
+            cb(err, self)
+          job.error = err if err
+          # If we've already failed, stop
+          return if hasFailed()
+          # Store the result
+          job.result = self
+          # "Return" if we're done
+          if hasFinished()
+            @recent = (j.result for j in jobs).reverse()
+            console.log "Recent: #{@recent.map (r) -> [r.score, r.timestamp]}"
+            return cb(false, this)
