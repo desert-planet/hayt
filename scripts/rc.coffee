@@ -127,14 +127,17 @@ wolframToDecimal = (expr, cb) ->
   client.query expr, (err, res) ->
     return cb(err, null) if err
     console.log("Results: %j", res.map (e) -> e.title)
-    decimal = res.filter (e) ->
+    decimals = res.filter (e) ->
       e.title == 'Result' or
       e.title.match /Decimal approximation/
-    console.log("Result options: %j", decimal.map (e) -> [e.title, e?.subpods?[0]?.value])
-    decimal = decimal?[0]?.subpods?[0]?.value
-    decimal = parseFloat(decimal)
-    return cb("Couldn't make #{expr} into decimal", null) if isNaN(decimal)
-    cb(false, decimal)
+    console.log("Result options: %j", decimals.map (e) -> [e.title, e?.subpods?[0]?.value])
+    for option in decimals
+      console.log("Trying option #{option.title}")
+      decimal = option.subpods?[0]?.value
+      decimal = parseFloat(decimal)
+      if not isNaN(decimal)
+        return cb(false, decimal)
+    return cb("Couldn't make #{expr} into decimal", null)
 
 ## Drivers
 ##
