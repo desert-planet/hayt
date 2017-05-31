@@ -166,8 +166,10 @@ class RCScore extends RCBase
       cb(false, this)
 
   # Invoke callback as:
-  # cb(error, [RCscore, ...]) with all RCScores found
-  # after `start` for `@who`
+  # cb(error, self) with all RCScores found stored as an array
+  # in @recent fully updated.
+  # `start` - the furthest back to look for RCScores
+  # `cb` - callback invoked as cb(err, self) with error == false on success
   fetch_recent: (start, cb) =>
     console.log "fetch_recent: #{start} for #{@who}"
     @storage.zrevrangebyscore @key("#{@who}:times"), '+inf', start, (err, res) =>
