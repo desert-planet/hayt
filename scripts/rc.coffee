@@ -74,8 +74,9 @@ module.exports = (robot) ->
             span = latest.timestamp - first.timestamp
             recent = (parseFloat(s.score) for s in self.recent[-140...]).filter (score) ->
               not isNaN(score)
+            [min, max] = [Math.min(recent...), Math.max(recent...)]
             scaled = recent.map (v) -> v * 10
-            return msg.reply "#{who} - #{sparkline scaled} - #{scaled.length} samples, spans #{prettyMs span}, latest #{prettyMs age} old"
+            return msg.reply "#{who} - #{sparkline scaled} - #{scaled.length} samples, range #{min}-#{max}, spans #{prettyMs span}, latest #{prettyMs age} old"
       else
         return msg.reply "What the fuck does #{options} even mean?"
 
