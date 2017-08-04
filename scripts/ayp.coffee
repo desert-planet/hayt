@@ -334,7 +334,7 @@ class AYPStrip
 
       if names.length == 1
         # The only person speaking is centered in the frame
-        char = avatars[names[0]]
+        char = avatars[names[0]].img
         left = (frame.width / 2) - (char.width / 2)
         top = (frame.height - char.height)
         @compositeImage frame, char, left, top
@@ -343,7 +343,7 @@ class AYPStrip
         first = true
         for line in lines
           [who, what] = line
-          char = avatars[who]
+          char = avatars[who].img
           top = (frame.height - char.height)
 
           if first
@@ -415,7 +415,7 @@ class AYPStrip
   ## Helpers and utilities
 
   # Load avatars for `names` and invoke `cb` as:
-  # `cb(err, {"Nickname": avatarImg, ...})`
+  # `cb(err, {"Nickname": {"img": avatarImg, "default": false}, ...})`
   # mapping each name to an avatar image that
   # can be used to represent it.
   #
@@ -446,7 +446,9 @@ class AYPStrip
           if names.every((o) -> o.img)
             avatars = {}
             for obj in names
-              avatars[obj.name] = obj.img
+              avatars[obj.name] =
+                img: obj.img
+                default: !!obj.img.match(/default\.png$/)
             cb(null, avatars)
 
   # Returns the bounding box of `msg`
