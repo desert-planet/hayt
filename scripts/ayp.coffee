@@ -56,6 +56,9 @@ FONT_PATH = path.resolve(IMG_BASE, AYP_FONT_FILE)
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
 
+## Are we in debug mode?
+DEBUG = (process.env.DEBUG || "").toLowerCase() in ["true", "1", "on"]
+
 ## Content filters. These can be used to change the text from the logging
 ## engine to be whatever is better for AGGGHHHHHHT reasons. Such as removing URLs
 ## or mapping a pattern of names into a single, consistent one.
@@ -520,9 +523,20 @@ class AYPStrip
       dim..., dim... # No size change
     return dst
 
+  postToDisk: (cb) =>
+    return cb(new Error("Nice try HACKERMAN. This does nothing unless you `$DEBUG`")) unless DEBUG
+    out_path = path.resolve(ROOT, "#{@info.when}.jpg")
+
+    @buildJPEG (jpg_err) =>
+      return cb(jpg_err) if jpg_err
+      fs.writeFile out_path, @info.image_jpeg, (err) =>
+        return cb(err) if err
+        return cb(false, out_path)
+
   # Post a strip to the AYP site
   # Invokes the callback as `cb(err, url)`
   post: (cb=(->)) =>
+    return @postToDisk(cb) if DEBUG
     return cb(new Error("No AYP_SECRET")) unless AYP_SECRET
     perform = =>
       HTTP.create(AYP_ENDPOINT).
