@@ -357,8 +357,22 @@ class AYPStrip
 
           @compositeImage frame, char, left, top
 
-      # Add the text after all the avatars are painted on
-      @drawPanelText frame, lines
+      # Helper for transforms below
+      # Randomly sort the words that were said
+      scramble = (what) ->
+        scrambleSort = -> 0.5 - Math.random()
+        what.split(' ').sort(scrambleSort).join(' ')
+
+      # Add the text after all the avatars are painted on, optionally
+      # transforming the spoken text for presentation
+      @drawPanelText frame, (
+        for line in lines
+          do (line) ->
+            [who, what] = line
+            # Scramble the words if this is the default avatar
+            what = scramble(what) if avatars[who].default
+            [who, what]
+      )
 
       # Return the frame to the caller
       return cb(false, frame)
