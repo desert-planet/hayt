@@ -109,22 +109,22 @@ filterName = (name) ->
 
   if /meowth/i.test(name)
     name = 'o_rly'
-    
+
   if /twerk/i.test(name) or /^high_tw/i.test(name)
     name = 'high_twerk'
-    
+
   if name == 'esch' or name == 'egbe' or /egg/i.test(name)
     # No one knows why, but he's an asshole for it
     name = 'esch'
-    
+
   # The bouncer muerto'd and now the lizard bounces
   if /geckomuerto/i.test(name)
     name = 'geckomuerto'
-    
+
   # Hold my beer, I'm about to computer a computer
   if /drewzar/i.test(name)
     name = 'drewzar'
-    
+
   # Lets just get the whole channel in this function
   if /shyguy/i.test(name)
     name = 'shyguy'
