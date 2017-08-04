@@ -56,6 +56,9 @@ FONT_PATH = path.resolve(IMG_BASE, AYP_FONT_FILE)
 ## S3 Storage
 s3 = S3("s3://#{AYP_AWS_KEY}:#{AYP_AWS_SECRET}@#{AYP_AWS_BUCKET}.s3.amazonaws.com/")
 
+## Are we in debug mode?
+DEBUG = (process.env.DEBUG || "").toLowerCase() in ["true", "1", "on"]
+
 ## Content filters. These can be used to change the text from the logging
 ## engine to be whatever is better for AGGGHHHHHHT reasons. Such as removing URLs
 ## or mapping a pattern of names into a single, consistent one.
@@ -334,7 +337,7 @@ class AYPStrip
 
       if names.length == 1
         # The only person speaking is centered in the frame
-        char = avatars[names[0]]
+        char = avatars[names[0]].img
         left = (frame.width / 2) - (char.width / 2)
         top = (frame.height - char.height)
         @compositeImage frame, char, left, top
@@ -343,7 +346,7 @@ class AYPStrip
         first = true
         for line in lines
           [who, what] = line
-          char = avatars[who]
+          char = avatars[who].img
           top = (frame.height - char.height)
 
           if first
@@ -354,8 +357,22 @@ class AYPStrip
 
           @compositeImage frame, char, left, top
 
-      # Add the text after all the avatars are painted on
-      @drawPanelText frame, lines
+      # Helper for transforms below
+      # Randomly sort the words that were said
+      scramble = (what) ->
+        scrambleSort = -> 0.5 - Math.random()
+        what.split(' ').sort(scrambleSort).join(' ')
+
+      # Add the text after all the avatars are painted on, optionally
+      # transforming the spoken text for presentation
+      @drawPanelText frame, (
+        for line in lines
+          do (line) ->
+            [who, what] = line
+            # Scramble the words if this is the default avatar
+            what = scramble(what) if avatars[who].default
+            [who, what]
+      )
 
       # Return the frame to the caller
       return cb(false, frame)
@@ -415,7 +432,7 @@ class AYPStrip
   ## Helpers and utilities
 
   # Load avatars for `names` and invoke `cb` as:
-  # `cb(err, {"Nickname": avatarImg, ...})`
+  # `cb(err, {"Nickname": {"img": avatarImg, "default": false}, ...})`
   # mapping each name to an avatar image that
   # can be used to represent it.
   #
@@ -436,17 +453,24 @@ class AYPStrip
 
     for nameObj in names
       do (nameObj) ->
-        GD.openPng charPathForNick(nameObj.name), (err, img) ->
+        imgPath = charPathForNick(nameObj.name)
+        GD.openPng imgPath, (err, img) ->
           return if failed
           return fail(err) if err
-          nameObj.img = img unless err
+
+          # Store the actual image data in `.img` and
+          # the path to that data in `.imgPath`
+          nameObj.img = img
+          nameObj.imgPath = imgPath
 
           # Are we done? Then build up a dictionary
           # and tell the caller.
           if names.every((o) -> o.img)
             avatars = {}
             for obj in names
-              avatars[obj.name] = obj.img
+              avatars[obj.name] =
+                img: obj.img
+                default: !!obj.imgPath.match(/default\.png$/)
             cb(null, avatars)
 
   # Returns the bounding box of `msg`
@@ -513,9 +537,20 @@ class AYPStrip
       dim..., dim... # No size change
     return dst
 
+  postToDisk: (cb) =>
+    return cb(new Error("Nice try HACKERMAN. This does nothing unless you `$DEBUG`")) unless DEBUG
+    out_path = path.resolve(ROOT, "ayp-DEBUG-#{@info.when}.jpg")
+
+    @buildJPEG (jpg_err) =>
+      return cb(jpg_err) if jpg_err
+      fs.writeFile out_path, @info.image_jpeg, (err) =>
+        return cb(err) if err
+        return cb(false, out_path)
+
   # Post a strip to the AYP site
   # Invokes the callback as `cb(err, url)`
   post: (cb=(->)) =>
+    return @postToDisk(cb) if DEBUG
     return cb(new Error("No AYP_SECRET")) unless AYP_SECRET
     perform = =>
       HTTP.create(AYP_ENDPOINT).
