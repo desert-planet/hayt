@@ -436,10 +436,15 @@ class AYPStrip
 
     for nameObj in names
       do (nameObj) ->
-        GD.openPng charPathForNick(nameObj.name), (err, img) ->
+        imgPath = charPathForNick(nameObj.name)
+        GD.openPng imgPath, (err, img) ->
           return if failed
           return fail(err) if err
-          nameObj.img = img unless err
+
+          # Store the actual image data in `.img` and
+          # the path to that data in `.imgPath`
+          nameObj.img = img
+          nameObj.imgPath = imgPath
 
           # Are we done? Then build up a dictionary
           # and tell the caller.
@@ -448,7 +453,7 @@ class AYPStrip
             for obj in names
               avatars[obj.name] =
                 img: obj.img
-                default: !!obj.img.match(/default\.png$/)
+                default: !!obj.imgPath.match(/default\.png$/)
             cb(null, avatars)
 
   # Returns the bounding box of `msg`
