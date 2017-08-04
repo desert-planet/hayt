@@ -525,7 +525,7 @@ class AYPStrip
 
   postToDisk: (cb) =>
     return cb(new Error("Nice try HACKERMAN. This does nothing unless you `$DEBUG`")) unless DEBUG
-    out_path = path.resolve(ROOT, "#{@info.when}.jpg")
+    out_path = path.resolve(ROOT, "ayp-DEBUG-#{@info.when}.jpg")
 
     @buildJPEG (jpg_err) =>
       return cb(jpg_err) if jpg_err
