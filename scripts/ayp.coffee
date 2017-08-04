@@ -331,6 +331,7 @@ class AYPStrip
 
     @loadAvatars names, (err, avatars) =>
       return cb(err, null) if err
+      scrambleLines = []
 
       if names.length == 1
         # The only person speaking is centered in the frame
@@ -338,6 +339,9 @@ class AYPStrip
         left = (frame.width / 2) - (char.width / 2)
         top = (frame.height - char.height)
         @compositeImage frame, char, left, top
+
+        isKenny = char.matchchar.match('default') == null
+        scrambleLines = line.concat(isKenny) for line in lines
       else
         # We have two speakers
         first = true
@@ -354,8 +358,11 @@ class AYPStrip
 
           @compositeImage frame, char, left, top
 
+          isKenny = char.matchchar.match('default') == null
+          scrambleLines = scrambleLines.concat(line.concat(isKenny))
+
       # Add the text after all the avatars are painted on
-      @drawPanelText frame, lines
+      @drawPanelText frame, scrambleLines
 
       # Return the frame to the caller
       return cb(false, frame)
@@ -374,7 +381,12 @@ class AYPStrip
     left = AYP_BUBBLE_PADDING_HORIZONTAL
     topPad = AYP_BUBBLE_PADDING_VERTICAL
     for line in lines
-      [who, what] = line
+      [who, what, scramble] = line
+
+      if scramble
+        scrambleSort = () => 0.5 - Math.random()
+        what = what.split(' ').sort(scrambleSort).join(' ')
+
       bubble = @textBubble what
 
       if not first
