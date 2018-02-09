@@ -34,6 +34,5 @@ module.exports = (robot) ->
       '(/¯◡ ‿ ◡)/¯ ~ ┻━┻',
       '(/¯◡ ‿ ◡)/¯ ~ ┻━┻',
       '┻━┻ ︵ ლ(⌒-⌒ლ)',
-      'ʇǝʞɔɐɹq ︵ヽ(`Д´)ﾉ︵ ǝʞup'
     ]
     msg.send msg.random flips
