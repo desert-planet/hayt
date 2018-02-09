@@ -36,7 +36,12 @@ module.exports = (robot) ->
       '┻━┻ ︵ ლ(⌒-⌒ლ)',
     ]
 
+    sets = [
+      '┬─┬﻿ ノ( ゜-゜ノ)',
+      '┬─┬﻿ ︵ /(.□. \）',
+    ]
+
     if /geckomuerto/i.test(msg.message.user.name.trim())
-      msg.send '┬─┬﻿ ノ( ゜-゜ノ)',
+      msg.send msg.random sets
     else
       msg.send msg.random flips
