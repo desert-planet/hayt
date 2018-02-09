@@ -35,4 +35,8 @@ module.exports = (robot) ->
       '(/¯◡ ‿ ◡)/¯ ~ ┻━┻',
       '┻━┻ ︵ ლ(⌒-⌒ლ)',
     ]
-    msg.send msg.random flips
+
+    if /geckomuerto/i.test(msg.message.user.name.trim())
+      msg.send '┬─┬﻿ ノ( ゜-゜ノ)',
+    else
+      msg.send msg.random flips
