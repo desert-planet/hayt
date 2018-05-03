@@ -65,9 +65,12 @@ DEBUG = (process.env.DEBUG || "").toLowerCase() in ["true", "1", "on"]
 
 # Make any changes required to the name
 filterName = (name) ->
-  if /dusy[ae]/i.test(name)
+  if /dusy[ae]/i.test(name) or /tired/i.test(name)
     # She likes to change her name A LOT. We can assume if it
     # looks like her, it's her.
+    #
+    # Also, one day she decided that she has a new name for how
+    # she is feeling so that's cool I guess
     name = 'dusya'
 
   if /minus/i.test(name)
