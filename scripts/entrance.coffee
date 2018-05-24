@@ -11,7 +11,7 @@ module.exports = (robot) ->
     else if /shyguy/.test(username)
       msg.send "wb #{username}"
     else if /twerk/.test(username)
-      msg.send "wb #{username}!!!!!!!"
+      msg.send "#{username}: FIX YOUR DAMN BOUNCER!!!!!!!"
     else if /kin/.test(username)
       msg.send "Hello #{username}! We missed you!"
     else if /jense/i.test(username) or /prawn/i.test(username) or /sinjen/.test(username)
