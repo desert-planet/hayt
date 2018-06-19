@@ -131,7 +131,7 @@ Supported commands:
 
   # Election driver
   robot.respond /(?:vote|freedom|oppressed) (\d+ )?([^\s]+)\s?(.*)?$/, (msg) ->
-    timeout = 1 # default timeout is 1 minute
+    timeout = 5 # default timeout is 5 minute
     timeout = parseInt(msg.match[1].trim()) if msg.match[1]?.length > 0
 
     action = msg.match[2].trim().toLowerCase()
