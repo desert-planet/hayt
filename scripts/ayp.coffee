@@ -325,7 +325,7 @@ class AYPStrip
   # cb invoked as `cb(err, image)`. `err` is only set on failure
   buildPanel: (lines, cb) =>
     # Setup a transparant frame that we'll composite characters and text into.
-    frame = GD.createTrueColor(AYP_PANEL_WIDTH, AYP_PANEL_HEIGHT)
+    frame = GD.createTrueColorSync(AYP_PANEL_WIDTH, AYP_PANEL_HEIGHT)
     frame.saveAlpha(1)
     clear = frame.colorAllocateAlpha(0, 0, 0, 127)
     frame.fill(0, 0, clear)
@@ -416,7 +416,7 @@ class AYPStrip
     msg = @formatForTextBubble(msg, font, size, max)
     [w, h] = @textSize(msg, font, size)
 
-    frame = GD.createTrueColor(
+    frame = GD.createTrueColorSync(
       w + (AYP_TEXT_PADDING * 2),
       h + (AYP_TEXT_PADDING * 2)
     )
@@ -482,7 +482,7 @@ class AYPStrip
   # When printed using `font` of `size`
   # in the form [width, height]
   textSize: (msg, font, size) ->
-    img = GD.create(1,1)
+    img = GD.createSync(1,1)
     black = img.colorAllocate(0, 0, 0)
     bb = img.stringFTBBox(black, font, size, 0, 0, 0, msg)
     [
