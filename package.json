@@ -47,8 +47,8 @@
     "wolfram": "~0.3.4"
   },
   "engines": {
-    "node": "0.10.x",
-    "npm": ">= 1.1.x"
+    "node": "10.x",
+    "npm": ">= 6.4.x"
   },
   "scripts": {
     "test": "mocha $(find tests/* -type f) --compilers coffee:coffee-script/register"
