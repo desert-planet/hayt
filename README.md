@@ -10,4 +10,4 @@ Butts. `(_|_)`
 
 ## Testing Hayt Locally
 
-Use our [Vagrant definition](https://github.com/desert-planet/hayt-vagrant) to argue with this robot on your own time. Considering how up to date we keep this machinery, it truly is the easiest way. 
+Use our [Vagrant definition](https://github.com/desert-planet/hayt-vagrant) to argue with this robot on your own time. Considering how up to date we keep this machinery, it truly is the easiest way.
