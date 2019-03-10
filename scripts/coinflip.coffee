@@ -30,4 +30,8 @@ module.exports = (robot) ->
       "Also, no one likes you",
       "Fuckfart"
     ]
-    msg.send "#{result}, #{insult}"
+
+    if /geckomuerto/i.test(msg.message.user.name.trim())
+      msg.send "Heads, #{insult}"
+    else
+      msg.send "#{result}, #{insult}"
