@@ -42,10 +42,11 @@
     "soupselect": "0.2.0",
     "sparkline": "0.1.x",
     "twitter": "~1.2.5",
-    "underscore": "1.5.x",
+    "underscore": "~1.7.0",
     "underscore.string": "2.3.0",
     "wolfram": "~0.3.4",
-    "hubot-quote": "3.0.0"
+    "natural": "~0.1.28",
+    "msgpack": "~0.2.4"
   },
   "engines": {
     "node": "0.10.x",

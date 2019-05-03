@@ -1,6 +1,5 @@
 [
   "hubot-calculator",
   "hubot-markov",
-  "hubot-google-images",
-  "hubot-quote"
+  "hubot-google-images"
 ]
