@@ -137,6 +137,10 @@ filterName = (name) ->
   # Lets just get the whole channel in this function
   if /shyguy/i.test(name)
     name = 'shyguy'
+    
+  # I'm not kidding. Whole. fucking. channel.
+  if /shadypkg/i.test(name)
+    name = 'shadypkg'
 
   return name
 
