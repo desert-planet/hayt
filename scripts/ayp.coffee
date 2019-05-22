@@ -141,6 +141,10 @@ filterName = (name) ->
   # I'm not kidding. Whole. fucking. channel.
   if /shadypkg/i.test(name)
     name = 'shadypkg'
+  
+  # I don't even know how to joke about this anymore
+  if /nomikos/i.test(name)
+    name = 'nomikos'
 
   return name
 
