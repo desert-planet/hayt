@@ -1,6 +1,7 @@
 # Hayt - A Hubot
 
 [![Build Status](https://travis-ci.org/desert-planet/hayt.svg?branch=master)](https://travis-ci.org/desert-planet/hayt)
+![vulnerabilities](https://img.shields.io/badge/vulnerabilities---2147483645-brightgreen)
 
 Butts. `(_|_)`
 
