@@ -90,8 +90,8 @@ filterName = (name) ->
     # I don't even understand this one
     name = 'cody_'
 
-  if /laura/i.test(name)
-    # Some kind of laura is one kind of laura
+  if /laura/i.test(name) or /kickstand/i.test(name)
+    # Some kind of laura is one kind of laura. Now a deprercated bike component
     name = 'laura'
 
   if /arbo/i.test(name)
