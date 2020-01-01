@@ -139,7 +139,7 @@ Supported commands:
 
     switch action
       # Vote on a current issue
-      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes"
+      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes","ye"
         return msg.reply "There's no vote going on." unless Vote.current?
         result = Vote.current?.yes msg.message.user.name
         reply = "Your vote " +
