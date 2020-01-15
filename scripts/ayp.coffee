@@ -145,6 +145,10 @@ filterName = (name) ->
   # I don't even know how to joke about this anymore
   if /nomikos/i.test(name)
     name = 'nomikos'
+    
+  # I was feeling left out
+  if /skalnik/i.test(name)
+    name = 'skalnik'
 
   return name
 
