@@ -78,8 +78,9 @@ filterName = (name) ->
     # Another one fond of aliases
     name = 'minusx'
 
-  if /jense/i.test(name) or /prawn/i.test(name) or /sinjen/.test(name)
-    # Has bouncer, bounces anyway, and also no one likes her
+  if /jense/i.test(name) or /prawn/i.test(name) or /sinjen/.test(name) or /sen/.test(name)
+    # Has bouncer, bounces anyway, and also no one likes her.
+    # New laptop, new nick.
     name = 'prawn'
 
   if /geckomuerto/i.test(name)
