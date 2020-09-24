@@ -139,11 +139,7 @@ Supported commands:
 
     switch action
       # Vote on a current issue
-<<<<<<< HEAD
-      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes", "yee"
-=======
-      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes","ye","okay"
->>>>>>> 6a8b06a94532502c3b801b7eea644256fc8e9310
+      when "yes","po","bai","da","si","ano","ja","jah","kylia","oui","vai","igen","taip","iva","tak","sim","ie","yog","ha","inde","ee","haa","oo","ya","yea","yeah","iya nih","jes","ye","okay","yee"
         return msg.reply "There's no vote going on." unless Vote.current?
         result = Vote.current?.yes msg.message.user.name
         reply = "Your vote " +
@@ -157,11 +153,7 @@ Supported commands:
           (if result then "totally counted." else "was absolutely worthless!")
         msg.reply reply
 
-<<<<<<< HEAD
-      when "random", "meh", "ehem"
-=======
-      when "random","rando"
->>>>>>> 6a8b06a94532502c3b801b7eea644256fc8e9310
+      when "random","rando","meh","ehem"
        return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
        voteResult = msg.random ["yes", "no"]
        result = if voteResult == "yes"
