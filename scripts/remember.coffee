@@ -76,11 +76,11 @@ module.exports = (robot) ->
 
     msg.send "My favorite memories are:\n#{sortedMemories[0..20].join(', ')}"
 
-  robot.respond /(me|random memory|memories)\s*(.*)?$/i, (msg) ->
+  robot.respond /(me|random memory)(\s+.+)?$/i, (msg) ->
     msg.finish()
 
     randomKey = if msg.match[2]
-      msg.random(findSimilarMemories(msg.match[2]))
+      msg.random(findSimilarMemories(msg.match[2].trim()))
     else
       msg.random(Object.keys(memories()))
 

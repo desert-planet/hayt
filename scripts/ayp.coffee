@@ -65,20 +65,22 @@ DEBUG = (process.env.DEBUG || "").toLowerCase() in ["true", "1", "on"]
 
 # Make any changes required to the name
 filterName = (name) ->
-  if /dusy[ae]/i.test(name) or /tired/i.test(name)
+  if /dusy[ae]/i.test(name) or /tired/i.test(name) or /k2y/i.test(name)
     # She likes to change her name A LOT. We can assume if it
     # looks like her, it's her.
     #
     # Also, one day she decided that she has a new name for how
     # she is feeling so that's cool I guess
+    # In addition, i18n reasons
     name = 'dusya'
 
   if /minus/i.test(name)
     # Another one fond of aliases
     name = 'minusx'
 
-  if /jense/i.test(name) or /prawn/i.test(name) or /sinjen/.test(name)
-    # Has bouncer, bounces anyway, and also no one likes her
+  if /jense/i.test(name) or /prawn/i.test(name) or /sinjen/.test(name) or /sen/.test(name)
+    # Has bouncer, bounces anyway, and also no one likes her.
+    # New laptop, new nick.
     name = 'prawn'
 
   if /geckomuerto/i.test(name)
@@ -89,18 +91,20 @@ filterName = (name) ->
     # I don't even understand this one
     name = 'cody_'
 
-  if /laura/i.test(name)
-    # Some kind of laura is one kind of laura
+  if /laura/i.test(name) or /kickstand/i.test(name)
+    # Some kind of laura is one kind of laura. Now a deprercated bike component
     name = 'laura'
 
   if /arbo/i.test(name)
     # Bouncers are hard or something, whatever.
     name = 'arbo'
 
-  if name == 'sflios' || name == 'PITlios' || name == 'missourios77' || name == 'sofalios'
-    # He visited this one time. And then moved that other time. And then did a joke. And then no one knows anymore.
+  if name == 'sflios' || name == 'PITlios' || name == 'missourios77' || name == 'sofalios' || name == 'solios'
+    # He visited this one time. And then moved that other time. And then did a
+    # joke. And then no one knows anymore. And lastly, a totally reasonable change.
+    #
     # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
-    name = 'solios'
+    name = 'solient'
 
   # has multiple connections because computers Я hard
   if /justinw/i.test(name)
@@ -134,6 +138,18 @@ filterName = (name) ->
   # Lets just get the whole channel in this function
   if /shyguy/i.test(name)
     name = 'shyguy'
+    
+  # I'm not kidding. Whole. fucking. channel.
+  if /shadypkg/i.test(name)
+    name = 'shadypkg'
+  
+  # I don't even know how to joke about this anymore
+  if /nomikos/i.test(name)
+    name = 'nomikos'
+    
+  # I was feeling left out
+  if /skalnik/i.test(name)
+    name = 'skalnik'
 
   return name
 
