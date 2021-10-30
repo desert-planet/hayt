@@ -150,6 +150,10 @@ filterName = (name) ->
   # I was feeling left out
   if /skalnik/i.test(name)
     name = 'skalnik'
+    
+  # Shows up, picks a new name, then goes back to the old one. A tale as old as this file.
+  if /phil/i.test(name)
+    name = 'philza'
 
   return name
 
