@@ -154,6 +154,10 @@ filterName = (name) ->
   # Shows up, picks a new name, then goes back to the old one. A tale as old as this file.
   if /phil/i.test(name)
     name = 'philza'
+    
+  # The only person that maybe has a good reason of being in here
+  if /Aqua/i.test(name) || /\[Rii\]/i.test(name) || /Namine/i.test(name)
+    name = 'Aqua'
 
   return name
 
