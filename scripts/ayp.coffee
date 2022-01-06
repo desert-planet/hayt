@@ -158,6 +158,10 @@ filterName = (name) ->
   # The only person that maybe has a good reason of being in here
   if /Aqua/i.test(name) || /\[Rii\]/i.test(name) || /Namine/i.test(name)
     name = 'Aqua'
+    
+  # Honestly, I have no idea what to say this time around
+  if /ramatevish/i.test(name)
+    name = 'ramatevish'
 
   return name
 
