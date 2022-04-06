@@ -18,7 +18,7 @@
 #   annabunches
 
 module.exports = (robot) ->
-  robot.hear /^\s*([A-Z"][A-Z0-9 .,'"()\?!&%$#@+-]+)$/, (res) ->
+  robot.hear /^\s*([A-Z"][A-Z0-9 .,'"()\?!&%$#@+-:]+)$/, (res) ->
     # Pick a loud from the stored list and say it. Skip if there are no louds.
     old_loud = res.random(robot.brain.get('louds'))
 
