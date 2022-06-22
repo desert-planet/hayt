@@ -23,7 +23,7 @@ module.exports = (robot) ->
     Object.keys(memories()).filter (key) -> searchRegex.test(key)
 
   robot.respond /(?:what is|rem(?:ember)?)\s+(.*)/i, (msg) ->
-    words = msg.match[1]
+    words = msg.match[1].trim()
     if match = words.match /(.*?)(\s+is\s+([\s\S]*))$/i
       msg.finish()
       key = match[1].toLowerCase()
