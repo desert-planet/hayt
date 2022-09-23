@@ -15,5 +15,5 @@
 
 module.exports = (robot) ->
   robot.respond /(mood)/i, (msg) ->
-    result = msg.random ["https://imgur.com/XujwziE.jpg", "https://i.imgur.com/8BYpECO.jpg"]
+    result = msg.random ["https://i.imgur.com/XujwziE.jpg", "https://i.imgur.com/8BYpECO.jpg"]
     msg.send "And your mood for the day is ... #{result}
