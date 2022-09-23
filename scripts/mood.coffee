@@ -15,5 +15,5 @@
 
 module.exports = (robot) ->
   robot.respond /(mood)/i, (msg) ->
-    result = msg.random ["https://usercontent.irccloud-cdn.com/file/DbMM89Wi/mood", "https://usercontent.irccloud-cdn.com/file/3g41hAJc/signal-2022-09-22-08-37-39-817.jpg"]
+    result = msg.random ["shorturl.at/ceiVZ", "shorturl.at/hiQRT"]
     msg.send "And your mood for the day is ... #{result}
