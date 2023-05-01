@@ -156,7 +156,7 @@ filterName = (name) ->
     name = 'philza'
     
   # The only person that maybe has a good reason of being in here
-  if /Aqua/i.test(name) || /\[Rii\]/i.test(name) || /Namine/i.test(name)
+  if /Aqua/i.test(name) || /\[Ri?i?\]/i.test(name) || /Namine/i.test(name)
     name = 'Aqua'
     
   # Honestly, I have no idea what to say this time around
