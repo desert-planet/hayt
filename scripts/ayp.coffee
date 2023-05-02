@@ -164,8 +164,8 @@ filterName = (name) ->
     name = 'ramatevish'
 
   # Nickles hates IRC, but loves us and gets to be added
-  if /nickles/i.test(name)
-    name = 'nickles'
+  if /nickels/i.test(name)
+    name = 'nickels'
 
   return name
 
