@@ -163,6 +163,10 @@ filterName = (name) ->
   if /ramatevish/i.test(name)
     name = 'ramatevish'
 
+  # Nickles hates IRC, but loves us and gets to be added
+  if /nickles/i.test(name)
+    name = 'nickles'
+
   return name
 
 # Make any changes required to the text
