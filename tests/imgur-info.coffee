@@ -7,7 +7,7 @@ describe 'Imgur Links', ->
   room = null
 
   beforeEach ->
-    room = helper.createRoom()
+    room = helper.createRoom(httpd: false)
     room.user.say 'alice', 'shut up your face'
 
   it 'should like, compile, man', ->
