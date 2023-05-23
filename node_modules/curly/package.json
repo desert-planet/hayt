@@ -1,0 +1,42 @@
+{
+  "_from": "curly@0.6.x",
+  "_id": "curly@0.6.2",
+  "_inBundle": false,
+  "_integrity": "sha512-MwFKrrWkgpmjLtgtj3yhRBuo7FckczWjCOkp59w5683tsFv27wVNE0qUMCdpc9/jk9V4VnSnct7hZSt19aMnSg==",
+  "_location": "/curly",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "curly@0.6.x",
+    "name": "curly",
+    "escapedName": "curly",
+    "rawSpec": "0.6.x",
+    "saveSpec": null,
+    "fetchSpec": "0.6.x"
+  },
+  "_requiredBy": [
+    "/node-s3"
+  ],
+  "_resolved": "https://registry.npmjs.org/curly/-/curly-0.6.2.tgz",
+  "_shasum": "bfd8bddfc9f184b6bb7e9795588e14a0de6566a5",
+  "_spec": "curly@0.6.x",
+  "_where": "/Users/skalnik/Code/hayt/node_modules/node-s3",
+  "author": {
+    "name": "Mathias Buus Madsen",
+    "email": "mathiasbuus@gmail.com"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "a http request module for node and the browser",
+  "engines": {
+    "node": "*"
+  },
+  "keywords": [
+    "request",
+    "https",
+    "http"
+  ],
+  "name": "curly",
+  "version": "0.6.2"
+}
