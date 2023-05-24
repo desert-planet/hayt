@@ -3,9 +3,7 @@ Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/dice.coffee')
 expect = require('chai').expect
 stub = require('sinon').stub
-
-waitForReply = (expectation) =>
-  setTimeout(expectation, 1)
+waitForReply = require('./helpers.coffee')
 
 describe 'when user rolls', ->
   room = null

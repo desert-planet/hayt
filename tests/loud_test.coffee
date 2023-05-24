@@ -3,8 +3,7 @@ Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/loud.coffee')
 expect = require('chai').expect
 
-waitForReply = (expectation) =>
-  setTimeout(expectation, 1)
+waitForReply = require('./helpers.coffee')
 
 describe 'being loud', ->
   room = null
@@ -41,7 +40,6 @@ describe 'being loud', ->
       room.user.say 'bob',   'BAR'
       room.user.say 'alice', '@hubot loud delete BAR'
       waitForReply ->
-        room.robot.brain.get('louds')
         expect(room.robot.brain.get('louds')).to.eql ['FOO']
 
     it 'should store banned words', ->
