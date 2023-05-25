@@ -31,9 +31,11 @@ describe 'user voting', ->
     it "shouldn't expire for 10 minutes", ->
       co =>
         yield room.user.say 'alice', '@hubot vote 10 on Foo'
-        this.clock.tick(300000)
+        this.clock.tick("10:00")
         expect(room.messages.length).to.eql 2
-        this.clock.tick(300000)
-        console.log(room.messages)
-        expect(room.messages.length).to.eql 3
-        expect(room.messages[2][1]).to.contain "Vote failed, time's up!"
+        this.clock.tick("10:00")
+        setTimeout ->
+          console.log(room.messages)
+          expect(room.messages.length).to.eql 3
+          expect(room.messages[2][1]).to.contain "Vote failed, time's up!"
+        , 1
