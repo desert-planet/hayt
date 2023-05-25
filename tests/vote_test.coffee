@@ -35,7 +35,6 @@ describe 'user voting', ->
         expect(room.messages.length).to.eql 2
         this.clock.tick("10:00")
         setTimeout ->
-          console.log(room.messages)
           expect(room.messages.length).to.eql 3
           expect(room.messages[2][1]).to.contain "Vote failed, time's up!"
         , 1
