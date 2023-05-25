@@ -10,5 +10,8 @@ describe 'Imgur Links', ->
     room = helper.createRoom(httpd: false)
     room.user.say 'alice', 'shut up your face'
 
+  afterEach ->
+    room.destroy()
+
   it 'should like, compile, man', ->
     assert room.messages.length > 0

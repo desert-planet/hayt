@@ -10,5 +10,8 @@ describe 'AYP', ->
     room = helper.createRoom()
     room.user.say 'shithead', '@hubot hello, this is dog'
 
+  afterEach ->
+    room.destroy()
+
   it 'compiled if it got this fucking far', ->
     assert room.messages.length > 0

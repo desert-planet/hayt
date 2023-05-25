@@ -10,6 +10,9 @@ describe 'being loud', ->
   beforeEach ->
     room = helper.createRoom(httpd: false)
 
+  afterEach ->
+    room.destroy()
+
   context 'loud database', ->
     it 'should have 3 louds after some user chatter', ->
       co ->

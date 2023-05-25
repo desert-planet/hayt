@@ -12,6 +12,9 @@ describe 'when user rolls', ->
   beforeEach ->
     room = helper.createRoom(httpd: false)
 
+  afterEach ->
+    room.destroy()
+
   context 'invalid dice', ->
     beforeEach ->
       return co ->
