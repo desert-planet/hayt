@@ -39,7 +39,7 @@
     "phantomjs": "^1.9.12",
     "pretty-ms": "2.1.x",
     "redis": "~0.12.1",
-    "request": "2.14.0",
+    "request": "2.88.2",
     "scoped-http-client": "~0.10.3",
     "soupselect": "0.2.0",
     "sparkline": "0.1.x",
