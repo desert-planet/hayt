@@ -7,11 +7,8 @@ describe 'AYP', ->
   room = null
 
   beforeEach ->
-    room = helper.createRoom()
+    room = helper.createRoom(httpd: false)
     room.user.say 'shithead', '@hubot hello, this is dog'
-
-  afterEach ->
-    room.destroy()
 
   it 'compiled if it got this fucking far', ->
     assert room.messages.length > 0
