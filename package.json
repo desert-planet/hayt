@@ -23,6 +23,7 @@
   "dependencies": {
     "cheerio": "0.12.x",
     "coffeescript": "~1.12.x",
+    "curly": "file:vendor/curly",
     "htmlparser": "1.7.6",
     "hubot": "2.6.4",
     "hubot-calculator": ">= 0.2.0",
