@@ -3,23 +3,27 @@ Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/dice.coffee')
 expect = require('chai').expect
 stub = require('sinon').stub
+co = require('co')
 
 describe 'when user rolls', ->
   room = null
   random_stub = null
 
   beforeEach ->
-    room = helper.createRoom()
+    room = helper.createRoom(httpd: false)
+
+  afterEach ->
+    room.destroy()
 
   context 'invalid dice', ->
     beforeEach ->
-      room.user.say 'alice', '@hubot roll 1d1'
-      room.user.say 'bob', '@hubot roll 1d0'
-      room.user.say 'eric', '@hubot roll 1d-1'
+      return co ->
+        yield room.user.say 'alice', '@hubot roll 1d1'
+        yield room.user.say 'bob', '@hubot roll 1d0'
+        yield room.user.say 'eric', '@hubot roll 1d-1'
 
     it 'should be snarky message', ->
-      expect(room.messages).to.eql [
-        ['alice', '@hubot roll 1d1']
+      expect(room.messages).to.eql [ ['alice', '@hubot roll 1d1']
         ['hubot', '@alice You want to roll dice with less than two sides. Wow.']
         ['bob', '@hubot roll 1d0']
         ['hubot', '@bob You want to roll dice with less than two sides. Wow.']
@@ -223,21 +227,26 @@ describe 'when user rolls', ->
       random_stub.restore()
 
     it 'should have 2 successes at >= 7', ->
-      room.user.say 'alice', '@hubot roll 6d10>7'
-      expect(room.messages[1][1]).to.match /2 successes./
+      co ->
+        yield room.user.say 'alice', '@hubot roll 6d10>7'
+        expect(room.messages[1][1]).to.match /2 successes./
 
     it 'should have 4 successes at <= 5', ->
-      room.user.say 'alice', '@hubot roll 6d10<5'
-      expect(room.messages[1][1]).to.match /4 successes./
+      co ->
+        yield room.user.say 'alice', '@hubot roll 6d10<5'
+        expect(room.messages[1][1]).to.match /4 successes./
 
     it 'should have 1 success at >= 9', ->
-      room.user.say 'alice', '@hubot roll 6d10>9'
-      expect(room.messages[1][1]).to.match /1 success./
+      co ->
+        yield room.user.say 'alice', '@hubot roll 6d10>9'
+        expect(room.messages[1][1]).to.match /1 success./
 
     it 'should have 1 success with 1d10>9', ->
-      room.user.say 'alice', '@hubot roll 1d10>9'
-      expect(room.messages[1][1]).to.match /I rolled a success./
+      co ->
+        yield room.user.say 'alice', '@hubot roll 1d10>9'
+        expect(room.messages[1][1]).to.match /I rolled a success./
 
     it 'should have a failure with 1d10<9', ->
-      room.user.say 'alice', '@hubot roll 1d10<9'
-      expect(room.messages[1][1]).to.match /I rolled a failure./
+      co ->
+        yield room.user.say 'alice', '@hubot roll 1d10<9'
+        expect(room.messages[1][1]).to.match /I rolled a failure./

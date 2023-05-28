@@ -7,8 +7,11 @@ describe 'Steam Links', ->
   room = null
 
   beforeEach ->
-    room = helper.createRoom()
+    room = helper.createRoom(httpd: false)
     room.user.say 'alice', 'shut up your face'
+
+  afterEach ->
+    room.destroy()
 
   it 'should like, compile, man', ->
     assert room.messages.length > 0
