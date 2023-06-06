@@ -255,7 +255,8 @@ module.exports = (robot) ->
           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
             sorry = msg.random ["sorry", "it's your fault"]
             # We will fix this when we fix twitter
-            return #msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
+            # return msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
+            return if err
             prefix = msg.random [
               "SHARE FAVE RT",
               "Connect with #brands",
