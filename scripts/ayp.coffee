@@ -238,30 +238,31 @@ module.exports = (robot) ->
           ]
           msg.reply "#{prefix} #{url} is now -> #{strip.info.image_url}"
 
-#           # Tweet a link to the comic, with some sort of text to go with it.
-#           prefix = msg.random [
-#             "Welp",
-#             "Here you go",
-#             "You made this? I made this.",
-#             "The one that doesn't make sense",
-#             "In which nothing happens",
-#             "Laughter, sorrow, nonsense",
-#             "#arrakis",
-#             "#dickbutt",
-#             "butts",
-#             "Have a comic",
-#             "#pants",
-#           ]
-#           Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
-#             sorry = msg.random ["sorry", "it's your fault"]
-#             return msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
-#             prefix = msg.random [
-#               "SHARE FAVE RT",
-#               "Connect with #brands",
-#               "Promoted by #a",
-#               "I put it on twitter, shitbirds",
-#             ]
-#             msg.send "#{prefix} #{url}"
+          # Tweet a link to the comic, with some sort of text to go with it.
+          prefix = msg.random [
+            "Welp",
+            "Here you go",
+            "You made this? I made this.",
+            "The one that doesn't make sense",
+            "In which nothing happens",
+            "Laughter, sorrow, nonsense",
+            "#arrakis",
+            "#dickbutt",
+            "butts",
+            "Have a comic",
+            "#pants",
+          ]
+          Twitter.mediaTweet strip.info.image_jpeg, "#{prefix} - #{strip.info.url}", (err, tweet, url) =>
+            sorry = msg.random ["sorry", "it's your fault"]
+            # We will fix this when we fix twitter
+            return #msg.reply "Well, I fucked tweeting that RIGHT up, #{sorry}: #{err}" if err
+            prefix = msg.random [
+              "SHARE FAVE RT",
+              "Connect with #brands",
+              "Promoted by #a",
+              "I put it on twitter, shitbirds",
+            ]
+            msg.send "#{prefix} #{url}"
 
 
 
