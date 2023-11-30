@@ -168,7 +168,7 @@ filterName = (name) ->
     name = 'nickels'
 
   # Feels left out from having bouncer problems I guess
-  if /Nicole/i.test(name)
+  if /Nicole/i.test(name) || /fullyDeterministicMedicine/i.test(name)
     name = 'randompoison'
 
   return name
