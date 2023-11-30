@@ -167,6 +167,10 @@ filterName = (name) ->
   if /nickels/i.test(name)
     name = 'nickels'
 
+  # Feels left out from having bouncer problems I guess
+  if /Nicole/i.test(name)
+    name = 'randompoison'
+
   return name
 
 # Make any changes required to the text
