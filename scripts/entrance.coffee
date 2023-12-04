@@ -12,3 +12,5 @@ module.exports = (robot) ->
       msg.send "wb #{username}"
     else if /kin/.test(username)
       msg.send "Hello #{username}! We missed you!"
+    else if /MetaCentricHeight/.test(username)
+      msg.send "wb boats, start a titanium fire today?"
