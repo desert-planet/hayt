@@ -115,9 +115,9 @@ module.exports = (robot) ->
   robot.respond /vote\??$/i, (msg) ->
     msg.send """Voting allows you to pretend you have the power of a god.
 Supported commands:
-  .vote?                         - This help noise
-  .voting?                       - What is going on, RIGHT NOW.
-  .vote yes / no / random        - Vote in the current... vote.
+  .vote?                        - This help noise
+  .voting?                      - What is going on, RIGHT NOW.
+  .vote yes / no / random       - Vote in the current... vote.
   .vote [minutes] topic <topic> - Propose a new topic, with optional duration
   .vote [minutes] on <thing>    - Vote on a thing, with optional duration
 """
