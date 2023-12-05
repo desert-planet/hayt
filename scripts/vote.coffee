@@ -118,8 +118,8 @@ Supported commands:
   .vote?                         - This help noise
   .voting?                       - What is going on, RIGHT NOW.
   .vote yes / no / random        - Vote in the current... vote.
-  .vote [duration] topic <topic> - Propose a new topic, with optional duration (in minutes)
-  .vote [duration] on <thing>    - Vote on a thing, with optional duration (in minutes)
+  .vote [minutes] topic <topic> - Propose a new topic, with optional duration
+  .vote [minutes] on <thing>    - Vote on a thing, with optional duration
 """
 
   robot.respond /voting\??$/i, (msg) ->
