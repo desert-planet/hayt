@@ -35,7 +35,7 @@
     "hubot-scripts": ">= 2.5.0 < 3.0.0",
     "node-gd": "~0.2.3",
     "node-s3": "~1.1.0",
-    "phantomjs": "^1.9.12",
+    "phantomjs": "file:./vendor/phantomjs",
     "redis": "~0.12.1",
     "request": "2.14.0",
     "scoped-http-client": "~0.10.3",
