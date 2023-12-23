@@ -14,3 +14,13 @@
     depends on D, and D is the package that needs to be rolled back. In this
     case, we may well have to locally fork A, B, and C just to control which
     version of D gets used.
+  * The following dependencies have been vendored in order to fix version
+    resolution:
+    * soupselect - The dependency on nodeselect has been changed from `>= 0.3.0`
+      to `~0.3.0` to prevent a newer version from being pulled in.
+    * wolfram - The dependency on nodeselect has been changed from `^ 0.18.0` to
+      `~0.18.0` to avoid pulling a newer minor version.
+    * phantomjs - Changed dependency to `phantomjs-prebuilt@^2.1.16`. I meant to
+      vendor this one, but accidentally pulled down the latest version and it at
+      least installed correctly. We'll probably hit runtime errors, but I shall
+      deal with that when we hit it.
