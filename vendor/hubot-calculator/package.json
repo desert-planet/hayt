@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "coffee-script": "~1.6",
-    "mathjs": ">= 0.25.0"
+    "mathjs": "~0.25.0"
   },
   "devDependencies": {
     "mocha": "*",
