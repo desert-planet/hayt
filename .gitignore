@@ -3,3 +3,4 @@ deps
 *.log
 .DS_Store*
 .hubot_history
+dump.rdb
