@@ -75,8 +75,6 @@ module.exports = (robot) ->
       else
         msg.send "I don't remember #{key}, but I'll remember it now!"
 
-      msg.send value
-
   robot.respond /forget\s+(.*)/i, (msg) ->
     key = msg.match[1].toLowerCase()
     value = memories()[key]
