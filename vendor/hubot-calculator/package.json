@@ -1,0 +1,32 @@
+{
+  "name": "hubot-calculator",
+  "description": "Hubot script for basic calculator functionality",
+  "version": "0.4.0",
+  "author": "Christopher Porter <chris@pulseenergy.com>",
+  "license": "MIT",
+  "keywords": [
+    "hubot",
+    "hubot-scripts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hubot-scripts/hubot-calculator"
+  },
+  "bugs": {
+    "url": "https://github.com/hubot-scripts/hubot-calculator/issues"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6",
+    "mathjs": ">= 0.25.0"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "sinon": "*"
+  },
+  "main": "index.coffee",
+  "scripts": {
+    "test": "script/test"
+  }
+}
