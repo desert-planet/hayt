@@ -24,3 +24,7 @@
       vendor this one, but accidentally pulled down the latest version and it at
       least installed correctly. We'll probably hit runtime errors, but I shall
       deal with that when we hit it.
+    * hubot, express - express's dependency on debug was changed from `*` (very
+      bad, i will swear a blood oath to destroy you if you ever do this) to
+      `~0.8.1` (sane, rational, you will go to heaven). Hubot had to be forked
+      as well, since it's the one that was depending on express.
