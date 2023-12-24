@@ -38,6 +38,10 @@ describe '.rem/.replace', ->
     expect(lastResponse()).to.eql ['hubot', 'I\'ve forgotten key is value.']
     expect(room.robot.brain.data.remember['key']).to.eql undefined
 
+    # Make sure we respond correctly if no such key exists.
+    room.user.say 'alice', '@hubot forget key'
+    expect(lastResponse()).to.eql ['hubot', "I don't remember anything matching `key`... so we're probably all good?"]
+
   it 'should not hallucinate memories', ->
     room.user.say 'alice', '@hubot rem key'
 

@@ -78,9 +78,12 @@ module.exports = (robot) ->
   robot.respond /forget\s+(.*)/i, (msg) ->
     key = msg.match[1].toLowerCase()
     value = memories()[key]
-    delete memories()[key]
-    delete memoriesByRecollection()[key]
-    msg.send "I've forgotten #{key} is #{value}."
+    if value
+      delete memories()[key]
+      delete memoriesByRecollection()[key]
+      msg.send "I've forgotten #{key} is #{value}."
+    else
+      msg.send "I don't remember anything matching `#{key}`... so we're probably all good?"
 
   robot.respond /what are your favorite memories/i, (msg) ->
     msg.finish()
