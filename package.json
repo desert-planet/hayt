@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "pretty-ms": "2.1.x",
-    "cheerio": "0.12.x",
+    "cheerio": "file:./vendor/cheerio",
     "coffee-script": "~1.10.x",
     "htmlparser": "1.7.6",
     "hubot": "file:./vendor/hubot",
