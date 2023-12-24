@@ -28,3 +28,5 @@
       bad, i will swear a blood oath to destroy you if you ever do this) to
       `~0.8.1` (sane, rational, you will go to heaven). Hubot had to be forked
       as well, since it's the one that was depending on express.
+    * hubot-calculator - The dependency on mathjs was changed from `>= 0.25.0`
+      (evil) to `~0.25.0` (less evil).
