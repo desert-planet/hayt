@@ -171,6 +171,10 @@ filterName = (name) ->
   if /Nicole/i.test(name) || /fullyDeterministicMedicine/i.test(name)
     name = 'randompoison'
 
+  # You make *one* joke about how many s<tab> names there are and this happens.
+  if /zSunsetDan/i.test(name)
+    name = 'sunsetdan'
+
   return name
 
 # Make any changes required to the text
