@@ -50,7 +50,7 @@ class Vote
     # Can't finish twice
     return if @finished or @expired
     # We're not done unless we get three votes
-    return if (@votes.yes.length + @votes.no.length) < 3
+    return if (@votes.yes.length + @votes.no.length) < 5
     # We're not done if there's no difference between the votes
     return if (Math.abs(@votes.yes.length - @votes.no.length) < 1)
     # Is this still being contested?
