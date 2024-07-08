@@ -79,7 +79,7 @@ module.exports = (robot) ->
   robot.respond /(me|random memory)(\s+.*)?$/i, (msg) ->
     msg.finish()
 
-    search = msg.match[2].trim()
+    search = msg.match[2]?.trim()
     randomKey = if search
       msg.random(findSimilarMemories(search))
     else
