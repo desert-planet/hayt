@@ -175,6 +175,10 @@ filterName = (name) ->
   if /zSunsetDan/i.test(name)
     name = 'sunsetdan'
 
+  # Shows up, disappears, reappears and here we are
+  if /^titties/i.test(name)
+    name = 'big_daddy'
+
   return name
 
 # Make any changes required to the text
