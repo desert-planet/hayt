@@ -2,12 +2,13 @@
 #   Remembers a key and value
 #
 # Commands:
-#   hubot what is|remember <key> - Returns a string
-#   hubot remember <key> is <value>. - Returns nothing. Remembers the text for next time!
-#   hubot what do you remember - Returns everything hubot remembers.
+#   hubot rem|remember|what is <key> - Returns a string.
+#   hubot rem|remember <key> is <value> - Returns nothing. Remembers the text for next time!
+#   hubot replace <key> with <value> - Returns nothing. Replaces an existing memory with new text.
 #   hubot forget <key> - Removes key from hubots brain.
-#   hubot what are your favorite memories? - Returns a list of the most remembered memories.  
-#   hubot random memory - Returns a random string
+#   hubot what are your favorite memories? - Returns a list of the most remembered memories.
+#   hubot me|random memory - Returns a random memory.
+#   hubot me|random memory <prefix> - Returns a random memory whose key matches the prefix.
 #
 # Dependencies:
 #   "underscore": "*"
@@ -30,7 +31,7 @@ module.exports = (robot) ->
       value = match[3]
       currently = memories()[key]
       if currently
-        msg.send "But #{key} is already #{currently}.  Forget #{key} first."
+        msg.send "But #{key} is already #{currently}. Use `replace` to update existing memories."
       else
         memories()[key] = value
         msg.send "OK, I'll remember #{key}."
@@ -61,12 +62,28 @@ module.exports = (robot) ->
 
       msg.send value
 
+  robot.respond /replace\s+(.*)/i, (msg) ->
+    words = msg.match[1].trim()
+    if match = words.match /(.*?)(\s+with\s+([\s\S]*))$/i
+      msg.finish()
+      key = match[1].toLowerCase()
+      value = match[3]
+      currently = memories()[key]
+      memories()[key] = value
+      if currently
+        msg.send "OK, #{key} has been updated."
+      else
+        msg.send "I don't remember #{key}, but I'll remember it now!"
+
   robot.respond /forget\s+(.*)/i, (msg) ->
     key = msg.match[1].toLowerCase()
     value = memories()[key]
-    delete memories()[key]
-    delete memoriesByRecollection()[key]
-    msg.send "I've forgotten #{key} is #{value}."
+    if value
+      delete memories()[key]
+      delete memoriesByRecollection()[key]
+      msg.send "I've forgotten #{key} is #{value}."
+    else
+      msg.send "I don't remember anything matching `#{key}`... so we're probably all good?"
 
   robot.respond /what are your favorite memories/i, (msg) ->
     msg.finish()
