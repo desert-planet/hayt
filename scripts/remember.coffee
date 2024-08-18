@@ -36,14 +36,15 @@ module.exports = (robot) ->
         msg.send "I don't remember anything matching `#{searchPattern}`"
       return
 
-    # Next, attempt to interpret `words` as an existing key.
-    if match = words.match /([^?]+)\??/i
-      key = match[1].toLowerCase()
-      value = memories()[key]
+    # Next, attempt to interpret `words` as an existing key. This also strips
+    # off the last "?" character.
+    if match = words.match /(.+?)\??$/i
+      stripped_key = match[1].toLowerCase()
+      value = memories()[stripped_key]
 
       if value
-        memoriesByRecollection()[key] ?= 0
-        memoriesByRecollection()[key]++
+        memoriesByRecollection()[stripped_key] ?= 0
+        memoriesByRecollection()[stripped_key]++
         msg.send value
         return
 
@@ -63,12 +64,12 @@ module.exports = (robot) ->
 
     # If none of the previous actions succeeded, search existing memories for
     # similar keys.
-    matchingKeys = findSimilarMemories(words)
+    matchingKeys = findSimilarMemories(stripped_key)
     if matchingKeys.length > 0
       keys = matchingKeys.join(', ')
-      msg.send "I don't remember `#{words}`. Did you mean:\n#{keys}"
+      msg.send "I don't remember `#{stripped_key}`. Did you mean:\n#{keys}"
     else
-      msg.send "I don't remember anything matching `#{words}`"
+      msg.send "I don't remember anything matching `#{stripped_key}`"
 
   robot.respond /forget\s+(.*)/i, (msg) ->
     key = msg.match[1].toLowerCase()
