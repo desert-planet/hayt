@@ -61,8 +61,8 @@ module.exports = (robot) ->
 
       msg.send value
 
-  robot.respond /forget\s+(.*)/i, (msg) ->
-    key = msg.match[1].toLowerCase()
+  robot.respond /(forget|forgor)\s+(.*)/i, (msg) ->
+    key = msg.match[2].toLowerCase()
     value = memories()[key]
     delete memories()[key]
     delete memoriesByRecollection()[key]
