@@ -99,9 +99,10 @@ filterName = (name) ->
     # Bouncers are hard or something, whatever.
     name = 'arbo'
 
-  if name == 'sflios' || name == 'PITlios' || name == 'missourios77' || name == 'sofalios' || name == 'solios'
+  if name == 'sflios' || name == 'PITlios' || name == 'missourios77' || name == 'sofalios' || name == 'solios' || /solie/i.test(name)
     # He visited this one time. And then moved that other time. And then did a
     # joke. And then no one knows anymore. And lastly, a totally reasonable change.
+    # Back again: this time because of Linux.
     #
     # http://pixxx.wtf.cat/image/0Q3B34330v0c/12188116_10205398142892807_4244989619067012464_o.jpg
     name = 'solient'
