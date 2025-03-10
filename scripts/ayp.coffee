@@ -87,6 +87,10 @@ filterName = (name) ->
     # ;_;
     name = 'geckomuerto'
 
+  if /cheerycherries/i.test(name)
+    # ¯\_(ツ)_/¯
+    name = 'cheerycherries'
+
   if /cody/i.test(name)
     # I don't even understand this one
     name = 'cody_'
