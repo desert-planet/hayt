@@ -28,6 +28,7 @@ module.exports = (robot) ->
       "Fucker",
       "Motherfucker",
       "Also, no one likes you",
-      "Fuckfart"
+      "Fuckfart",
+      "Poptart"
     ]
     msg.send "#{result}, #{insult}"
