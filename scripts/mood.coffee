@@ -19,6 +19,6 @@ module.exports = (robot) ->
       "https://i.imgur.com/XujwziE.jpg",
       "https://i.imgur.com/8BYpECO.jpg",
       "https://i.imgur.com/yEfseSE.jpeg",
-      "https://cloud.skalnik.com/UwhVo.png",
+      "https://c.sklnk.xyz/UwhVo.png",
     ]
     msg.send "And your mood for the day is ... #{result}"
