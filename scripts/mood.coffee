@@ -20,5 +20,6 @@ module.exports = (robot) ->
       "https://i.imgur.com/8BYpECO.jpg",
       "https://i.imgur.com/yEfseSE.jpeg",
       "https://c.sklnk.xyz/UwhVo.png",
+      "https://i.redd.it/1tzihsyqubi61.jpg",
     ]
     msg.send "And your mood for the day is ... #{result}"
