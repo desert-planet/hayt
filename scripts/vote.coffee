@@ -153,7 +153,7 @@ Supported commands:
 
       when "random","rando","meh","ehem", "maybe","idk","possibly"
        return msg.reply "You can't randomly vote on nothing!" unless Vote.current?
-       voteResult = msg.random ["yes","no"]
+       voteResult = msg.random ["yes", "no"]
        result = if voteResult == "yes"
                   Vote.current?.yes msg.message.user.name
                 else
