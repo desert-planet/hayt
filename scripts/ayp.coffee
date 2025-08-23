@@ -226,6 +226,7 @@ module.exports = (robot) ->
 
   # Ask for what currently serves as "output"
   robot.respond /(?:nmp|ayp)(\s+(me)?)?\s*$/i, (msg) ->
+    return msg.reply "THANKS AMAZON FOR RUINING EVERYTHING"
     buffer.get 6, (err, lines) ->
       # Build a strip of AYP
       new AYPStrip lines, (err, image, strip) ->
