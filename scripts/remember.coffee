@@ -23,43 +23,53 @@ module.exports = (robot) ->
     Object.keys(memories()).filter (key) -> searchRegex.test(key)
 
   robot.respond /(?:what is|rem(?:ember)?)\s+(.*)/i, (msg) ->
+    msg.finish()
     words = msg.match[1].trim()
-    if match = words.match /(.*?)(\s+is\s+([\s\S]*))$/i
-      msg.finish()
-      key = match[1].toLowerCase()
-      value = match[3]
-      currently = memories()[key]
-      if currently
-        msg.send "But #{key} is already #{currently}.  Forget #{key} first."
-      else
-        memories()[key] = value
-        msg.send "OK, I'll remember #{key}."
-    else if match = words.match /([^?]+)\??/i
-      msg.finish()
 
-      key = match[1].toLowerCase()
-      value = memories()[key]
+    # First check for a search expression.
+    if match = words.match /\|\s*(grep\s+)?(.*)$/i
+      searchPattern = match[2]
+      matchingKeys = findSimilarMemories(searchPattern)
+      if matchingKeys.length > 0
+        msg.send "I remember:\n#{matchingKeys.join(', ')}"
+      else
+        msg.send "I don't remember anything matching `#{searchPattern}`"
+      return
+
+    # Next, attempt to interpret `words` as an existing key. This also strips
+    # off the last "?" character.
+    if match = words.match /(.+?)\??$/i
+      stripped_key = match[1].toLowerCase()
+      value = memories()[stripped_key]
 
       if value
-        memoriesByRecollection()[key] ?= 0
-        memoriesByRecollection()[key]++
-      else
-        if match = words.match /\|\s*(grep\s+)?(.*)$/i
-          searchPattern = match[2]
-          matchingKeys = findSimilarMemories(searchPattern)
-          if matchingKeys.length > 0
-            value = "I remember:\n#{matchingKeys.join(', ')}"
-          else
-            value = "I don't remember anything matching `#{searchPattern}`"
-        else
-          matchingKeys = findSimilarMemories(key)
-          if matchingKeys.length > 0
-            keys = matchingKeys.join(', ')
-            value = "I don't remember `#{key}`. Did you mean:\n#{keys}"
-          else
-            value = "I don't remember anything matching `#{key}`"
+        memoriesByRecollection()[stripped_key] ?= 0
+        memoriesByRecollection()[stripped_key]++
+        msg.send value
+        return
 
-      msg.send value
+    # Next, attempt to interpret `words` as a "foo is bar" expression in order
+    # to store a memory.
+    if match = words.match /^(.*)is(.*)$/i
+      key = match[1].trim().toLowerCase()
+      value = match[2].trim()
+      if key and value
+        currently = memories()[key]
+        if currently
+          msg.send "But #{key} is already #{currently}.  Forget #{key} first."
+        else
+          memories()[key] = value
+          msg.send "OK, I'll remember #{key}."
+        return
+
+    # If none of the previous actions succeeded, search existing memories for
+    # similar keys.
+    matchingKeys = findSimilarMemories(stripped_key)
+    if matchingKeys.length > 0
+      keys = matchingKeys.join(', ')
+      msg.send "I don't remember `#{stripped_key}`. Did you mean:\n#{keys}"
+    else
+      msg.send "I don't remember anything matching `#{stripped_key}`"
 
   robot.respond /(forget|forgor)\s+(.*)/i, (msg) ->
     key = msg.match[2].toLowerCase()
