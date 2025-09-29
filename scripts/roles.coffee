@@ -4,6 +4,7 @@
 # Commands:
 #   hubot <user> is a badass guitarist - assign a role to a user
 #   hubot <user> is not a badass guitarist - remove a role from a user
+#   hubot <user> is not anybody important - nuke the roles of a user
 #   hubot who is <user> - see what roles a user has
 #
 # Examples:
@@ -66,6 +67,20 @@ module.exports = (robot) ->
           msg.send getAmbiguousUserText users
         else
           msg.send "I don't know anything about #{name}."
+
+  robot.respond /@?([\w .\-_]+) is not anybody important[.!]*$/i, (msg) ->
+    name = msg.match[1].trim()
+
+    unless name in ['', 'who', 'what', 'where', 'when', 'why']
+      users = robot.brain.usersForFuzzyName(name)
+      if users.length is 1
+        user = users[0]
+        user.roles = [ ]
+        msg.send "Ok, #{name} is not anybody important."
+      else if users.length > 1
+        msg.send getAmbiguousUserText users
+      else
+        msg.send "I don't know anything about #{name}."
 
   robot.respond /@?([\w .\-_]+) is not (["'\w: \-_]+)[.!]*$/i, (msg) ->
     name    = msg.match[1].trim()
