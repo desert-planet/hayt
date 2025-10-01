@@ -47,25 +47,27 @@ module.exports = (robot) ->
     name    = msg.match[1].trim()
     newRole = msg.match[2].trim()
 
-    unless name in ['', 'who', 'what', 'where', 'when', 'why']
-      unless newRole.match(/^not\s+/i)
-        users = robot.brain.usersForFuzzyName(name)
-        if users.length is 1
-          user = users[0]
-          user.roles = user.roles or [ ]
+    return if name in ['', 'who', 'what', 'where', 'when', 'why']
+    return if newRole is ''
+    return if newRole.match(/^not\s+/i)
 
-          if newRole in user.roles
-            msg.send "I know"
-          else
-            user.roles.push(newRole)
-            if name.toLowerCase() is robot.name.toLowerCase()
-              msg.send "Ok, I am #{newRole}."
-            else
-              msg.send "Ok, #{name} is #{newRole}."
-        else if users.length > 1
-          msg.send getAmbiguousUserText users
+    users = robot.brain.usersForFuzzyName(name)
+    if users.length is 1
+      user = users[0]
+      user.roles = user.roles or [ ]
+
+      if newRole in user.roles
+        msg.send "I know"
+      else
+        user.roles.push(newRole)
+        if name.toLowerCase() is robot.name.toLowerCase()
+          msg.send "Ok, I am #{newRole}."
         else
-          msg.send "I don't know anything about #{name}."
+          msg.send "Ok, #{name} is #{newRole}."
+    else if users.length > 1
+      msg.send getAmbiguousUserText users
+    else
+      msg.send "I don't know anything about #{name}."
 
   robot.respond /@?([\w .\-_]+) is not (["'\w: \-_]+)[.!]*$/i, (msg) ->
     name    = msg.match[1].trim()
