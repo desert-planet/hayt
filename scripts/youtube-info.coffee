@@ -2,8 +2,7 @@
 #  Grab the title of a youtube video
 #
 # Dependencies:
-#  cheerio
-#  request
+#  youtube-dl-exec
 #
 # Configuration:
 #  None
@@ -19,8 +18,7 @@
 
 url = require 'url'
 path = require 'path'
-request = require 'request'
-cheerio = require 'cheerio'
+youtubedl = require 'youtube-dl-exec'
 
 module.exports = (robot) ->
   robot.hear /(youtube\.com\/(?:watch\?v=|shorts\/)|youtu.be\/)(.+)/i, (msg) ->
@@ -29,10 +27,13 @@ module.exports = (robot) ->
 
 getTitle = (msg, url) ->
   muhUrl = "https://youtube.com/watch?v=#{url}"
-  request muhUrl, (err, res, body) ->
-    if err
+  youtubedl muhUrl, {
+    dumpSingleJson: true
+    noCheckCertificates: true
+    noWarnings: true
+    preferFreeFormats: true
+  }
+    .then (output) ->
+      msg.send output.title
+    .catch (err) ->
       msg.send "couldn't do anything with #{muhUrl}"
-    else
-      $ = cheerio.load(body)
-      title = $('title').text()
-      msg.send title
