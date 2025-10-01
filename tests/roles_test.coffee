@@ -56,13 +56,14 @@ describe 'roles management', ->
       room.user.say 'alice', '@hubot unknown_user is a mystery'
       expect(room.messages[1][1]).to.eql "I don't know anything about unknown_user."
 
-    # lmao this is less of a test case and more of a bug report.
     it 'should handle empty role assignments gracefully', ->
       room.user.say 'alice', '@hubot bob is '
 
       bob = room.robot.brain.userForName('bob')
-      expect(bob.roles).to.contain ''
-      expect(room.messages[1][1]).to.eql 'Ok, bob is .'
+      # Should not assign empty roles.
+      expect(bob.roles or []).to.not.contain ''
+      # Should not respond to empty role assignments.
+      expect(room.messages.length).to.eql 1
 
   context 'removing roles', ->
     beforeEach ->
