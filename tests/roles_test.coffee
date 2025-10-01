@@ -48,7 +48,7 @@ describe 'roles management', ->
       room.user.say 'alice', '@hubot what is happening'
       room.user.say 'alice', '@hubot where is the location'
 
-      # Only "who is" should get a response, "what" and "where" should be ignored
+      # Only "who is" should get a response, "what" and "where" should be ignored.
       expect(room.messages.length).to.eql 4  # 3 user messages + 1 robot response
       expect(room.messages[1][1]).to.eql "a person? Never heard of 'em"
 
