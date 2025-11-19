@@ -27,7 +27,7 @@ loadBrain = (robot) ->
     robot.brain.set('adlib', list)
 
 module.exports = (robot) ->
-  robot.hear /(?:^|\s)(_+)(?=\s|$)/g, (res) ->
+  robot.hear /(?:^|\s)(_{3,})(?=\s|$)/g, (res) ->
     # Any text that has 3 or more underscores will result in adlib replacement.
     message = res.message.text
     matches = res.match
