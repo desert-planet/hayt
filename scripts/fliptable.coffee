@@ -37,8 +37,8 @@ module.exports = (robot) ->
     ]
 
     sets = [
-      '┬─┬﻿ ノ( ゜-゜ノ)',
-      '┬─┬﻿ ︵ /(.□. \）',
+      'ʕノ•ᴥ•ʔノ ︵ ┻━┻',
+      '(╯°□°)╯︵ ┻━┻',
     ]
 
     if /geckomuerto/i.test(msg.message.user.name.trim())
