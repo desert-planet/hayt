@@ -17,8 +17,9 @@ module.exports = (robot) ->
 
     for cuss in cusses
       if fullMessage.indexOf(cuss) != -1
-        pottymouths[user] ?= {}
-        userEntry = pottymouths[user]
+        pottymouths.users ?= {}
+        pottymouths.users[user] ?= {}
+        userEntry = pottymouths.users[user]
 
         # Total times the user has cussed.
         userEntry.total ?= 0
@@ -34,7 +35,18 @@ module.exports = (robot) ->
         pottymouths.cusses[cuss] ?= 0
         pottymouths.cusses[cuss] += 1
 
-        msg.send "#{user} said '#{cuss}'! (#{userEntry.cusses[cuss]} times, #{pottymouths.cusses[cuss]} across all users)"
+  robot.respond /pottymouths/, (msg) ->
+    users = robot.brain.get('pottymouths').users ? {}
+
+    # Find the users who have cussed the most.
+    totals = ({name, total: entry.total} for name, entry of users)
+    totals.sort (a, b) -> b.total - a.total
+    top = totals.slice(0, 5)
+
+    verbiage = ["The pottiest of mouths"]
+    for {name, total}, rank in top
+      verbiage.push "#{rank + 1}. #{name} (#{total})"
+    msg.send verbiage.join("\n")
 
   # Initialize the pottymouth data if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
