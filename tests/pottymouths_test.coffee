@@ -19,3 +19,17 @@ describe 'pottymouths', ->
 
     room.user.say 'alice', '@hubot pottymouths'
     expect(room.messages[4][1]).to.eql "The pottiest of mouths\n1. charlie (4)\n2. alice (2)"
+
+  it 'report top cusses', ->
+    room.user.say 'alice', 'oh shit oh fuck oh piss'
+    room.user.say 'alice', 'oh fuck shit'
+    room.user.say 'alice', 'fuck'
+
+    room.user.say 'alice', '@hubot cusses alice'
+    expect(room.messages[4][1]).to.eql "alice's top cusses\n1. fuck (3)\n2. shit (2)\n3. piss (1)"
+
+    room.user.say 'alice', '@hubot cusses bob'
+    expect(room.messages[6][1]).to.eql "bob's top cusses"
+
+    room.user.say 'alice', '@hubot cusses'
+    expect(room.messages[8][1]).to.eql "Top cusses\n1. fuck (3)\n2. shit (2)\n3. piss (1)"

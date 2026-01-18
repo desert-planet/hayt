@@ -48,6 +48,26 @@ module.exports = (robot) ->
       verbiage.push "#{rank + 1}. #{name} (#{total})"
     msg.send verbiage.join("\n")
 
+  robot.respond /cusses( \S+)?/, (msg) ->
+    user = msg.match[1]?.trim().toLowerCase()
+    pottymouths = robot.brain.get('pottymouths')
+    verbiage = []
+
+    if user
+      verbiage.push "#{user}'s top cusses"
+      cusses = pottymouths.users?[user]?.cusses ? {}
+    else
+      verbiage.push "Top cusses"
+      cusses = pottymouths.cusses ? {}
+
+    cusses = ({cuss, total} for cuss, total of cusses)
+    cusses.sort (a, b) -> b.total - a.total
+    top = cusses.slice(0, 5)
+
+    for {cuss, total}, rank in top
+      verbiage.push "#{rank + 1}. #{cuss} (#{total})"
+    msg.send verbiage.join("\n")
+
   # Initialize the pottymouth data if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
     if not robot.brain.get('pottymouths')?
