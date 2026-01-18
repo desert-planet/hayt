@@ -46,7 +46,7 @@ describe 'pottymouths', ->
     expect(room.messages[6][1]).to.eql "'damn' has been said 1 times"
 
     room.user.say 'alice', '@hubot cuss butt'
-    expect(room.messages[8][1]).to.eql "'butt' isn't a cuss!"
+    expect(room.messages[8][1]).to.eql "'butt' isn't a (recognized) cuss!"
 
   it 'should be case insensitive', ->
     room.user.say 'alice', 'oh shit oh fuck oh piss'

@@ -1,10 +1,62 @@
+# Description:
+#   Track who cusses the most and which cusses get said the most.
+#
+# Commands:
+#   pottymouths   - List the users who have cussed the most
+#   cusses        - List which cusses have been said the most
+#   cusses <user> - List someone's top cusses
+#   cuss <cuss>   - List how many times a cuss has been said
+
 module.exports = (robot) ->
+  # Sourced from https://en.wiktionary.org/wiki/Category:English_swear_words
   CUSSES = [
-    "fuck",
-    "shit",
-    "piss",
-    "damn",
+    "arse",
+    "arsehead",
+    "arsehole",
+    "ass",
+    "asshole"
+    "bastard",
+    "bitch",
+    "bloody",
+    "bollocks",
+    "brotherfucker",
+    "bugger",
+    "bullshit",
+    "cock",
+    "cocksucker",
+    "crap",
+    "cunt",
     "dammit",
+    "damn",
+    "damned",
+    "dick",
+    "dickhead",
+    "dumbass",
+    "fatherfucker"
+    "fuck",
+    "fucked",
+    "fucker",
+    "fucking",
+    "goddammit",
+    "goddamn",
+    "goddamned",
+    "goddamnit",
+    "godsdamn",
+    "hell",
+    "horseshit",
+    "jackarse",
+    "jackass",
+    "motherfucker",
+    "pigfucker",
+    "piss",
+    "prick",
+    "pussy",
+    "shit",
+    "shite",
+    "sisterfucker",
+    "slut",
+    "twat",
+    "wanker",
   ]
 
   robot.hear /(.*)/, (msg) ->
@@ -77,7 +129,7 @@ module.exports = (robot) ->
       total = pottymouths.cusses?[cuss] ? 0
       msg.send "'#{cuss}' has been said #{total} times"
     else
-      msg.send "'#{cuss}' isn't a cuss!"
+      msg.send "'#{cuss}' isn't a (recognized) cuss!"
 
   # Initialize the pottymouth data if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
