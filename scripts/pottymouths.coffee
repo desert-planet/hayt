@@ -1,21 +1,23 @@
 module.exports = (robot) ->
+  CUSSES = [
+    "fuck",
+    "shit",
+    "piss",
+    "damn",
+    "dammit",
+  ]
+
   robot.hear /(.*)/, (msg) ->
-    # Ignore ourselves.
     user = msg.message.user.name
+
+    # Ignore ourselves.
     return if user == robot.name
 
-    cusses = [
-      "fuck",
-      "shit",
-      "piss",
-      "damn",
-      "dammit",
-    ]
-
+    user = user.toLowerCase()
     fullMessage = msg.match[1].trim().toLowerCase()
     pottymouths = robot.brain.get('pottymouths')
 
-    for cuss in cusses
+    for cuss in CUSSES
       if fullMessage.indexOf(cuss) != -1
         pottymouths.users ?= {}
         pottymouths.users[user] ?= {}
@@ -67,6 +69,15 @@ module.exports = (robot) ->
     for {cuss, total}, rank in top
       verbiage.push "#{rank + 1}. #{cuss} (#{total})"
     msg.send verbiage.join("\n")
+
+  robot.respond /cuss (\S+)/, (msg) ->
+    cuss = msg.match[1].trim().toLowerCase()
+    if cuss in CUSSES
+      pottymouths = robot.brain.get('pottymouths')
+      total = pottymouths.cusses?[cuss] ? 0
+      msg.send "'#{cuss}' has been said #{total} times"
+    else
+      msg.send "'#{cuss}' isn't a cuss!"
 
   # Initialize the pottymouth data if it doesn't exist yet.
   robot.brain.once 'loaded', (data) ->
