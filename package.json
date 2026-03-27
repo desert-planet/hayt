@@ -43,7 +43,7 @@
     "sparkline": "0.1.x",
     "twitter": "~1.2.5",
     "underscore": "1.5.x",
-    "underscore.string": "2.3.0",
+    "underscore.string": "3.3.5",
     "wolfram": "~0.3.4"
   },
   "engines": {
