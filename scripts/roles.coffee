@@ -33,9 +33,9 @@ module.exports = (robot) ->
         user = users[0]
         user.roles = user.roles or [ ]
         if user.roles.length > 0
-          if user.roles.join('').search(',') > -1
-            joiner = '; '
-          msg.send "#{name} is #{user.roles.join(joiner)}."
+          roles = user.roles.slice().sort(() -> Math.random() - 0.5)[0..4]
+          joiner = if roles.join('').includes(',') then '; ' else ', '
+          msg.send "#{name} is #{roles.join(joiner)}."
         else
           msg.send "#{name} is nothing to me."
       else if users.length > 1
