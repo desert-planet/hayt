@@ -84,21 +84,26 @@ module.exports = (robot) ->
   karma = new Karma robot
   allow_self = process.env.KARMA_ALLOW_SELF or "true"
 
-  robot.hear /(?:[\(]([\S\s]+)[\)]|([\S]+[^() ]))\+\+(\s|$)/, (msg) ->
-    subject = (msg.match[1] || msg.match[2]).toLowerCase()
-    if allow_self is true or msg.message.user.name.toLowerCase() != subject
-      karma.increment subject
-      msg.send "#{subject} #{karma.incrementResponse()} (Karma: #{karma.get(subject)})"
-    else
-      msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
+  increment_regex = /(?:[\(]([\S\s]+)[\)]|([\S]+[^() ]))\+\+(\s|$)/g
+  decrement_regex = /(?:[\(]([\S\s]+)[\)]|([\S]+[^()][^ ]))--(\s|$)/g
 
-  robot.hear /(?:[\(]([\S\s]+)[\)]|([\S]+[^()][^ ]))--(\s|$)/, (msg) ->
-    subject = (msg.match[1] || msg.match[2]).toLowerCase()
-    if allow_self is true or msg.message.user.name.toLowerCase() != subject
-      karma.decrement subject
-      msg.send "#{subject} #{karma.decrementResponse()} (Karma: #{karma.get(subject)})"
-    else
-      msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
+  robot.hear increment_regex, (msg) ->
+    while match = increment_regex.exec msg.message.text
+      subject = (match[1] || match[2]).toLowerCase()
+      if allow_self is true or msg.message.user.name.toLowerCase() != subject
+        karma.increment subject
+        msg.send "#{subject} #{karma.incrementResponse()} (Karma: #{karma.get(subject)})"
+      else
+        msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
+
+  robot.hear decrement_regex, (msg) ->
+    while match = decrement_regex.exec msg.message.text
+      subject = (match[1] || match[2]).toLowerCase()
+      if allow_self is true or msg.message.user.name.toLowerCase() != subject
+        karma.decrement subject
+        msg.send "#{subject} #{karma.decrementResponse()} (Karma: #{karma.get(subject)})"
+      else
+        msg.send msg.random karma.selfDeniedResponses(msg.message.user.name)
 
   robot.respond /karma empty ?(\S+[^-\s])$/i, (msg) ->
     subject = msg.match[1].toLowerCase()
