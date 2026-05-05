@@ -182,6 +182,10 @@ filterName = (name) ->
   if /^bmac/i.test(name)
     name = 'stochastic-bombastic'
 
+  # For real tho, we saw this one coming when they joined
+  if /^teatime/i.test(name)
+    name = 'teatime2'
+
   return name
 
 # Make any changes required to the text
