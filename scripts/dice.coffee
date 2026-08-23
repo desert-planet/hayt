@@ -46,8 +46,8 @@ module.exports = (robot) ->
 
     answer = if sides < 2
       "You want to roll dice with less than two sides. Wow."
-    else if dice > 100
-      "I'm not going to roll more than 100 dice for you."
+    else if dice > 127
+      "I'm not going to roll more than 127 dice for you."
     else
       report modifier, roll(dice, sides, meta_modifiers), meta_modifiers['success_func']
     msg.reply answer
