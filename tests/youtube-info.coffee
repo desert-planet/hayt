@@ -8,7 +8,14 @@ describe 'when user links', ->
 
   beforeEach ->
     room = helper.createRoom()
-    room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
 
-  it 'should be able to find title', ->
-    assert room.messages.length > 0
+  afterEach ->
+    room.destroy()
+
+  it 'should be able to find title', (done) ->
+    @timeout(10000)  # Increase timeout for youtube-dl-exec
+    room.user.say 'alice', 'https://www.youtube.com/watch?v=ePoi0_zSnYk'
+    setTimeout ->
+      assert room.messages.length > 1
+      done()
+    , 5000

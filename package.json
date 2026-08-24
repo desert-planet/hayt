@@ -44,7 +44,8 @@
     "twitter": "~1.2.5",
     "underscore": "1.5.x",
     "underscore.string": "2.3.0",
-    "wolfram": "~0.3.4"
+    "wolfram": "~0.3.4",
+    "youtube-dl-exec": "^2.4.0"
   },
   "engines": {
     "node": "0.10.x",
