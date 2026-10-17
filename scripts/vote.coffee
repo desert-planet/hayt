@@ -123,7 +123,7 @@ Supported commands:
 """
 
   robot.respond /voting\??$/i, (msg) ->
-    sure_am = "Yep, for #{Vote.current?.duration()} seconds now. #{Vote.current?.votes.yes.length} vs #{Vote.current?.votes.no.length}"
+    sure_am = "Yep, #{Vote.current?.description}. Going for #{Vote.current?.duration()} seconds now, #{Vote.current?.votes.yes.length} vs #{Vote.current?.votes.no.length}"
     nope = "Nope, democracy has totally failed."
     msg.reply if Vote.current then sure_am else nope
 
