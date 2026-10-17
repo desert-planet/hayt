@@ -2,7 +2,6 @@
 #  Grab the title of a youtube video
 #
 # Dependencies:
-#  cheerio
 #  request
 #
 # Configuration:
@@ -12,27 +11,24 @@
 #  None
 #
 # Notes:
-#  youtube sucks
+#  youtube sucks, so this uses the oembed endpoint instead of scraping the page
 #
 # Author:
 #  justinwoo
 
-url = require 'url'
-path = require 'path'
 request = require 'request'
-cheerio = require 'cheerio'
 
 module.exports = (robot) ->
-  robot.hear /(youtube\.com\/(?:watch\?v=|shorts\/)|youtu.be\/)(.+)/i, (msg) ->
-    url_parsed = url.parse(msg.match[2])
-    getTitle msg, url_parsed.href
+  robot.hear /(?:youtube\.com\/(?:watch\?(?:\S*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/i, (msg) ->
+    getTitle msg, msg.match[1]
 
-getTitle = (msg, url) ->
-  muhUrl = "https://youtube.com/watch?v=#{url}"
-  request muhUrl, (err, res, body) ->
-    if err
-      msg.send "couldn't do anything with #{muhUrl}"
-    else
-      $ = cheerio.load(body)
-      title = $('title').text()
-      msg.send title
+getTitle = (msg, id) ->
+  videoUrl = "https://www.youtube.com/watch?v=#{id}"
+  oembedUrl = "https://www.youtube.com/oembed?format=json&url=#{encodeURIComponent videoUrl}"
+  request oembedUrl, (err, res, body) ->
+    return msg.send "couldn't do anything with #{videoUrl}" if err or res.statusCode isnt 200
+    try
+      title = JSON.parse(body).title
+    catch
+      return msg.send "couldn't do anything with #{videoUrl}"
+    msg.send title if title
